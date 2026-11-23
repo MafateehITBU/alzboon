@@ -1,0 +1,108 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-cream: #f8f6f1;
+  --color-cream-deep: #f4f2ea;
+  --color-ivory: #f2f0e8;
+  --color-card: #f7f9fb;
+  --color-paper: #fbfaf7;
+  --color-white: #ffffff;
+  --color-offwhite: #fafafa;
+  --color-teal: #3f8377;
+  --color-teal-deep: #3e8377;
+  --color-gold: #bba97a;
+  --color-gold-deep: #baa87a;
+  --color-ink: #011320;
+  --color-ink-soft: #1b1c1c;
+  --color-heading: #171717;
+  --color-body: #555555;
+  --color-body-strong: #43474c;
+  --color-copy: #333333;
+  --color-quote: #191c1e;
+  --color-muted: #6c8793;
+  --color-navy: #011320;
+  --color-line: #e2e8f0;
+  --color-field: #1a3243;
+  --color-warning: #d97706;
+  --color-info: #2563eb;
+  --color-success: #15803d;
+  --color-danger: #dc2626;
+  --font-abu: var(--font-abu-family), sans-serif;
+  --font-jakarta: var(--font-jakarta-family), sans-serif;
+  --font-roboto: var(--font-roboto-family), sans-serif;
+  --font-dm: var(--font-dm-family), sans-serif;
+  --font-dinar: var(--font-dinar-family), 'Segoe UI', Tahoma, sans-serif;
+  --font-georgia: Georgia, 'Times New Roman', serif;
+  --font-freeserif: FreeSerif, 'Times New Roman', serif;
+  --shadow-header: 0 4px 24px -4px rgba(15, 28, 38, 0.08);
+  --shadow-card: 0 1px 1px rgba(0, 0, 0, 0.05);
+  --shadow-soft: 0 4px 4px rgba(0, 0, 0, 0.1);
+  --shadow-portrait: 4px 4px 4px rgba(0, 0, 0, 0.2);
+  --shadow-cta: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  --shadow-teal: 0 12px 16px rgba(63, 131, 119, 0.35);
+  --animate-float-card: float-card 4.5s ease-in-out infinite;
+}
+
+@keyframes float-card {
+  0%,
+  100% {
+    transform: translateY(-2rem);
+  }
+
+  50% {
+    transform: translateY(calc(-2rem - 14px));
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  html,
+  body {
+    margin: 0;
+    overflow-x: clip;
+    background: var(--color-white);
+  }
+
+  body {
+    min-height: 100svh;
+    color: var(--color-ink-soft);
+    font-family: var(--font-abu), sans-serif;
+    font-weight: 400;
+    line-height: 1.5;
+    color-scheme: light;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  html[lang='ar'] body,
+  [lang='ar'] {
+    font-family: var(--font-dinar), 'Segoe UI', Tahoma, sans-serif;
+    font-weight: 500;
+  }
+
+  html[lang='ar'] .font-abu,
+  html[lang='ar'] .font-jakarta,
+  html[lang='ar'] .font-roboto,
+  html[lang='ar'] .font-dm,
+  [lang='ar'] .font-abu,
+  [lang='ar'] .font-jakarta,
+  [lang='ar'] .font-roboto,
+  [lang='ar'] .font-dm {
+    font-family: var(--font-dinar), 'Segoe UI', Tahoma, sans-serif;
+  }
+
+  button,
+  input {
+    font: inherit;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  img {
+    max-width: none;
+  }
+}

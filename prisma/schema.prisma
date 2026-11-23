@@ -1,0 +1,370 @@
+// Approved model in docs/DATABASE_SCHEMA.md.
+// PostgreSQL names are snake_case. Prisma client fields stay camelCase.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum AdminRole {
+  SUPER_ADMIN
+  ADMIN
+}
+
+enum Permission {
+  MANAGE_ADMINS
+  MANAGE_BLOGS
+  MANAGE_SERVICES
+  MANAGE_CONTACT_ENQUIRIES
+  MANAGE_WEBSITE_SETTINGS
+}
+
+enum Region {
+  JORDAN
+  UAE
+}
+
+enum SocialPlatform {
+  LINKEDIN
+  FACEBOOK
+  INSTAGRAM
+  X
+}
+
+enum Locale {
+  EN
+  AR
+}
+
+enum EnquiryStatus {
+  NEW
+  READ
+  ARCHIVED
+}
+
+enum MediaVisibility {
+  PUBLIC
+  PRIVATE
+}
+
+model AdminUser {
+  id             String    @id @default(uuid()) @db.Uuid
+  name           String
+  email          String    @unique
+  phone          String?
+  passwordHash   String    @map("password_hash")
+  role           AdminRole
+  active         Boolean   @default(true)
+  profileMediaId String?   @map("profile_media_id") @db.Uuid
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  profileMedia MediaAsset?       @relation("AdminProfile", fields: [profileMediaId], references: [id], onDelete: Restrict)
+  permissions  AdminPermission[]
+  sessions     Session[]
+
+  @@index([profileMediaId])
+  @@map("admin_users")
+}
+
+model AdminPermission {
+  adminUserId String     @map("admin_user_id") @db.Uuid
+  permission  Permission
+
+  adminUser AdminUser @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
+
+  @@id([adminUserId, permission])
+  @@map("admin_permissions")
+}
+
+model Session {
+  id          String    @id @default(uuid()) @db.Uuid
+  adminUserId String    @map("admin_user_id") @db.Uuid
+  tokenHash   String    @unique @map("token_hash")
+  expiresAt   DateTime  @map("expires_at")
+  revokedAt   DateTime? @map("revoked_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  adminUser AdminUser @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
+
+  @@index([adminUserId])
+  @@map("sessions")
+}
+
+model LoginAttempt {
+  id          String   @id @default(uuid()) @db.Uuid
+  identifier  String
+  successful  Boolean
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([identifier, createdAt])
+  @@map("login_attempts")
+}
+
+model WebsiteSettings {
+  id                String   @id @default("default")
+  logoMediaId       String?  @map("logo_media_id") @db.Uuid
+  contactEmail      String   @map("contact_email")
+  businessHoursEn   String   @map("business_hours_en")
+  businessHoursAr   String   @map("business_hours_ar")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  logoMedia    MediaAsset?   @relation("WebsiteLogo", fields: [logoMediaId], references: [id], onDelete: Restrict)
+  phoneNumbers PhoneNumber[]
+  addresses    Address[]
+  mapLocations MapLocation[]
+  socialLinks  SocialLink[]
+
+  @@index([logoMediaId])
+  @@map("website_settings")
+}
+
+model PhoneNumber {
+  id                String @id @default(uuid()) @db.Uuid
+  websiteSettingsId String @map("website_settings_id")
+  number            String
+  region            Region
+  label             String?
+  sortOrder         Int    @default(0) @map("sort_order")
+
+  websiteSettings WebsiteSettings @relation(fields: [websiteSettingsId], references: [id], onDelete: Cascade)
+
+  @@index([websiteSettingsId])
+  @@map("phone_numbers")
+}
+
+model Address {
+  id                String @id @default(uuid()) @db.Uuid
+  websiteSettingsId String @map("website_settings_id")
+  textEn            String @map("text_en")
+  textAr            String @map("text_ar")
+  region            Region
+  sortOrder         Int    @default(0) @map("sort_order")
+
+  websiteSettings WebsiteSettings @relation(fields: [websiteSettingsId], references: [id], onDelete: Cascade)
+
+  @@index([websiteSettingsId])
+  @@map("addresses")
+}
+
+model MapLocation {
+  id                String  @id @default(uuid()) @db.Uuid
+  websiteSettingsId String  @map("website_settings_id")
+  label             String
+  latitude          Decimal @db.Decimal(10, 7)
+  longitude         Decimal @db.Decimal(10, 7)
+  sortOrder         Int     @default(0) @map("sort_order")
+
+  websiteSettings WebsiteSettings @relation(fields: [websiteSettingsId], references: [id], onDelete: Cascade)
+
+  @@index([websiteSettingsId])
+  @@map("map_locations")
+}
+
+model SocialLink {
+  websiteSettingsId String         @map("website_settings_id")
+  platform          SocialPlatform
+  url               String
+
+  websiteSettings WebsiteSettings @relation(fields: [websiteSettingsId], references: [id], onDelete: Cascade)
+
+  @@id([websiteSettingsId, platform])
+  @@map("social_links")
+}
+
+model Partner {
+  id          String   @id @default(uuid()) @db.Uuid
+  name        String
+  logoMediaId String   @map("logo_media_id") @db.Uuid
+  sortOrder   Int      @default(0) @map("sort_order")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  logoMedia MediaAsset @relation("PartnerLogo", fields: [logoMediaId], references: [id], onDelete: Restrict)
+
+  @@index([logoMediaId])
+  @@map("partners")
+}
+
+model BlogCategory {
+  id        String   @id @default(uuid()) @db.Uuid
+  nameEn    String   @map("name_en")
+  nameAr    String   @map("name_ar")
+  slug      String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  blogs Blog[]
+
+  @@map("blog_categories")
+}
+
+model Blog {
+  id                     String    @id @default(uuid()) @db.Uuid
+  categoryId             String    @map("category_id") @db.Uuid
+  slug                   String    @unique
+  authorName             String    @map("author_name")
+  publishedOn            DateTime  @map("published_on") @db.Date
+  published              Boolean   @default(false)
+  featuredMediaId        String    @map("featured_media_id") @db.Uuid
+  attachmentMediaId      String?   @map("attachment_media_id") @db.Uuid
+  attachmentDisplayName  String?   @map("attachment_display_name")
+  createdAt              DateTime  @default(now()) @map("created_at")
+  updatedAt              DateTime  @updatedAt @map("updated_at")
+
+  category        BlogCategory      @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  featuredMedia   MediaAsset        @relation("BlogFeaturedImage", fields: [featuredMediaId], references: [id], onDelete: Restrict)
+  attachmentMedia MediaAsset?       @relation("BlogAttachment", fields: [attachmentMediaId], references: [id], onDelete: Restrict)
+  translations    BlogTranslation[]
+
+  @@index([categoryId])
+  @@index([featuredMediaId])
+  @@index([attachmentMediaId])
+  @@map("blogs")
+}
+
+model BlogTranslation {
+  blogId   String @map("blog_id") @db.Uuid
+  locale   Locale
+  title    String
+  document Json
+
+  blog Blog @relation(fields: [blogId], references: [id], onDelete: Cascade)
+
+  @@id([blogId, locale])
+  @@map("blog_translations")
+}
+
+model Service {
+  id                   String   @id @default(uuid()) @db.Uuid
+  slug                 String   @unique
+  heroMediaId          String   @map("hero_media_id") @db.Uuid
+  practiceAreaMediaId  String   @map("practice_area_media_id") @db.Uuid
+  available            Boolean  @default(false)
+  createdAt            DateTime @default(now()) @map("created_at")
+  updatedAt            DateTime @updatedAt @map("updated_at")
+
+  heroMedia         MediaAsset           @relation("ServiceHeroImage", fields: [heroMediaId], references: [id], onDelete: Restrict)
+  practiceAreaMedia MediaAsset           @relation("ServicePracticeImage", fields: [practiceAreaMediaId], references: [id], onDelete: Restrict)
+  translations      ServiceTranslation[]
+  practiceAreas     PracticeArea[]
+  benefits          Benefit[]
+  contactEnquiries  ContactEnquiry[]
+
+  @@index([heroMediaId])
+  @@index([practiceAreaMediaId])
+  @@map("services")
+}
+
+model ServiceTranslation {
+  serviceId           String @map("service_id") @db.Uuid
+  locale              Locale
+  name                String
+  heroTitle           String @map("hero_title")
+  heroDescription     String @map("hero_description")
+  overviewTitle       String @map("overview_title")
+  overviewDescription String @map("overview_description")
+
+  service Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@id([serviceId, locale])
+  @@map("service_translations")
+}
+
+model PracticeArea {
+  id        String @id @default(uuid()) @db.Uuid
+  serviceId String @map("service_id") @db.Uuid
+  sortOrder Int    @default(0) @map("sort_order")
+
+  service      Service                   @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  translations PracticeAreaTranslation[]
+
+  @@index([serviceId])
+  @@map("practice_areas")
+}
+
+model PracticeAreaTranslation {
+  practiceAreaId String @map("practice_area_id") @db.Uuid
+  locale         Locale
+  title          String
+  subtitle       String
+  description    String
+
+  practiceArea PracticeArea @relation(fields: [practiceAreaId], references: [id], onDelete: Cascade)
+
+  @@id([practiceAreaId, locale])
+  @@map("practice_area_translations")
+}
+
+model Benefit {
+  id        String @id @default(uuid()) @db.Uuid
+  serviceId String @map("service_id") @db.Uuid
+  sortOrder Int    @default(0) @map("sort_order")
+
+  service      Service              @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  translations BenefitTranslation[]
+
+  @@index([serviceId])
+  @@map("benefits")
+}
+
+model BenefitTranslation {
+  benefitId String @map("benefit_id") @db.Uuid
+  locale    Locale
+  text      String
+
+  benefit Benefit @relation(fields: [benefitId], references: [id], onDelete: Cascade)
+
+  @@id([benefitId, locale])
+  @@map("benefit_translations")
+}
+
+model ContactEnquiry {
+  id        String        @id @default(uuid()) @db.Uuid
+  name      String
+  email     String
+  phone     String
+  company   String
+  country   String
+  serviceId String?       @map("service_id") @db.Uuid
+  message   String
+  status    EnquiryStatus @default(NEW)
+  createdAt DateTime      @default(now()) @map("created_at")
+  updatedAt DateTime      @updatedAt @map("updated_at")
+
+  service Service? @relation(fields: [serviceId], references: [id], onDelete: SetNull)
+
+  @@index([serviceId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("contact_enquiries")
+}
+
+model MediaAsset {
+  id                String          @id @default(uuid()) @db.Uuid
+  storageKey        String          @unique @map("storage_key")
+  visibility        MediaVisibility
+  originalFilename  String          @map("original_filename")
+  mimeType          String          @map("mime_type")
+  byteSize          Int             @map("byte_size")
+  width             Int?
+  height            Int?
+  createdAt         DateTime        @default(now()) @map("created_at")
+  updatedAt         DateTime        @updatedAt @map("updated_at")
+
+  profileAdmins    AdminUser[]       @relation("AdminProfile")
+  websiteSettings  WebsiteSettings[] @relation("WebsiteLogo")
+  partners         Partner[]         @relation("PartnerLogo")
+  featuredBlogs    Blog[]            @relation("BlogFeaturedImage")
+  attachmentBlogs  Blog[]            @relation("BlogAttachment")
+  heroServices     Service[]         @relation("ServiceHeroImage")
+  practiceServices Service[]         @relation("ServicePracticeImage")
+
+  @@map("media_assets")
+}
