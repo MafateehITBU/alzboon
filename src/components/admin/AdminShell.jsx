@@ -4,36 +4,36 @@ import { useEffect, useId, useRef, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
-  Briefcase,
+  ChevronLeft,
+  ChevronRight,
+  FileText,
   FolderTree,
   Globe,
   Handshake,
-  Inbox,
   LayoutDashboard,
+  Mail,
   Menu,
-  Newspaper,
-  PanelLeftClose,
-  PanelLeftOpen,
+  Shield,
   UserRound,
-  Users,
+  Wrench,
   X,
 } from 'lucide-react'
 import logo from '@/assets/images/logo-header.png'
 import { assetSrc } from '@/lib/utils/assetSrc'
 import { accountInitials } from '@/lib/admin/navigation'
 import { logoutAction } from '@/app/admin/actions'
-import { adminGhostButton, adminOutlineButton, adminTealButton } from '@/components/admin/adminStyles'
+import { adminOutlineButton, adminTealButton } from '@/components/admin/adminStyles'
 
 const icons = {
-  Briefcase,
+  FileText,
   FolderTree,
   Globe,
   Handshake,
-  Inbox,
   LayoutDashboard,
-  Newspaper,
+  Mail,
+  Shield,
   UserRound,
-  Users,
+  Wrench,
 }
 
 export default function AdminShell({ admin, groups, children }) {
@@ -137,45 +137,42 @@ function Sidebar({ id, groups, pathname, collapsed, onToggle, onNavigate, closeR
   return (
     <aside
       id={id}
-      className={`shrink-0 flex-col border-r border-white/70 bg-white/80 text-ink shadow-[8px_0_40px_-28px_rgba(1,19,32,0.35)] backdrop-blur-xl ${collapsed ? 'w-[88px]' : 'w-[280px]'} ${className}`}
+      className={`shrink-0 flex-col border-r border-line bg-white text-ink ${collapsed ? 'w-[88px]' : 'w-[280px]'} ${className}`}
     >
-      <div className={`flex items-center border-b border-line/60 ${collapsed ? 'flex-col gap-2 px-2 py-4' : 'h-16 justify-between gap-2 px-4'}`}>
+      <div className={`flex items-center border-b border-line ${collapsed ? 'justify-center px-2 py-4' : 'h-[72px] gap-3 px-5'}`}>
         {collapsed ? (
-          <span className="grid size-10 place-items-center rounded-2xl bg-teal font-jakarta text-sm font-bold text-white shadow-[0_10px_20px_-12px_rgba(63,131,119,0.8)]" aria-hidden="true">
+          <span className="grid size-10 place-items-center rounded-xl bg-teal font-jakarta text-sm font-bold text-white" aria-hidden="true">
             AZ
           </span>
         ) : (
           <div className="min-w-0">
             <img src={assetSrc(logo)} alt="Awwad AlZboon" width="168" height="34" className="h-8 w-auto" />
-            <p className="mt-1 font-jakarta text-[11px] font-medium tracking-[0.16em] text-muted uppercase">Admin</p>
           </div>
         )}
-        {onToggle ? (
+        {!onToggle ? (
           <button
             type="button"
-            className={adminGhostButton}
-            aria-expanded={!collapsed}
-            aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            onClick={onToggle}
+            ref={closeRef}
+            className="ms-auto inline-flex size-9 items-center justify-center rounded-lg text-muted transition hover:bg-[#F3F5F7] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal/35"
+            onClick={onNavigate}
           >
-            {collapsed ? <PanelLeftOpen aria-hidden="true" size={18} /> : <PanelLeftClose aria-hidden="true" size={18} />}
-          </button>
-        ) : (
-          <button type="button" ref={closeRef} className={adminGhostButton} onClick={onNavigate}>
             <X aria-hidden="true" size={18} />
             <span className="sr-only">Close menu</span>
           </button>
-        )}
+        ) : null}
       </div>
+
       <nav aria-label="Admin" className="flex-1 overflow-y-auto px-3 py-4">
-        {groups.map((group) => (
-          <section key={group.label} className="mb-5">
-            {collapsed ? null : (
-              <h2 className="px-3 pb-2 font-jakarta text-[11px] font-semibold tracking-[0.14em] text-muted uppercase">{group.label}</h2>
+        {groups.map((group, groupIndex) => (
+          <section key={group.label || `group-${groupIndex}`} className={group.label ? 'mt-5' : ''}>
+            {collapsed || !group.label ? null : (
+              <h2 className="px-3 pb-2 font-jakarta text-[11px] font-semibold tracking-[0.14em] text-[#8A97A3] uppercase">
+                {group.label}
+              </h2>
             )}
             <ul className="grid gap-1">
               {group.items.map((entry) => (
-                <li key={entry.label}>
+                <li key={entry.href}>
                   <NavItem entry={entry} pathname={pathname} collapsed={collapsed} onNavigate={onNavigate} />
                 </li>
               ))}
@@ -183,6 +180,20 @@ function Sidebar({ id, groups, pathname, collapsed, onToggle, onNavigate, closeR
           </section>
         ))}
       </nav>
+
+      {onToggle ? (
+        <div className="mt-auto border-t border-line px-3 py-3">
+          <button
+            type="button"
+            className="mx-auto flex size-9 items-center justify-center rounded-lg text-[#8A97A3] transition hover:bg-[#F3F5F7] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal/35"
+            aria-expanded={!collapsed}
+            aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            onClick={onToggle}
+          >
+            {collapsed ? <ChevronRight aria-hidden="true" size={18} strokeWidth={2} /> : <ChevronLeft aria-hidden="true" size={18} strokeWidth={2} />}
+          </button>
+        </div>
+      ) : null}
     </aside>
   )
 }
@@ -194,8 +205,8 @@ function NavItem({ entry, pathname, collapsed, onNavigate }) {
   const className = `group flex min-h-11 w-full items-center gap-3 rounded-xl px-3 text-left font-jakarta text-sm transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal/35 ${collapsed ? 'justify-center' : ''} ${
     entry.enabled
       ? active
-        ? 'bg-teal text-white shadow-[0_12px_24px_-16px_rgba(63,131,119,0.9)]'
-        : 'text-body hover:bg-teal/8 hover:text-ink'
+        ? 'bg-[rgba(63,131,119,0.12)] text-teal'
+        : 'text-[#4B5563] hover:bg-[#F3F5F7] hover:text-ink'
       : 'cursor-not-allowed text-muted/50'
   }`
 
@@ -215,7 +226,7 @@ function NavItem({ entry, pathname, collapsed, onNavigate }) {
 
   return (
     <Link href={entry.href} aria-current={active ? 'page' : undefined} aria-label={collapsed ? entry.label : undefined} className={className} onClick={onNavigate}>
-      <Icon aria-hidden="true" size={18} className={active ? '' : 'text-teal/80 group-hover:text-teal'} />
+      <Icon aria-hidden="true" size={18} strokeWidth={1.75} className={active ? 'text-teal' : 'text-[#6B7280] group-hover:text-ink'} />
       {collapsed ? null : <span className={active ? 'font-semibold' : 'font-medium'}>{entry.label}</span>}
     </Link>
   )
@@ -263,7 +274,7 @@ function AccountMenu({ admin, open, menuId, onToggle, onClose }) {
           <p className="font-jakarta text-sm break-all text-ink">{admin.email}</p>
           <p className="mt-1 font-jakarta text-xs font-medium tracking-wide text-teal uppercase">{admin.roleLabel}</p>
           <Link href="/admin/account" role="menuitem" className={`${adminTealButton} mt-4 w-full`} onClick={onClose}>
-            Account
+            Profile
           </Link>
           <form action={logoutAction} className="mt-2">
             <button type="submit" role="menuitem" className={`${adminOutlineButton} w-full`}>

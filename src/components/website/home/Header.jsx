@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import logo from '@/assets/images/logo-header.png'
@@ -8,6 +8,7 @@ import chevron from '@/assets/icons/icon-chevron-down.svg'
 import { assetSrc } from '@/lib/utils/assetSrc'
 import { alternateLocale } from '@/lib/i18n/locale'
 import { switchLocalePath, withLocale } from '@/lib/i18n/paths'
+import { getServiceNavIcon } from '@/components/website/serviceNavIcons'
 
 const desktopLinkClass =
   'relative inline-flex min-h-8 items-center gap-1.5 border-0 bg-transparent px-0 py-1 font-jakarta text-[15px] leading-6 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-teal'
@@ -30,8 +31,21 @@ function isActivePath(pathname, href) {
   return pathname === href || pathname.startsWith(`${href}/`)
 }
 
+/** Keep mega-menu blurbs short — about two short lines of copy. */
+function shortenServiceSummary(text, maxWords = 14) {
+  if (typeof text !== 'string') return ''
+  const cleaned = text.replace(/\s+/g, ' ').trim()
+  if (!cleaned) return ''
+  const words = cleaned.split(' ')
+  if (words.length <= maxWords) return cleaned
+  return `${words.slice(0, maxWords).join(' ')}…`
+}
+
 function Header({ locale = 'en', messages, services = [] }) {
   const pathname = usePathname()
+  const servicesMenuId = useId()
+  const headerRef = useRef(null)
+  const closeTimerRef = useRef(null)
   const [menuOpen, setMenuOpen] = useState(false)
   const [servicesOpen, setServicesOpen] = useState(false)
   const homeHref = withLocale('/', locale)
@@ -50,10 +64,36 @@ function Header({ locale = 'en', messages, services = [] }) {
 
   const serviceItems = services
     .filter((service) => service?.slug && service?.name)
-    .map((service) => ({
-      href: withLocale(`/services/${service.slug}`, locale),
-      label: service.name,
-    }))
+    .map((service, index) => {
+      const icon = getServiceNavIcon(service.slug, index)
+      return {
+        href: withLocale(`/services/${service.slug}`, locale),
+        label: service.name,
+        summary: shortenServiceSummary(service.summary),
+        slug: service.slug,
+        icon,
+      }
+    })
+
+  function clearCloseTimer() {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current)
+      closeTimerRef.current = null
+    }
+  }
+
+  function openServicesMenu() {
+    clearCloseTimer()
+    setServicesOpen(true)
+  }
+
+  function scheduleCloseServicesMenu() {
+    clearCloseTimer()
+    closeTimerRef.current = setTimeout(() => {
+      setServicesOpen(false)
+      closeTimerRef.current = null
+    }, 120)
+  }
 
   function closeMenu() {
     setMenuOpen(false)
@@ -74,9 +114,38 @@ function Header({ locale = 'en', messages, services = [] }) {
     setServicesOpen(false)
   }, [pathname])
 
+  useEffect(() => () => clearCloseTimer(), [])
+
+  useEffect(() => {
+    if (!servicesOpen) return undefined
+
+    function onKeyDown(event) {
+      if (event.key === 'Escape') setServicesOpen(false)
+    }
+
+    function onPointerDown(event) {
+      if (!headerRef.current?.contains(event.target)) {
+        setServicesOpen(false)
+      }
+    }
+
+    document.addEventListener('keydown', onKeyDown)
+    document.addEventListener('pointerdown', onPointerDown)
+    return () => {
+      document.removeEventListener('keydown', onKeyDown)
+      document.removeEventListener('pointerdown', onPointerDown)
+    }
+  }, [servicesOpen])
+
   return (
-    <header className="sticky top-0 z-40 h-20 w-full border-b border-line/60 bg-white shadow-[0_4px_16px_rgba(15,28,38,0.04)]">
-      <div className="relative mx-auto grid h-full w-full max-w-[1440px] grid-cols-[250px_1fr_auto] items-center gap-6 pr-20 pl-[114px] max-[1439px]:px-8 max-[1200px]:grid-cols-[180px_1fr_auto] max-[1200px]:px-6 max-[1023px]:grid-cols-[auto_1fr_auto] max-[1023px]:px-6 max-[767px]:px-4">
+    <header
+      ref={headerRef}
+      className="sticky top-0 z-40 w-full border-b border-line/60 bg-white shadow-[0_4px_16px_rgba(15,28,38,0.04)]"
+      onMouseLeave={() => {
+        if (!menuOpen) scheduleCloseServicesMenu()
+      }}
+    >
+      <div className="relative mx-auto grid h-20 w-full max-w-[1440px] grid-cols-[250px_1fr_auto] items-center gap-6 pr-20 pl-[114px] max-[1439px]:px-8 max-[1200px]:grid-cols-[180px_1fr_auto] max-[1200px]:px-6 max-[1023px]:grid-cols-[auto_1fr_auto] max-[1023px]:px-6 max-[767px]:px-4">
         <Link href={homeHref} className="col-start-1 block" onClick={closeMenu}>
           <img
             src={assetSrc(logo)}
@@ -114,37 +183,25 @@ function Header({ locale = 'en', messages, services = [] }) {
             {nav.about || 'About Us'}
           </Link>
 
-          <div className="group relative">
-            <button
-              type="button"
-              className={desktopNavClass(servicesActive)}
-              aria-expanded={servicesOpen}
-              aria-controls="desktop-services-menu"
-              aria-current={servicesActive ? 'page' : undefined}
-              onClick={() => setServicesOpen((open) => !open)}
-            >
-              {nav.services || 'Services'}
-              <img src={assetSrc(chevron)} alt="" width="8" height="5" className="h-[5px] w-2" />
-            </button>
-            <div
-              id="desktop-services-menu"
-              role="group"
-              aria-label={nav.services || 'Services'}
-              className={`${servicesOpen ? 'flex' : 'hidden'} absolute top-full left-1/2 z-30 min-w-[220px] -translate-x-1/2 flex-col pt-2.5 group-hover:flex group-focus-within:flex`}
-            >
-              <div className="flex flex-col rounded-lg border border-line bg-white py-1 shadow-header">
-                {serviceItems.map((service, index) => (
-                  <Link
-                    key={service.href}
-                    href={service.href}
-                    className={`block px-3 py-2.5 font-jakarta text-sm leading-5 text-ink hover:bg-cream hover:text-teal-deep ${index > 0 ? 'border-t border-line/70' : ''}`}
-                  >
-                    {service.label}
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </div>
+          <button
+            type="button"
+            className={desktopNavClass(servicesActive || servicesOpen)}
+            aria-expanded={servicesOpen}
+            aria-controls={servicesMenuId}
+            aria-current={servicesActive ? 'page' : undefined}
+            onClick={() => setServicesOpen((open) => !open)}
+            onMouseEnter={openServicesMenu}
+            onFocus={openServicesMenu}
+          >
+            {nav.services || 'Services'}
+            <img
+              src={assetSrc(chevron)}
+              alt=""
+              width="8"
+              height="5"
+              className={`h-[5px] w-2 transition-transform duration-300 ${servicesOpen ? 'rotate-180' : ''}`}
+            />
+          </button>
 
           <Link
             href={contactHref}
@@ -170,6 +227,68 @@ function Header({ locale = 'en', messages, services = [] }) {
             / EN
           </span>
         </Link>
+      </div>
+
+      {/* Desktop services mega menu — full width under header */}
+      <div
+        id={servicesMenuId}
+        role="region"
+        aria-label={nav.services || 'Services'}
+        aria-hidden={!servicesOpen}
+        className={`absolute inset-x-0 top-full z-30 grid max-[1023px]:hidden transition-[grid-template-rows,opacity] duration-300 ease-out ${
+          servicesOpen
+            ? 'grid-rows-[1fr] opacity-100'
+            : 'pointer-events-none grid-rows-[0fr] opacity-0'
+        }`}
+        onMouseEnter={openServicesMenu}
+      >
+        <div className="min-h-0 overflow-hidden pb-4">
+          <div className="rounded-b-2xl border-t border-line bg-white shadow-[0_16px_36px_rgba(15,28,38,0.14)]">
+            <div className="mx-auto max-w-[1440px] px-[114px] py-5 max-[1439px]:px-8 max-[1200px]:px-6">
+              {serviceItems.length > 0 ? (
+                <ul className="grid list-none grid-cols-3 p-0">
+                  {serviceItems.map((service, index) => (
+                    <li
+                      key={service.href}
+                      className={index > 0 ? 'border-s border-line' : undefined}
+                    >
+                      <Link
+                        href={service.href}
+                        className="group/item flex items-start gap-3.5 px-5 py-3 transition-colors hover:bg-[rgba(63,131,119,0.06)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
+                        onClick={() => setServicesOpen(false)}
+                      >
+                        <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[rgba(63,131,119,0.1)] transition-colors group-hover/item:bg-[rgba(63,131,119,0.16)]">
+                          <img
+                            src={assetSrc(service.icon.src)}
+                            alt=""
+                            width={service.icon.width}
+                            height={service.icon.height}
+                            className="object-contain"
+                            style={{ width: service.icon.width, height: service.icon.height }}
+                          />
+                        </span>
+                        <span className="min-w-0 pt-0.5">
+                          <span className="block font-abu text-[17px] leading-6 font-normal text-ink transition-colors group-hover/item:text-teal-deep">
+                            {service.label}
+                          </span>
+                          {service.summary ? (
+                            <span className="mt-1 block font-abu text-[13px] leading-[1.4] font-normal text-body line-clamp-2">
+                              {service.summary}
+                            </span>
+                          ) : null}
+                        </span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="font-abu text-[15px] font-normal text-body">
+                  {messages?.services?.empty || 'No services are available yet.'}
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Mobile side drawer */}
@@ -243,9 +362,22 @@ function Header({ locale = 'en', messages, services = [] }) {
                       <Link
                         key={service.href}
                         href={service.href}
-                        className="block py-2.5 ps-4 font-jakarta text-[15px] leading-6 text-body transition-colors hover:text-teal-deep"
+                        className="flex items-center gap-3 py-2.5 ps-1 font-jakarta text-[15px] leading-6 text-body transition-colors hover:text-teal-deep"
                         onClick={closeMenu}
                       >
+                        <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[rgba(63,131,119,0.1)]">
+                          <img
+                            src={assetSrc(service.icon.src)}
+                            alt=""
+                            width={service.icon.width}
+                            height={service.icon.height}
+                            className="object-contain"
+                            style={{
+                              width: Math.round(service.icon.width * 0.85),
+                              height: Math.round(service.icon.height * 0.85),
+                            }}
+                          />
+                        </span>
                         {service.label}
                       </Link>
                     ))}

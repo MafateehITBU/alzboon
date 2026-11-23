@@ -49,7 +49,7 @@ Working behavior:
 
 - Home links to `/`.
 - Header, hero, and footer Contact Us scroll to `#consultation`.
-- Services opens three on-page anchors.
+- Services opens a full-width mega menu under the header listing available CMS services in three columns with icons.
 - The language control changes emphasis only. Page copy stays English.
 - WhatsApp uses `https://wa.me/971562511154`.
 - Phone and email in the footer use website settings when a settings row exists; otherwise they keep `tel:+971562511154` and `mailto:info@alzboon.com`.
@@ -58,12 +58,10 @@ Working behavior:
 
 Visible items without destinations:
 
-- About Us.
 - View Our Profile.
-- Book A Consultation.
 - Practice-area detail pages.
-- Privacy Policy.
-- Blogs.
+
+Public About Us is implemented at `/about` and `/ar/about` from the approved Figma About Us frame (`2120:5882`): cinematic hero background (`about-hero-presence.jpg`), overlapping white statistics card, two-column founder profile with quote and 2×2 accreditations, and homepage-style cream consultation card. Shared header/footer are reused. The founder portrait is `src/assets/images/about-founder.png` (Figma-exported studio portrait).
 
 The hero video is a still image and the exported control bar. It does not play.
 

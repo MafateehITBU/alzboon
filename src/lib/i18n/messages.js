@@ -135,6 +135,8 @@ const messages = {
     },
     services: {
       title: 'Services',
+      megaHeading: 'Our Practice Areas',
+      viewAll: 'View all',
       description: 'Explore our available legal consultancy services.',
       empty: 'No services are available yet.',
       back: 'Back to services',
@@ -174,7 +176,93 @@ const messages = {
     },
     about: {
       title: 'About Us',
-      body: 'Awwad AlZboon Legal Consultancy provides intellectual property, corporate, and dispute advisory for businesses across the UAE and beyond.',
+      metaDescription:
+        'Architecting legal certainty across borders and enterprise. Learn about Counselor Awaad Alzboon, senior counsel and founder of Awwad AlZboon Legal Consultancy.',
+      breadcrumbHome: 'HOME',
+      breadcrumbCurrent: 'ABOUT US',
+      heroTitle: 'Architecting Legal Certainty Across Border & Enterprise',
+      heroTitleParts: [
+        { text: 'Architecting Legal Certainty ', accent: false },
+        { text: 'Across ', accent: false, glueNext: true },
+        { text: 'Border & Enterprise', accent: true },
+      ],
+      heroBody:
+        'Founded on rigorous jurisprudence, specialized intellectual property enforcement, and commercial acumen. Serving visionary corporations, innovators, and sovereign family offices across Jordan, the GCC, and international jurisdictions.',
+      heroCards: [
+        {
+          title: 'Licensed Arbitrator',
+          body: 'Commercial tribunals & dispute mediation',
+        },
+        {
+          title: 'Certified IP Agent',
+          body: 'WIPO & Madrid System accredited',
+        },
+      ],
+      stats: [
+        {
+          label: 'TENURE',
+          value: '25+',
+          description: 'Years of Proven Advisory Leadership',
+        },
+        {
+          label: 'PORTFOLIO',
+          value: '1,200+',
+          description: 'Cases, Briefs & Filings Managed',
+        },
+        {
+          label: 'REACH',
+          value: '40+',
+          description: 'Jurisdictions via Madrid & WIPO',
+        },
+        {
+          label: 'FIDUCIARY TRUST',
+          value: '98%',
+          description: 'Retained Client Loyalty Index',
+        },
+      ],
+      founderEyebrow: 'EXECUTIVE BIO & JUDICIAL MANDATE',
+      founderHeading: 'A Quarter Century of Unwavering Sovereignty & Defense',
+      founderRole: 'SENIOR COUNSEL & FOUNDER',
+      founderName: 'Awaad Alzboon',
+      founderCredentials: 'Licensed Arbitrator • Certified Patent & Trademark Agent',
+      founderPortraitAlt: 'Counselor Awaad Alzboon, Senior Counsel and Founder',
+      founderBio1:
+        'For over 25 years, Counselor Awaad Alzboon has served as confidential legal strategist and senior advocate to high-growth enterprises, multinational conglomerates, governmental authorities, and pioneer tech ventures. His practice bridges continental civil legal codifications with complex Anglo-American cross-border transactions.',
+      founderBio2:
+        'Renowned for his strategic agility in high-stakes intellectual property dispute resolution and multi-million-dollar contractual architectures, Counselor Alzboon has represented clients before high appellate courts, ministerial chambers, and private arbitral tribunals across Jordan and the broader GCC economic sphere.',
+      founderQuote:
+        'Protecting enterprise intellect and operational sovereignty across global markets requires not merely knowledge of statutes, but strategic foresight and unyielding precision.',
+      founderAttribution: 'Counselor Awaad Alzboon',
+      credentialsHeading: 'BAR ADMISSIONS & OFFICIAL ACCREDITATIONS',
+      credentials: [
+        {
+          title: 'Jordan Bar Association',
+          body: 'Full Judicial Advocacy Rights',
+        },
+        {
+          title: 'WIPO Representative',
+          body: 'Global IP Registry Delegate',
+        },
+        {
+          title: 'International Arbitration Bar',
+          body: 'Certified Dispute Arbitrator',
+        },
+        {
+          title: 'Madrid System Counsel',
+          body: 'Multilateral Trademark Agent',
+        },
+      ],
+      ctaLabel: 'CONFIDENTIAL ENGAGEMENT',
+      ctaTitle: 'Engage Our Counsel for Your Next Strategic Milestone',
+      ctaTitleLines: [
+        [{ text: 'Engage Our Counsel for Your Next', accent: false }],
+        [{ text: 'Strategic Milestone', accent: true }],
+      ],
+      ctaBody:
+        'Whether safeguarding novel proprietary technologies, structuring an overseas subsidiary, or arbitrating complex partnership disputes, our team provides sovereign legal clarity.',
+      ctaPrimary: 'Book Structured Consultation',
+      ctaWhatsapp: 'Direct WhatsApp Counsel',
+      ctaNote: 'Protected under strict Jordan Bar Attorney-Client Confidentiality Statutes.',
     },
     privacy: {
       title: 'Privacy Policy',
@@ -320,6 +408,8 @@ const messages = {
     },
     services: {
       title: 'الخدمات',
+      megaHeading: 'مجالات ممارستنا',
+      viewAll: 'عرض الكل',
       description: 'تعرّفوا على خدمات الاستشارات القانونية التي نقدّمها.',
       empty: 'لا توجد خدمات معروضة حالياً.',
       back: 'العودة إلى الخدمات',
@@ -359,7 +449,93 @@ const messages = {
     },
     about: {
       title: 'من نحن',
-      body: 'تقدّم استشارات عواد الزبون القانونية خدمات الملكية الفكرية والاستشارات المؤسسية وتسوية المنازعات للشركات في دولة الإمارات وخارجها.',
+      metaDescription:
+        'صياغة اليقين القانونية عبر الحدود والمؤسسات. تعرّفوا على المستشار عواد الزبون، المستشار الأول ومؤسس استشارات عواد الزبون القانونية.',
+      breadcrumbHome: 'الرئيسية',
+      breadcrumbCurrent: 'من نحن',
+      heroTitle: 'صياغة اليقين القانونية عبر الحدود والمؤسسات',
+      heroTitleParts: [
+        { text: 'صياغة اليقين القانونية ', accent: false },
+        { text: 'عبر ', accent: false, glueNext: true },
+        { text: 'الحدود والمؤسسات', accent: true },
+      ],
+      heroBody:
+        'تأسست على فقه قانوني رصين، وإنفاذ متخصص للملكية الفكرية، وخبرة تجارية دقيقة. نخدم الشركات الرائدة والمبتكرين ومكاتب العائلات السيادية في الأردن ودول مجلس التعاون والاختصاصات الدولية.',
+      heroCards: [
+        {
+          title: 'محكّم مرخّص',
+          body: 'هيئات التحكيم التجارية وتسوية المنازعات',
+        },
+        {
+          title: 'وكيل ملكية فكرية معتمد',
+          body: 'معتمد لدى الويبو ونظام مدريد',
+        },
+      ],
+      stats: [
+        {
+          label: 'الخبرة',
+          value: '+25',
+          description: 'عاماً من القيادة الاستشارية المثبتة',
+        },
+        {
+          label: 'المحفظة',
+          value: '+1,200',
+          description: 'قضية ومذكرة وإيداع تمت إدارتها',
+        },
+        {
+          label: 'الانتشار',
+          value: '+40',
+          description: 'اختصاصاً عبر نظام مدريد والويبو',
+        },
+        {
+          label: 'الثقة الائتمانية',
+          value: '%98',
+          description: 'مؤشر ولاء العملاء المستمرين',
+        },
+      ],
+      founderEyebrow: 'السيرة التنفيذية والولاية القضائية',
+      founderHeading: 'ربع قرن من السيادة والدفاع الراسخين',
+      founderRole: 'المستشار الأول والمؤسس',
+      founderName: 'عواد الزبون',
+      founderCredentials: 'محكّم مرخّص • وكيل براءات اختراع وعلامات تجارية معتمد',
+      founderPortraitAlt: 'المستشار عواد الزبون، المستشار الأول والمؤسس',
+      founderBio1:
+        'لأكثر من خمسة وعشرين عاماً، عمل المستشار عواد الزبون مستشاراً قانونياً سرياً ومحامياً أول لدى الشركات عالية النمو، والتكتلات متعددة الجنسيات، والجهات الحكومية، والمشاريع التقنية الرائدة. وتمتد ممارسته بين التقنينات المدنية القارية والمعاملات الأنجلوأمريكية العابرة للحدود المعقّدة.',
+      founderBio2:
+        'ويُعرف بمرونته الاستراتيجية في تسوية منازعات الملكية الفكرية عالية المخاطر وهياكل العقود بملايين الدولارات، وقد مثّل عملاءه أمام محاكم الاستئناف العليا، والغرف الوزارية، وهيئات التحكيم الخاصة في الأردن وفي المجال الاقتصادي الأوسع لمجلس التعاون.',
+      founderQuote:
+        'حماية ملكية المؤسسة الفكرية وسيادتها التشغيلية عبر الأسواق العالمية لا تتطلب معرفة بالنصوص القانونية فحسب، بل استشرافاً استراتيجياً ودقّة لا تلين.',
+      founderAttribution: 'المستشار عواد الزبون',
+      credentialsHeading: 'القبول في نقابات المحامين والاعتمادات الرسمية',
+      credentials: [
+        {
+          title: 'نقابة المحامين الأردنيين',
+          body: 'حقوق الترافع القضائي الكاملة',
+        },
+        {
+          title: 'ممثل الويبو',
+          body: 'مندوب السجل العالمي للملكية الفكرية',
+        },
+        {
+          title: 'هيئة التحكيم الدولية',
+          body: 'محكّم معتمد في تسوية المنازعات',
+        },
+        {
+          title: 'مستشار نظام مدريد',
+          body: 'وكيل علامات تجارية متعدد الأطراف',
+        },
+      ],
+      ctaLabel: 'تعاقد سري',
+      ctaTitle: 'استعينوا بمستشارينا لخطوتكم الاستراتيجية القادمة',
+      ctaTitleLines: [
+        [{ text: 'استعينوا بمستشارينا لخطوتكم', accent: false }],
+        [{ text: 'الاستراتيجية القادمة', accent: true }],
+      ],
+      ctaBody:
+        'سواء كنتم تحمون تقنيات ملكية مبتكرة، أو تؤسسون فرعاً في الخارج، أو تحكّمون في منازعات شراكة معقّدة، يوفّر فريقنا وضوحاً قانونياً راسخاً.',
+      ctaPrimary: 'احجزوا استشارة منظّمة',
+      ctaWhatsapp: 'استشارة واتساب مباشرة',
+      ctaNote: 'محمي بموجب أحكام سرية العلاقة بين المحامي والموكّل في نقابة المحامين الأردنيين.',
     },
     privacy: {
       title: 'سياسة الخصوصية',

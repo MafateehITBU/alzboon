@@ -12,7 +12,9 @@ export const metadata = {
   description:
     'Awwad Alzboon provides intellectual property, corporate, and dispute consultancy for businesses.',
   icons: {
-    icon: '/favicon.svg',
+    icon: [{ url: '/favicon.png', type: 'image/png' }],
+    shortcut: '/favicon.png',
+    apple: '/favicon.png',
   },
 }
 

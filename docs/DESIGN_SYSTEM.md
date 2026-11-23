@@ -34,16 +34,26 @@ Implemented in `src/styles/globals.css` with Tailwind CSS 4 `@theme`. Component 
 
 ## Fonts
 
+Approved website-wide typography:
+
+- English public UI uses **Abu Dhabi Pro** Regular and Bold (`font-abu`).
+- Arabic public UI uses **GE Dinar Two** (`--font-dinar` / remapped under `lang="ar"`).
+- Do not replace either family with IBM Plex, Tajawal, Google Fonts, or other substitutes.
+- Preserve the existing font files in `src/assets/fonts`.
+
 | Token | Source | Weights |
 | --- | --- | --- |
 | `font-abu` | `abu-dhabi-pro-regular.otf` and `FontsFree-Net-Abu-Dhabi-Pro-Bold.ttf` | 400 and 700 |
+| `font-dinar` | `GE-Dinar-Two-Medium_1E.otf` | 500 (Arabic public pages) |
 | `font-jakarta` | `plus-jakarta-sans-wght.ttf`, SIL Open Font License | 400 through 700 |
 | `font-roboto` | `roboto-400.woff2`, SIL Open Font License | 400 |
 | `font-dm` | `dm-sans-400.woff2`, SIL Open Font License | 400 |
 | `font-georgia` | Georgia, then Times New Roman | 400 |
-| `font-freeserif` | FreeSerif, then Times New Roman | 700 for the Arabic label |
+| `font-freeserif` | FreeSerif, then Times New Roman | 700 for the language-switcher label |
 
-Regular Abu Dhabi Pro is registered at CSS weight 400. Its OS/2 weight class is 500. Bold is registered at 700. All four supplied families use `font-display: swap`. The page does not request Google Fonts.
+`next/font` registers Abu Dhabi Pro and GE Dinar Two in `src/lib/fonts.js`. When `html` or a subtree has `lang="ar"`, `globals.css` assigns GE Dinar Two to the body and remaps `.font-abu`, `.font-jakarta`, `.font-roboto`, and `.font-dm` so Arabic public pages stay on Dinar without rewriting every utility class. English pages keep Abu Dhabi Pro as the display face.
+
+Regular Abu Dhabi Pro is registered at CSS weight 400. Its OS/2 weight class is 500. Bold is registered at 700. Supplied families use `font-display: swap`. The page does not request Google Fonts.
 
 Both Abu Dhabi Pro files embed the same Tanween notice: website use requires a separate webfont license, and the foundry does not supply a standard webfont license in the file. The notice points to `d.jaser@tanweentype.me` and `www.tanweentype.me`. There is no license file beside either font. The Bold filename, `FontsFree-Net-Abu-Dhabi-Pro-Bold.ttf`, is a redistribution name and is not permission to use it. Neither weight is cleared for production. Leave both files in place for development until a webfont license is purchased and the licensed files replace these copies.
 
@@ -62,3 +72,14 @@ Homepage sizes stay on the Figma values through arbitrary utilities, including 6
 Shared button class strings live in `src/components/website/buttonStyles.js`. Filled and outline homepage buttons use a fixed 48px border box to match the Figma control height. Filled buttons use a transparent border, zero vertical padding, and a 20px line height. The outline button uses a 2px `#BAA87A` border, a 5px radius, 20px bold type, and a 26px line height. Icons and SVG artwork use native images so their boxes stay exact. Raster artwork is also a native image for the same reason: `next/image` writes inline sizing that fights these fixed crops.
 
 The admin workspace uses the same tokens and fonts. The page background is `cream` (`#f8f6f1`). Panels are white with `line` borders. Primary actions use `teal` (`#3f8377`). New enquiry counts, NEW status badges, locked Super Admin notes, and unsaved-change banners use `warning`. READ status badges use `info`. ARCHIVED status badges use `muted`. Active status and success toasts use `success`. Delete actions and errors use `danger`. Arabic business hours, address fields, Arabic blog and service titles, Arabic TipTap, and Arabic service textareas use `dir="rtl"`. Sidebar, top bar, cards, account menu, tables, settings form, blog/service/enquiry/account panels, and dialogs are Tailwind utilities in `src/components/admin`. There is no admin stylesheet.
+
+## About Us page
+
+Public About (`/about`, `/ar/about`) follows the approved Figma About Us reference (frame `2120:5882`, 1440×2866):
+
+- Hero: full-width cinematic background (`about-hero-presence.jpg`) with ~2.5px blur, teal readability overlay, and start-side teal gradient; white headline with gold gradient accent; two frosted credential panels with geometric icons.
+- Stats: overlapping white rounded container with light-gray inner cells and hairline dividers, straddling the hero/white boundary.
+- Founder: two-column layout — rounded navy-framed portrait with name overlay and floating Jordan Bar badge; right column bio, light-gray quote panel, and 2×2 accreditation grid with circular geometric icons (no invented org logos).
+- Consultation: full-width navy section, centered teal pill label, white/gold heading, outline + teal actions.
+
+Keep English/Arabic copy exact from `messages.js`. Shared `SiteShell`, header, and footer stay unchanged. Founder portrait asset: `src/assets/images/about-founder.png`.

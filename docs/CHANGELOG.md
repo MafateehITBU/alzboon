@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-11-23 — Admin sidebar organization
+
+- Reorganized admin navigation to match the sectioned sidebar pattern: Dashboard, then Management / Content / Enquiries / Account.
+- Moved Website Information and Partners under Management; Profile under Account.
+- Collapse control is a centered chevron at the bottom of the sidebar.
+
 ## 2026-11-22 — Phase 12 final QA and production readiness
 
 Stabilization phase: security hardening, QA, and deployment documentation. No VPS deploy.
@@ -18,6 +24,13 @@ Connected the CMS to the public website without redesigning the Figma homepage.
 - Added bilingual public routes for About, Services, service detail, Blogs, blog detail, Contact, and Privacy. English stays unprefixed; Arabic uses `/ar`.
 - Services and blogs gained unique public slugs. Every saved service and published non-future blogs appear publicly. Private attachments stay admin-only.
 - Service admin no longer has an availability checkbox; all saved services show in the public header and service pages.
+- Implemented the bilingual About Us page (`/about`, `/ar/about`) with hero, institutional stats, founder profile (using `expertise-portrait.jpg`), credentials, and consultation CTA in the homepage design system. Documented Abu Dhabi Pro (EN) and GE Dinar Two (AR) as the approved global typography policy.
+- Redesigned About Us into an editorial premium layout: gold-accented hero typography, divider-based stats and credentials (no repetitive card grids), art-directed founder portrait composition, and a full-bleed teal consultation band.
+- Replaced that About layout with the approved **Sovereign Atlas** direction: atlas-plate hero + teal jurisdiction column, varied 2×2 statistics monument, recessed founder well with overlapping bio panel and gold quote plaque, featured Jordan Bar credential band, and double-framed engagement folio CTA.
+- Rebuilt About Us to match the approved Figma reference (navy hero, overlapping stats card, founder profile with 2×2 accreditations, navy consultation CTA), discarding prior creative redesign concepts.
+- Replaced the temporary About founder image with the Figma-exported studio portrait at `src/assets/images/about-founder.png`.
+- About polish: homepage-matched type scale, hero gradient accent on “Border & Enterprise”, rounded-square credential icons, separated stats tiles with count-up, and homepage-style cream consultation card.
+- About hero background replaced with `about-hero-presence.jpg` (International Legal Presence): subtle blur, teal overlay, and RTL-aware positioning.
 - Arabic public pages use self-hosted GE Dinar Two Medium. Homepage static copy is bilingual via `messages.js`. The hero keeps its left-side layout in Arabic.
 - `npm test` now forces the `*_test` database (`tests/use-test-database.js`) so test cleanup cannot wipe development content.
 - Contact form creates `NEW` enquiries with honeypot and rate limiting. No email notifications were added.

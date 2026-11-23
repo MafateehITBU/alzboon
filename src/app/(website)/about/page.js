@@ -1,20 +1,36 @@
-import PublicPage from '@/components/website/PublicPage'
+import AboutPageView from '@/components/website/about/AboutPageView'
 import { absoluteUrl } from '@/lib/site/config'
 import { loadPublicSiteData } from '@/lib/site/load-public'
 
-export const metadata = {
-  title: 'About Us',
-  description: 'About Awwad AlZboon Legal Consultancy.',
-  alternates: { canonical: '/about', languages: { en: '/about', ar: '/ar/about' } },
-  openGraph: { title: 'About Us', description: 'About Awwad AlZboon Legal Consultancy.', url: absoluteUrl('/about') },
+export async function generateMetadata() {
+  const site = await loadPublicSiteData('en')
+  const title = site.messages.about.title
+  const description = site.messages.about.metaDescription
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: '/about',
+      languages: { en: '/about', ar: '/ar/about' },
+    },
+    openGraph: {
+      title,
+      description,
+      url: absoluteUrl('/about'),
+      type: 'website',
+    },
+  }
 }
 
 export default async function AboutPage() {
   const site = await loadPublicSiteData('en')
   return (
-    <PublicPage locale={site.locale} messages={site.messages} contact={site.contact} services={site.services} narrow>
-      <h1 className="font-abu text-4xl tracking-[-0.03em] text-ink">{site.messages.about.title}</h1>
-      <p className="mt-4 font-jakarta text-base leading-7 text-body">{site.messages.about.body}</p>
-    </PublicPage>
+    <AboutPageView
+      locale={site.locale}
+      messages={site.messages}
+      contact={site.contact}
+      services={site.services}
+    />
   )
 }

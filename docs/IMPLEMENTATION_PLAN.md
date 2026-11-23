@@ -118,7 +118,7 @@ Phase 9 did not add public contact submission, account self-service editing, or 
 
 - Added `/admin/account` for every active authenticated admin to update profile photo, name, email, and phone.
 - Password changes use a separate action, verify the current password, enforce the Argon2id policy, revoke all sessions, clear the cookie, and require sign-in again.
-- Role, status, and permissions remain read-only. `/admin/profile` redirects to `/admin/account`. Sidebar and account menu point to Account.
+- Role, status, and permissions remain read-only. `/admin/profile` redirects to `/admin/account`. Sidebar and account menu point to Profile under the Account section.
 - `npm test` covers profile updates, email rules, photo upload/removal, password policy, session revocation, and role/permission protection.
 
 Phase 10 did not add public website content pages or a media library.

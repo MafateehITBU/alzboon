@@ -8,7 +8,7 @@ Authentication, the admin workspace, and public website integration are implemen
 | --- | --- | --- |
 | `/` | Homepage (EN) | Figma homepage. Canonical URL is `/`. Contact and services may come from PostgreSQL with design fallbacks. |
 | `/ar` | Homepage (AR) | Arabic homepage shell with RTL direction on page content. |
-| `/about`, `/ar/about` | About | Localized static about copy. |
+| `/about`, `/ar/about` | About | Figma About Us bilingual page: navy hero, overlapping statistics card, founder profile with quote and 2×2 accreditations, navy consultation CTA. Static localized copy; contact/WhatsApp use website settings when present. |
 | `/services`, `/ar/services` | Services list | Available services only. |
 | `/services/[slug]`, `/ar/services/[slug]` | Service detail | Saved services. Uses bilingual translations. Not-found for missing slugs. |
 | `/blogs`, `/ar/blogs` | Blog list | Published blogs with `publishedOn <= today`. Optional `?category=` by category slug. Pagination supported. |
@@ -20,7 +20,7 @@ Authentication, the admin workspace, and public website integration are implemen
 | `/robots.txt` | Robots | Allows `/`, disallows `/admin`. |
 | Any other path | Not found | The not-found page links back to `/`. |
 
-Header Services links CMS services when present. Contact Us opens `/contact` (or `/ar/contact`). WhatsApp uses the first website-settings phone when present.
+Header Services opens a full-width mega menu under the header with available CMS services in a three-column grid and practice-area icons. Contact Us opens `/contact` (or `/ar/contact`). WhatsApp uses the first website-settings phone when present.
 
 ## Admin routes
 

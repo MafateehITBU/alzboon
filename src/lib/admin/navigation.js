@@ -30,11 +30,20 @@ export function accountInitials(name) {
 export function adminNavigation(admin) {
   const groups = [
     {
+      label: null,
+      items: [{ href: '/admin', label: 'Dashboard', icon: 'LayoutDashboard', enabled: true }],
+    },
+    {
       label: 'Management',
       items: [
-        { href: '/admin', label: 'Dashboard', icon: 'LayoutDashboard', enabled: true },
         ...(hasPermission(admin, 'MANAGE_ADMINS')
-          ? [{ href: '/admin/admins', label: 'Admins', icon: 'Users', enabled: true }]
+          ? [{ href: '/admin/admins', label: 'Admins', icon: 'Shield', enabled: true }]
+          : []),
+        ...(hasPermission(admin, 'MANAGE_WEBSITE_SETTINGS')
+          ? [
+              { href: '/admin/website', label: 'Website Information', icon: 'Globe', enabled: true },
+              { href: '/admin/partners', label: 'Partners', icon: 'Handshake', enabled: true },
+            ]
           : []),
       ],
     },
@@ -43,30 +52,24 @@ export function adminNavigation(admin) {
       items: [
         ...(hasPermission(admin, 'MANAGE_BLOGS')
           ? [
-              { href: '/admin/blog-categories', label: 'Blog categories', icon: 'FolderTree', enabled: true },
-              { href: '/admin/blogs', label: 'Blogs', icon: 'Newspaper', enabled: true },
+              { href: '/admin/blog-categories', label: 'Blog Categories', icon: 'FolderTree', enabled: true },
+              { href: '/admin/blogs', label: 'Blogs', icon: 'FileText', enabled: true },
             ]
           : []),
         ...(hasPermission(admin, 'MANAGE_SERVICES')
-          ? [{ href: '/admin/services', label: 'Services', icon: 'Briefcase', enabled: true }]
-          : []),
-        ...(hasPermission(admin, 'MANAGE_WEBSITE_SETTINGS')
-          ? [
-              { href: '/admin/website', label: 'Website information', icon: 'Globe', enabled: true },
-              { href: '/admin/partners', label: 'Partners', icon: 'Handshake', enabled: true },
-            ]
+          ? [{ href: '/admin/services', label: 'Services', icon: 'Wrench', enabled: true }]
           : []),
       ],
     },
     {
       label: 'Enquiries',
       items: hasPermission(admin, 'MANAGE_CONTACT_ENQUIRIES')
-        ? [{ href: '/admin/contact-enquiries', label: 'Contact enquiries', icon: 'Inbox', enabled: true }]
+        ? [{ href: '/admin/contact-enquiries', label: 'Contact Enquiries', icon: 'Mail', enabled: true }]
         : [],
     },
     {
       label: 'Account',
-      items: [{ href: '/admin/account', label: 'Account', icon: 'UserRound', enabled: true }],
+      items: [{ href: '/admin/account', label: 'Profile', icon: 'UserRound', enabled: true }],
     },
   ]
 

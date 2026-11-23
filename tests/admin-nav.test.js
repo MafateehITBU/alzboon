@@ -13,23 +13,25 @@ function labels(admin) {
 }
 
 test('dashboard and profile stay available without module permissions', () => {
-  assert.deepEqual(labels(plainAdmin), ['Dashboard', 'Account'])
+  assert.deepEqual(labels(plainAdmin), ['Dashboard', 'Profile'])
   assert.deepEqual(dashboardCardsFor(plainAdmin), [])
   assert.deepEqual(quickActionsFor(plainAdmin), [])
 })
 
 test('navigation follows assigned permissions and links live modules', () => {
-  assert.deepEqual(labels(blogAdmin), ['Dashboard', 'Blog categories', 'Blogs', 'Account'])
+  assert.deepEqual(labels(blogAdmin), ['Dashboard', 'Blog Categories', 'Blogs', 'Profile'])
   const items = adminNavigation(superAdmin).flatMap((group) => group.items)
   const unfinished = items.filter((item) => item.enabled === false)
+  const groups = adminNavigation(superAdmin).map((group) => group.label)
 
+  assert.deepEqual(groups, [null, 'Management', 'Content', 'Enquiries', 'Account'])
   assert.equal(items.find((item) => item.label === 'Admins').href, '/admin/admins')
-  assert.equal(items.find((item) => item.label === 'Website information').href, '/admin/website')
+  assert.equal(items.find((item) => item.label === 'Website Information').href, '/admin/website')
   assert.equal(items.find((item) => item.label === 'Partners').href, '/admin/partners')
   assert.equal(items.find((item) => item.label === 'Blogs').href, '/admin/blogs')
-  assert.equal(items.find((item) => item.label === 'Blog categories').href, '/admin/blog-categories')
+  assert.equal(items.find((item) => item.label === 'Blog Categories').href, '/admin/blog-categories')
   assert.equal(items.find((item) => item.label === 'Services').href, '/admin/services')
-  assert.equal(items.find((item) => item.label === 'Contact enquiries').href, '/admin/contact-enquiries')
+  assert.equal(items.find((item) => item.label === 'Contact Enquiries').href, '/admin/contact-enquiries')
   assert.equal(unfinished.length, 0)
   assert.deepEqual(
     dashboardCardsFor(blogAdmin).map((card) => card.key),
