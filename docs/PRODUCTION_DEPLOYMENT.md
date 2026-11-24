@@ -54,12 +54,19 @@ STORAGE_ROOT="/var/www/alzboon/shared/uploads"
 APP_URL="https://www.example.com"
 NODE_ENV="production"
 TRUST_PROXY="true"
+SMTP_HOST="smtp.example.com"
+SMTP_PORT="587"
+SMTP_SECURE="false"
+SMTP_USER="smtp-user"
+SMTP_PASS="smtp-password"
+SMTP_FROM="Awwad AlZboon <noreply@example.com>"
 ```
 
 Notes:
 
 - Set `APP_URL` to the public HTTPS origin (used by sitemap, robots, metadata).
 - `TRUST_PROXY=true` only when Nginx strips client-supplied `X-Forwarded-For` and sets the real client IP.
+- SMTP vars are optional; when set, new public contact enquiries email active Super Admins and Admins with `MANAGE_CONTACT_ENQUIRIES`.
 - Do **not** leave `SUPER_ADMIN_EMAIL` / `SUPER_ADMIN_PASSWORD` in production env after bootstrap.
 - Never commit production secrets.
 

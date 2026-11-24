@@ -7,12 +7,22 @@ import { AuthError } from '@/lib/auth/errors'
 import { requirePermission } from '@/lib/auth/current-admin'
 import { createBlog, deleteBlog, updateBlog } from '@/lib/blog/blogs'
 import { blogActionMessage, BlogError } from '@/lib/blog/errors'
+import { notifyBriefSubscribers } from '@/lib/mail/blog-notification'
 import { discardAttachment, saveAttachment } from '@/lib/media/save-attachment'
 import { discardPublicImage, savePublicImage } from '@/lib/media/save-public-image'
 import { removeStoredFile } from '@/lib/storage/objects'
 import { getPrisma } from '@/lib/prisma/client'
 import { importBlogsCsv } from '@/lib/csv/blogs-csv'
 import { formatImportResult } from '@/lib/csv/import-result'
+
+async function notifyIfNewlyPublic(db, result) {
+  if (!result?.becamePublic || !result?.blog) return
+  try {
+    await notifyBriefSubscribers(db, result.blog)
+  } catch (error) {
+    console.error('[blogs] Subscriber notification failed after publish.', error)
+  }
+}
 
 export async function createBlogAction(_previous, formData) {
   const current = await requirePermission('MANAGE_BLOGS')
@@ -29,6 +39,8 @@ export async function createBlogAction(_previous, formData) {
     const result = await createBlog(getPrisma(), current.admin.id, {
       titleEn: formData.get('titleEn'),
       titleAr: formData.get('titleAr'),
+      descriptionEn: formData.get('descriptionEn'),
+      descriptionAr: formData.get('descriptionAr'),
       authorName: formData.get('authorName'),
       publishedOn: formData.get('publishedOn'),
       published: formData.get('published') === '1',
@@ -43,7 +55,8 @@ export async function createBlogAction(_previous, formData) {
     revalidatePath('/admin/blogs')
     revalidatePath('/admin')
     revalidatePublicContent({ blogs: true })
-    redirect(`/admin/blogs/${result.blog.id}/edit?saved=1`)
+    await notifyIfNewlyPublic(getPrisma(), result)
+    redirect('/admin/blogs?notice=created')
   } catch (error) {
     if (isRedirect(error)) throw error
     for (const file of staged) await removeStoredFile(file.visibility, file.storageKey)
@@ -66,6 +79,8 @@ export async function updateBlogAction(_previous, formData) {
     const result = await updateBlog(getPrisma(), current.admin.id, blogId, {
       titleEn: formData.get('titleEn'),
       titleAr: formData.get('titleAr'),
+      descriptionEn: formData.get('descriptionEn'),
+      descriptionAr: formData.get('descriptionAr'),
       authorName: formData.get('authorName'),
       publishedOn: formData.get('publishedOn'),
       published: formData.get('published') === '1',
@@ -86,8 +101,10 @@ export async function updateBlogAction(_previous, formData) {
     revalidatePath(`/admin/blogs/${blogId}/edit`)
     revalidatePath('/admin')
     revalidatePublicContent({ blogs: true })
-    return { ok: true, message: 'The blog was saved.', blogId }
+    await notifyIfNewlyPublic(getPrisma(), result)
+    redirect('/admin/blogs?notice=updated')
   } catch (error) {
+    if (isRedirect(error)) throw error
     for (const file of staged) {
       if (file.visibility === 'PUBLIC') await discardPublicImage(file.storageKey)
       else await discardAttachment(file.storageKey)

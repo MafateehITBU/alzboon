@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Pencil, Plus, Trash2 } from 'lucide-react'
 import AdminListToolbar from '@/components/admin/AdminListToolbar'
+import AdminToast from '@/components/admin/AdminToast'
 import CsvImportExport from '@/components/admin/CsvImportExport'
 import useLiveSearch from '@/components/admin/useLiveSearch'
 import { adminFieldClass, adminTealButton } from '@/components/admin/adminStyles'
@@ -14,7 +15,12 @@ const inputClass = `${adminFieldClass} sm:w-auto`
 
 const initialState = { ok: false, message: '' }
 
-export default function BlogsPanel({ query, listing, categories, loadError }) {
+const NOTICE_MESSAGES = {
+  created: 'The blog was created successfully.',
+  updated: 'The blog was updated successfully.',
+}
+
+export default function BlogsPanel({ query, listing, categories, loadError, notice = '' }) {
   const router = useRouter()
   const [toast, setToast] = useState(null)
   const [deleting, setDeleting] = useState(null)
@@ -27,10 +33,16 @@ export default function BlogsPanel({ query, listing, categories, loadError }) {
   }, [query.categoryId, query.status])
 
   useEffect(() => {
-    if (!toast) return undefined
-    const timer = setTimeout(() => setToast(null), 4000)
-    return () => clearTimeout(timer)
-  }, [toast])
+    if (!notice || !NOTICE_MESSAGES[notice]) return
+    setToast({ tone: 'success', message: NOTICE_MESSAGES[notice] })
+    const params = new URLSearchParams()
+    if (query.search) params.set('q', query.search)
+    if (query.categoryId) params.set('category', query.categoryId)
+    if (query.status) params.set('status', query.status)
+    if (query.page > 1) params.set('page', String(query.page))
+    const next = params.toString()
+    router.replace(next ? `/admin/blogs?${next}` : '/admin/blogs')
+  }, [notice, query.categoryId, query.page, query.search, query.status, router])
 
   const [search, onSearchChange] = useLiveSearch(query.search || '', (value) => {
     const params = new URLSearchParams()
@@ -63,11 +75,7 @@ export default function BlogsPanel({ query, listing, categories, loadError }) {
 
   return (
     <div className="grid gap-4">
-      {toast ? (
-        <p role="status" className={`rounded-lg border px-4 py-3 font-jakarta text-sm ${toast.tone === 'success' ? 'border-success/30 bg-white text-success' : 'border-danger/30 bg-white text-danger'}`}>
-          {toast.message}
-        </p>
-      ) : null}
+      <AdminToast toast={toast} onClose={() => setToast(null)} />
 
       <AdminListToolbar
         searchId="blog-search"
@@ -137,6 +145,7 @@ export default function BlogsPanel({ query, listing, categories, loadError }) {
               <thead className="border-b border-line/70 bg-[#f7f5ef]/70">
                 <tr className="font-jakarta text-xs tracking-wide text-muted uppercase">
                   <th className="px-4 py-3 font-semibold">Blog</th>
+                  <th className="px-4 py-3 font-semibold">Description</th>
                   <th className="px-4 py-3 font-semibold">Category</th>
                   <th className="px-4 py-3 font-semibold">Author</th>
                   <th className="px-4 py-3 font-semibold">Status</th>
@@ -157,6 +166,9 @@ export default function BlogsPanel({ query, listing, categories, loadError }) {
                           </p>
                         </div>
                       </div>
+                    </td>
+                    <td className="max-w-[240px] px-4 py-3 font-jakarta text-sm text-body">
+                      <p className="line-clamp-2">{blog.descriptionEn || '—'}</p>
                     </td>
                     <td className="px-4 py-3 font-jakarta text-sm text-body">{blog.categoryName}</td>
                     <td className="px-4 py-3 font-jakarta text-sm text-body">{blog.authorName}</td>

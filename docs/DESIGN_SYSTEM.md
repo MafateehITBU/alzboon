@@ -83,3 +83,14 @@ Public About (`/about`, `/ar/about`) follows the approved Figma About Us referen
 - Consultation: full-width navy section, centered teal pill label, white/gold heading, outline + teal actions.
 
 Keep English/Arabic copy exact from `messages.js`. Shared `SiteShell`, header, and footer stay unchanged. Founder portrait asset: `src/assets/images/about-founder.png`.
+
+## Blog article page
+
+Public article pages (`/blogs/[slug]`, `/ar/blogs/[slug]`) use an editorial reading layout:
+
+- Surface: `#f7f9fb` content band with white sidebar panels and subtle borders (`rgba(1,19,32,0.08)`).
+- Title: `font-abu` display sizes; metadata and body use `font-jakarta` (remapped to GE Dinar Two under `lang="ar"`).
+- Accents: gold `#BBA97A` for category/eyebrow and H1 left border; teal for H2 border and links.
+- TipTap article variant: comfortable ~720px measure, heading anchors for TOC, gold-bordered blockquotes when present.
+- Related cards reuse the listing `BlogsCard` language. Consultation band matches the About cream CTA pattern.
+- Shared Header/Footer/SiteShell remain unchanged.

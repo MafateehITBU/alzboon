@@ -10,10 +10,11 @@ Authentication, the admin workspace, and public website integration are implemen
 | `/ar` | Homepage (AR) | Arabic homepage shell with RTL direction on page content. |
 | `/about`, `/ar/about` | About | Figma About Us bilingual page: navy hero, overlapping statistics card, founder profile with quote and 2×2 accreditations, navy consultation CTA. Static localized copy; contact/WhatsApp use website settings when present. |
 | `/services/[slug]`, `/ar/services/[slug]` | Service detail | Shared Figma-matched template. Hero, practice accordion, and images from CMS; methodology and precedent shared via messages. Not-found for missing slugs. No general `/services` index — services are reached from the header mega menu. |
-| `/blogs`, `/ar/blogs` | Blog list | Published blogs with `publishedOn <= today`. Optional `?category=` by category slug. Pagination supported. |
-| `/blogs/[slug]`, `/ar/blogs/[slug]` | Blog detail | Published blogs only. TipTap JSON rendered safely. Attachments are never public. |
+| `/blogs`, `/ar/blogs` | Blog list | Figma listing (`2191:1818`): published blogs with `publishedOn <= today`. Optional `?category=` by category slug. Pagination (`page`, 6 per page). Hero repository figure is static presentation copy, not a live CMS count. |
+| `/blogs/[slug]`, `/ar/blogs/[slug]` | Blog article | Published blogs only (`publishedBlogWhere`). Editorial detail layout with TOC, related posts, and consultation CTA. TipTap JSON rendered safely. Attachments remain private/admin-only. Missing or unpublished slugs return 404. |
 | `/contact`, `/ar/contact` | Contact | About-matched hero (same image/overlay), breadcrumb, and two-column enquiries layout: CMS phones/email/addresses/business hours + WhatsApp on the left; inquiry form on the right. Creates `ContactEnquiry` with status `NEW`. Honeypot + rate limiting. IP limits require `TRUST_PROXY=true` behind Nginx. |
-| `/privacy-policy`, `/ar/privacy-policy` | Privacy | Localized privacy copy. |
+| `/privacy`, `/ar/privacy` | Privacy Policy & Statutory Legal Privilege | Full editorial privacy page (Figma `2191:2362`). |
+| `/privacy-policy`, `/ar/privacy-policy` | Redirect | Permanent redirect to `/privacy` / `/ar/privacy`. |
 | `/media/[mediaId]` | Public media | Serves `PUBLIC` media assets only. Private media returns 404. |
 | `/sitemap.xml` | Sitemap | Public routes plus available services and published blogs. Excludes `/admin`. |
 | `/robots.txt` | Robots | Allows `/`, disallows `/admin`. |

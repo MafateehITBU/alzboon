@@ -147,6 +147,8 @@ test('blog create edit bilingual content category and media', async () => {
         createBlog(prisma, denied.id, {
           titleEn: 'Denied',
           titleAr: 'مرفوض',
+          descriptionEn: 'Card description EN',
+          descriptionAr: 'وصف البطاقة',
           authorName: 'X',
           publishedOn: '2024-01-01',
           published: true,
@@ -161,6 +163,8 @@ test('blog create edit bilingual content category and media', async () => {
     const created = await createBlog(prisma, actor.id, {
       titleEn: 'Market update',
       titleAr: 'تحديث السوق',
+      descriptionEn: 'Card description EN',
+      descriptionAr: 'وصف البطاقة',
       authorName: 'Awwad Team',
       publishedOn: '2024-06-01',
       published: true,
@@ -183,6 +187,8 @@ test('blog create edit bilingual content category and media', async () => {
     const updated = await updateBlog(prisma, actor.id, created.blog.id, {
       titleEn: 'Market update revised',
       titleAr: 'تحديث السوق المعدل',
+      descriptionEn: 'Card description EN',
+      descriptionAr: 'وصف البطاقة',
       authorName: 'Editorial Desk',
       publishedOn: '2024-06-02',
       published: false,
@@ -226,6 +232,8 @@ test('published blogs exclude hidden and future dates', async () => {
     const visible = await createBlog(prisma, actor.id, {
       titleEn: 'Visible now',
       titleAr: 'ظاهر الآن',
+      descriptionEn: 'Card description EN',
+      descriptionAr: 'وصف البطاقة',
       authorName: 'Desk',
       publishedOn: '2020-01-01',
       published: true,
@@ -238,6 +246,8 @@ test('published blogs exclude hidden and future dates', async () => {
     const hidden = await createBlog(prisma, actor.id, {
       titleEn: 'Hidden draft',
       titleAr: 'مسودة مخفية',
+      descriptionEn: 'Card description EN',
+      descriptionAr: 'وصف البطاقة',
       authorName: 'Desk',
       publishedOn: '2020-01-01',
       published: false,
@@ -250,6 +260,8 @@ test('published blogs exclude hidden and future dates', async () => {
     const future = await createBlog(prisma, actor.id, {
       titleEn: 'Future post',
       titleAr: 'منشور مستقبلي',
+      descriptionEn: 'Card description EN',
+      descriptionAr: 'وصف البطاقة',
       authorName: 'Desk',
       publishedOn: '2099-01-01',
       published: true,
@@ -343,6 +355,8 @@ test('orphan media cleanup keeps referenced attachment and removes unused file',
     const created = await createBlog(prisma, actor.id, {
       titleEn: 'With attachment',
       titleAr: 'مع مرفق',
+      descriptionEn: 'Card description EN',
+      descriptionAr: 'وصف البطاقة',
       authorName: 'Desk',
       publishedOn: '2021-01-01',
       published: false,

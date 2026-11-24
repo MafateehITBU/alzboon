@@ -38,7 +38,7 @@ export default function RichTextEditor({ label, value, onChange, dir = 'ltr', na
     editorProps: {
       attributes: {
         class:
-          'min-h-48 px-3 py-3 font-jakarta text-sm leading-6 text-ink focus:outline-none [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_a]:text-teal [&_a]:underline',
+          'min-h-48 px-3 py-3 font-jakarta text-sm leading-6 text-ink focus:outline-none [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_a]:text-teal [&_a]:underline [&_h1]:mt-4 [&_h1]:mb-2 [&_h1]:font-abu [&_h1]:text-3xl [&_h1]:leading-tight [&_h1]:tracking-[-0.02em] [&_h1]:text-ink [&_h2]:mt-3.5 [&_h2]:mb-2 [&_h2]:font-abu [&_h2]:text-2xl [&_h2]:leading-tight [&_h2]:tracking-[-0.02em] [&_h2]:text-ink [&_h3]:mt-3 [&_h3]:mb-1.5 [&_h3]:font-abu [&_h3]:text-xl [&_h3]:leading-snug [&_h3]:text-ink [&_p]:my-1.5',
         dir,
         lang: dir === 'rtl' ? 'ar' : 'en',
       },
@@ -99,27 +99,40 @@ export default function RichTextEditor({ label, value, onChange, dir = 'ltr', na
           <ToolbarButton label="Align right" active={editor?.isActive({ textAlign: 'right' })} onClick={() => editor?.chain().focus().setTextAlign('right').run()}>
             <AlignRight size={16} />
           </ToolbarButton>
+          <ToolbarButton
+            label="Paragraph"
+            active={editor?.isActive('paragraph') && !editor?.isActive('heading')}
+            onClick={() => editor?.chain().focus().setParagraph().run()}
+          >
+            <span className="font-jakarta text-[11px] font-semibold lowercase">p</span>
+          </ToolbarButton>
+          <ToolbarButton
+            label="Heading 1"
+            active={editor?.isActive('heading', { level: 1 })}
+            onClick={() => editor?.chain().focus().toggleHeading({ level: 1 }).run()}
+          >
+            <span className="font-jakarta text-[11px] font-semibold lowercase">h1</span>
+          </ToolbarButton>
+          <ToolbarButton
+            label="Heading 2"
+            active={editor?.isActive('heading', { level: 2 })}
+            onClick={() => editor?.chain().focus().toggleHeading({ level: 2 }).run()}
+          >
+            <span className="font-jakarta text-[11px] font-semibold lowercase">h2</span>
+          </ToolbarButton>
+          <ToolbarButton
+            label="Heading 3"
+            active={editor?.isActive('heading', { level: 3 })}
+            onClick={() => editor?.chain().focus().toggleHeading({ level: 3 }).run()}
+          >
+            <span className="font-jakarta text-[11px] font-semibold lowercase">h3</span>
+          </ToolbarButton>
           <ToolbarButton label="Undo" onClick={() => editor?.chain().focus().undo().run()}>
             <Undo2 size={16} />
           </ToolbarButton>
           <ToolbarButton label="Redo" onClick={() => editor?.chain().focus().redo().run()}>
             <Redo2 size={16} />
           </ToolbarButton>
-          <select
-            aria-label="Heading level"
-            className="min-h-9 rounded border border-line bg-white px-2 font-jakarta text-xs"
-            value={editor?.isActive('heading', { level: 1 }) ? '1' : editor?.isActive('heading', { level: 2 }) ? '2' : editor?.isActive('heading', { level: 3 }) ? '3' : 'p'}
-            onChange={(event) => {
-              const value = event.target.value
-              if (value === 'p') editor?.chain().focus().setParagraph().run()
-              else editor?.chain().focus().toggleHeading({ level: Number(value) }).run()
-            }}
-          >
-            <option value="p">Paragraph</option>
-            <option value="1">Heading 1</option>
-            <option value="2">Heading 2</option>
-            <option value="3">Heading 3</option>
-          </select>
         </div>
         <EditorContent editor={editor} />
       </div>

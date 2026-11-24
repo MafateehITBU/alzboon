@@ -21,6 +21,8 @@ export const BLOG_CSV_HEADERS = [
   'published',
   'titleEn',
   'titleAr',
+  'descriptionEn',
+  'descriptionAr',
   'documentEnJson',
   'documentArJson',
   'attachmentDisplayName',
@@ -64,6 +66,8 @@ export async function exportBlogsCsv(db, actorId) {
       published: blog.published ? 'true' : 'false',
       titleEn: en?.title || '',
       titleAr: ar?.title || '',
+      descriptionEn: en?.description || '',
+      descriptionAr: ar?.description || '',
       documentEnJson: cellJson(en?.document || emptyDocument()),
       documentArJson: cellJson(ar?.document || emptyDocument()),
       attachmentDisplayName: blog.attachmentDisplayName || '',
@@ -88,8 +92,11 @@ export async function importBlogsCsv(db, actorId, csvText) {
     try {
       const titleEn = String(row.titleEn || '').trim()
       const titleAr = String(row.titleAr || '').trim()
+      const descriptionEn = String(row.descriptionEn || '').trim().replace(/\s+/g, ' ').slice(0, 320)
+      const descriptionAr = String(row.descriptionAr || '').trim().replace(/\s+/g, ' ').slice(0, 320)
       const authorName = String(row.authorName || '').trim()
       if (!titleEn || !titleAr) throw new Error('titleEn and titleAr are required')
+      if (!descriptionEn || !descriptionAr) throw new Error('descriptionEn and descriptionAr are required')
       if (!authorName) throw new Error('authorName is required')
 
       const publishedOn = parseDate(row.publishedOn)
@@ -124,8 +131,8 @@ export async function importBlogsCsv(db, actorId, csvText) {
           : null)
 
         const translationCreate = [
-          { locale: 'EN', title: titleEn, document: documentEn },
-          { locale: 'AR', title: titleAr, document: documentAr },
+          { locale: 'EN', title: titleEn, description: descriptionEn, document: documentEn },
+          { locale: 'AR', title: titleAr, description: descriptionAr, document: documentAr },
         ]
 
         if (current) {

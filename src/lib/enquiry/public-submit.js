@@ -1,3 +1,4 @@
+import { notifyEnquiryRecipients } from '../mail/enquiry-notification.js'
 import { availableServiceWhere } from '../service/public.js'
 import { isValidInternationalPhone, toE164Phone } from './phone.js'
 
@@ -44,16 +45,21 @@ export async function submitPublicEnquiry(db, input, { ip = 'unknown' } = {}) {
   }
 
   let serviceId = null
+  let serviceName = ''
   if (serviceIdRaw) {
     const service = await db.service.findFirst({
       where: { id: serviceIdRaw, ...availableServiceWhere() },
-      select: { id: true },
+      select: {
+        id: true,
+        translations: { where: { locale: 'EN' }, select: { name: true }, take: 1 },
+      },
     })
     if (!service) return { ok: false, code: 'INVALID_SERVICE' }
     serviceId = service.id
+    serviceName = service.translations?.[0]?.name || ''
   }
 
-  await db.contactEnquiry.create({
+  const enquiry = await db.contactEnquiry.create({
     data: {
       name,
       email,
@@ -70,6 +76,12 @@ export async function submitPublicEnquiry(db, input, { ip = 'unknown' } = {}) {
   await db.loginAttempt.create({
     data: { identifier: `enquiry-ip:${String(ip).slice(0, 120)}`, successful: true },
   })
+
+  try {
+    await notifyEnquiryRecipients(db, enquiry, { serviceName })
+  } catch (error) {
+    console.error('[enquiry] Notification failed after successful submit.', error)
+  }
 
   return { ok: true, code: 'OK' }
 }

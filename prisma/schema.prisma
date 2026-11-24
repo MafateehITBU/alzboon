@@ -230,10 +230,11 @@ model Blog {
 }
 
 model BlogTranslation {
-  blogId   String @map("blog_id") @db.Uuid
-  locale   Locale
-  title    String
-  document Json
+  blogId      String @map("blog_id") @db.Uuid
+  locale      Locale
+  title       String
+  description String @default("")
+  document    Json
 
   blog Blog @relation(fields: [blogId], references: [id], onDelete: Cascade)
 
@@ -342,6 +343,18 @@ model ContactEnquiry {
   @@index([status])
   @@index([createdAt])
   @@map("contact_enquiries")
+}
+
+/// Footer "Judicial Briefs" subscribers. Additive table only — never drop existing data.
+model NewsletterSubscriber {
+  id        String   @id @default(uuid()) @db.Uuid
+  email     String   @unique
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([active])
+  @@map("newsletter_subscribers")
 }
 
 model MediaAsset {

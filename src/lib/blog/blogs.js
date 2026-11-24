@@ -38,7 +38,16 @@ export async function listBlogs(db, actorId, query) {
     where.OR = [
       { slug: { contains: q, mode: 'insensitive' } },
       { authorName: { contains: q, mode: 'insensitive' } },
-      { translations: { some: { title: { contains: q, mode: 'insensitive' } } } },
+      {
+        translations: {
+          some: {
+            OR: [
+              { title: { contains: q, mode: 'insensitive' } },
+              { description: { contains: q, mode: 'insensitive' } },
+            ],
+          },
+        },
+      },
       {
         category: {
           OR: [
@@ -79,6 +88,20 @@ export async function getBlogForAdmin(db, actorId, blogId) {
   return serializeBlog(blog)
 }
 
+/** True when a blog would appear on the public site (published + not future-dated). */
+export function isPubliclyListedBlog(blog, now = new Date()) {
+  if (!blog?.published) return false
+  const raw = blog.publishedOn
+  const on =
+    raw instanceof Date
+      ? raw
+      : new Date(`${String(raw || '').slice(0, 10)}T00:00:00.000Z`)
+  if (Number.isNaN(on.getTime())) return false
+  const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()))
+  const publishedDay = new Date(Date.UTC(on.getUTCFullYear(), on.getUTCMonth(), on.getUTCDate()))
+  return publishedDay <= today
+}
+
 export async function createBlog(db, actorId, input) {
   await assertCanManageBlogs(db, actorId)
   const payload = normalizeBlogInput(input, true)
@@ -104,15 +127,30 @@ export async function createBlog(db, actorId, input) {
         attachmentDisplayName: payload.attachmentDisplayName,
         translations: {
           create: [
-            { locale: 'EN', title: payload.titleEn, document: payload.documentEn },
-            { locale: 'AR', title: payload.titleAr, document: payload.documentAr },
+            {
+              locale: 'EN',
+              title: payload.titleEn,
+              description: payload.descriptionEn,
+              document: payload.documentEn,
+            },
+            {
+              locale: 'AR',
+              title: payload.titleAr,
+              description: payload.descriptionAr,
+              document: payload.documentAr,
+            },
           ],
         },
       },
       include: blogInclude,
     })
 
-    return { blog: serializeBlog(blog), removedMedia: [] }
+    const serialized = serializeBlog(blog)
+    return {
+      blog: serialized,
+      removedMedia: [],
+      becamePublic: isPubliclyListedBlog(blog),
+    }
   })
 }
 
@@ -125,6 +163,7 @@ export async function updateBlog(db, actorId, blogId, input) {
   return runInTransaction(db, async (tx) => {
     const current = await tx.blog.findUnique({ where: { id: blogId }, include: blogInclude })
     if (!current) throw new BlogError('NOT_FOUND')
+    const wasPublic = isPubliclyListedBlog(current)
 
     await assertCategory(tx, payload.categoryId)
 
@@ -160,8 +199,18 @@ export async function updateBlog(db, actorId, blogId, input) {
         translations: {
           deleteMany: {},
           create: [
-            { locale: 'EN', title: payload.titleEn, document: payload.documentEn },
-            { locale: 'AR', title: payload.titleAr, document: payload.documentAr },
+            {
+              locale: 'EN',
+              title: payload.titleEn,
+              description: payload.descriptionEn,
+              document: payload.documentEn,
+            },
+            {
+              locale: 'AR',
+              title: payload.titleAr,
+              description: payload.descriptionAr,
+              document: payload.documentAr,
+            },
           ],
         },
       },
@@ -178,7 +227,12 @@ export async function updateBlog(db, actorId, blogId, input) {
       if (orphan) removed.push(orphan)
     }
 
-    return { blog: serializeBlog(blog), removedMedia: removed }
+    const serialized = serializeBlog(blog)
+    return {
+      blog: serialized,
+      removedMedia: removed,
+      becamePublic: !wasPublic && isPubliclyListedBlog(blog),
+    }
   })
 }
 
@@ -204,6 +258,8 @@ export async function deleteBlog(db, actorId, blogId) {
 function normalizeBlogInput(input, requireFeatured) {
   const titleEn = cleanText(input?.titleEn, 200)
   const titleAr = cleanText(input?.titleAr, 200)
+  const descriptionEn = cleanDescription(input?.descriptionEn)
+  const descriptionAr = cleanDescription(input?.descriptionAr)
   const authorName = cleanText(input?.authorName, 120)
   const categoryId = typeof input?.categoryId === 'string' ? input.categoryId : ''
   const publishedOn = parseDate(input?.publishedOn)
@@ -213,6 +269,7 @@ function normalizeBlogInput(input, requireFeatured) {
   const attachmentDisplayName = cleanText(input?.attachmentDisplayName, 120)
 
   if (!titleEn || !titleAr) throw new BlogError('INVALID_TITLE')
+  if (!descriptionEn || !descriptionAr) throw new BlogError('INVALID_DESCRIPTION')
   if (!authorName) throw new BlogError('INVALID_AUTHOR')
   if (!publishedOn) throw new BlogError('INVALID_DATE')
   if (!categoryId) throw new BlogError('INVALID_CATEGORY')
@@ -229,6 +286,8 @@ function normalizeBlogInput(input, requireFeatured) {
   return {
     titleEn,
     titleAr,
+    descriptionEn,
+    descriptionAr,
     authorName,
     categoryId,
     publishedOn,
@@ -299,6 +358,8 @@ function serializeBlog(blog) {
     published: blog.published,
     titleEn: titleEn?.title || '',
     titleAr: titleAr?.title || '',
+    descriptionEn: titleEn?.description || '',
+    descriptionAr: titleAr?.description || '',
     documentEn: titleEn?.document || emptyDocument(),
     documentAr: titleAr?.document || emptyDocument(),
     featuredMediaId: blog.featuredMediaId,
@@ -321,6 +382,15 @@ function cleanText(value, max) {
   if (typeof value !== 'string') return null
   const text = value.trim().replace(/\s+/g, ' ')
   if (!text || text.length > max) return null
+  return text
+}
+
+const DESCRIPTION_MAX = 320
+
+function cleanDescription(value) {
+  if (typeof value !== 'string') return null
+  const text = value.trim().replace(/\s+/g, ' ')
+  if (!text || text.length > DESCRIPTION_MAX) return null
   return text
 }
 

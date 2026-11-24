@@ -157,10 +157,19 @@ Hidden blogs stay out of every public query. Public helpers also require `publis
 - blog id
 - `locale`: `EN` or `AR`
 - title
+- `description` — short public card summary (up to 320 characters); additive column with empty default for existing rows
 - TipTap document
 - unique pair of blog and locale
 
 Arabic content is edited and rendered right to left.
+
+### NewsletterSubscriber
+
+- unique email
+- `active` boolean (default true)
+- timestamps
+
+Additive table for footer Judicial Briefs subscriptions. Existing tables are never dropped for this feature.
 
 ### Service
 

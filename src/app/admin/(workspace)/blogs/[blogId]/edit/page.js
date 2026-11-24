@@ -10,10 +10,9 @@ export const metadata = {
   robots: { index: false, follow: false },
 }
 
-export default async function EditBlogPage({ params, searchParams }) {
+export default async function EditBlogPage({ params }) {
   const current = await requirePermission('MANAGE_BLOGS')
   const { blogId } = await params
-  const query = await searchParams
   const [blog, categories] = await Promise.all([
     getBlogForAdmin(getPrisma(), current.admin.id, blogId),
     listAllCategories(getPrisma(), current.admin.id),
@@ -22,7 +21,7 @@ export default async function EditBlogPage({ params, searchParams }) {
   return (
     <>
       <PageHeader title={blog.titleEn || 'Edit blog'} description="Update bilingual content, publishing status, and media." />
-      <BlogEditorForm mode="edit" blog={blog} categories={categories} savedNotice={query?.saved === '1'} />
+      <BlogEditorForm mode="edit" blog={blog} categories={categories} />
     </>
   )
 }

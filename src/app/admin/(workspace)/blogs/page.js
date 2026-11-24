@@ -13,7 +13,9 @@ export const metadata = {
 
 export default async function BlogsPage({ searchParams }) {
   const current = await requirePermission('MANAGE_BLOGS')
-  const query = parseBlogListQuery(await searchParams)
+  const params = await searchParams
+  const query = parseBlogListQuery(params)
+  const notice = typeof params?.notice === 'string' ? params.notice : ''
 
   let listing = null
   let categories = []
@@ -32,7 +34,7 @@ export default async function BlogsPage({ searchParams }) {
   return (
     <>
       <PageHeader title="Blogs" description="Create and publish bilingual articles with featured images and optional attachments." />
-      <BlogsPanel query={query} listing={listing} categories={categories} loadError={loadError} />
+      <BlogsPanel query={query} listing={listing} categories={categories} loadError={loadError} notice={notice} />
     </>
   )
 }

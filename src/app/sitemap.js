@@ -13,8 +13,8 @@ export default async function sitemap() {
     '/ar/blogs',
     '/contact',
     '/ar/contact',
-    '/privacy-policy',
-    '/ar/privacy-policy',
+    '/privacy',
+    '/ar/privacy',
   ].map((path) => ({
     url: absoluteUrl(path || '/'),
     lastModified: new Date(),

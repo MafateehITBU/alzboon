@@ -12,7 +12,7 @@ import { emptyDocument } from '@/lib/blog/sanitize-document'
 const inputClass =
   'min-h-11 w-full rounded-xl border border-line/90 bg-white px-3.5 font-jakarta text-sm text-ink shadow-[inset_0_1px_2px_rgba(1,19,32,0.03)] transition-[border-color,box-shadow] duration-200 hover:border-teal/25 focus:border-teal/50 focus:shadow-[0_0_0_4px_rgba(63,131,119,0.12)] focus-visible:outline-none'
 
-export default function BlogEditorForm({ mode, blog = null, categories, savedNotice = false }) {
+export default function BlogEditorForm({ mode, blog = null, categories }) {
   const action = mode === 'create' ? createBlogAction : updateBlogAction
   const [state, formAction, pending] = useActionState(action, { ok: false, message: '' })
   const [documentEn, setDocumentEn] = useState(blog?.documentEn || emptyDocument())
@@ -22,22 +22,34 @@ export default function BlogEditorForm({ mode, blog = null, categories, savedNot
   return (
     <form action={formAction} className="grid gap-6">
       {mode === 'edit' ? <input type="hidden" name="blogId" value={blog.id} /> : null}
-      {(savedNotice || state?.message) && (
+      {state?.message ? (
         <p
           role="status"
           className={`rounded-lg border px-4 py-3 font-jakarta text-sm ${
-            (state?.ok ?? savedNotice) ? 'border-success/30 bg-white text-success' : 'border-danger/30 bg-white text-danger'
+            state.ok ? 'border-success/30 bg-white text-success' : 'border-danger/30 bg-white text-danger'
           }`}
         >
-          {state?.message || 'The blog was saved.'}
+          {state.message}
         </p>
-      )}
+      ) : null}
 
       <section className="rounded-2xl border border-white/70 bg-white/90 p-5 shadow-[0_18px_40px_-28px_rgba(1,19,32,0.28)] backdrop-blur-sm">
         <h2 className="font-abu text-2xl text-ink">English content</h2>
         <div className="mt-4 grid gap-4">
           <Field label="English title" htmlFor="titleEn">
             <input id="titleEn" name="titleEn" required defaultValue={blog?.titleEn || ''} className={inputClass} />
+          </Field>
+          <Field label="English description" htmlFor="descriptionEn">
+            <textarea
+              id="descriptionEn"
+              name="descriptionEn"
+              required
+              rows={3}
+              maxLength={320}
+              defaultValue={blog?.descriptionEn || ''}
+              className={`${inputClass} py-2.5`}
+              placeholder="Short card summary shown on the public blogs page"
+            />
           </Field>
           <RichTextEditor label="English content" value={documentEn} onChange={setDocumentEn} name="documentEn" dir="ltr" />
         </div>
@@ -48,6 +60,20 @@ export default function BlogEditorForm({ mode, blog = null, categories, savedNot
         <div className="mt-4 grid gap-4">
           <Field label="Arabic title" htmlFor="titleAr">
             <input id="titleAr" name="titleAr" required dir="rtl" lang="ar" defaultValue={blog?.titleAr || ''} className={inputClass} />
+          </Field>
+          <Field label="Arabic description" htmlFor="descriptionAr">
+            <textarea
+              id="descriptionAr"
+              name="descriptionAr"
+              required
+              rows={3}
+              maxLength={320}
+              dir="rtl"
+              lang="ar"
+              defaultValue={blog?.descriptionAr || ''}
+              className={`${inputClass} py-2.5`}
+              placeholder="ملخص قصير يظهر في بطاقة المدونة"
+            />
           </Field>
           <RichTextEditor label="Arabic content" value={documentAr} onChange={setDocumentAr} name="documentAr" dir="rtl" />
         </div>

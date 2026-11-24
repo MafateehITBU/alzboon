@@ -31,6 +31,13 @@ export function documentHasText(document) {
   return collectText(sanitized).trim().length > 0
 }
 
+/** Plain text from a TipTap document for excerpts and reading-time estimates. */
+export function documentPlainText(document) {
+  const sanitized = sanitizeTipTapDocument(document)
+  if (!sanitized) return ''
+  return collectText(sanitized).replace(/\s+/g, ' ').trim()
+}
+
 function sanitizeNode(node) {
   if (!node || typeof node !== 'object' || typeof node.type !== 'string') return null
   if (!ALLOWED_NODES.has(node.type)) return null

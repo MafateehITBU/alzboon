@@ -20,6 +20,8 @@ export function blogActionMessage(code) {
       return 'This category still has blogs. Move or delete those blogs first.'
     case 'INVALID_TITLE':
       return 'Enter English and Arabic titles.'
+    case 'INVALID_DESCRIPTION':
+      return 'Enter English and Arabic descriptions for the public blog cards (up to 320 characters each).'
     case 'INVALID_AUTHOR':
       return 'Enter an author name.'
     case 'INVALID_DATE':

@@ -1,31 +1,59 @@
-import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import PublicPage from '@/components/website/PublicPage'
-import RichTextContent from '@/components/website/RichTextContent'
-import { withLocale } from '@/lib/i18n/paths'
+import BlogArticleView from '@/components/website/blog/BlogArticleView'
+import {
+  getPublishedBlogBySlug,
+  listRelatedPublishedBlogs,
+  serializePublicBlog,
+  serializePublicBlogListItem,
+} from '@/lib/blog/public'
 import { getPrisma } from '@/lib/prisma/client'
 import { absoluteUrl } from '@/lib/site/config'
 import { loadPublicSiteData } from '@/lib/site/load-public'
-import { getPublishedBlogBySlug, serializePublicBlog } from '@/lib/blog/public'
+
+async function loadArticle(slug, locale) {
+  const db = getPrisma()
+  const raw = await getPublishedBlogBySlug(db, slug)
+  const blog = serializePublicBlog(raw, locale)
+  if (!blog) return null
+
+  const relatedRaw = await listRelatedPublishedBlogs(db, {
+    excludeId: blog.id,
+    categorySlug: blog.categorySlug,
+    take: 3,
+  })
+  const related = relatedRaw.map((row) => serializePublicBlogListItem(row, locale)).filter(Boolean)
+
+  return { blog, related }
+}
 
 export async function generateMetadata({ params }) {
   const { slug } = await params
   try {
     const blog = serializePublicBlog(await getPublishedBlogBySlug(getPrisma(), slug), 'ar')
     if (!blog) return { title: 'المقال غير موجود' }
+    const description = blog.excerpt || `${blog.title} — ${blog.authorName}`
+    const url = absoluteUrl(`/ar/blogs/${blog.slug}`)
     return {
       title: blog.title,
-      description: `${blog.title} — ${blog.authorName}`,
+      description,
       alternates: {
         canonical: `/ar/blogs/${blog.slug}`,
         languages: { en: `/blogs/${blog.slug}`, ar: `/ar/blogs/${blog.slug}` },
       },
       openGraph: {
         title: blog.title,
-        description: `${blog.title} — ${blog.authorName}`,
-        url: absoluteUrl(`/ar/blogs/${blog.slug}`),
+        description,
+        url,
         type: 'article',
         locale: 'ar_AE',
+        publishedTime: blog.publishedOn,
+        authors: blog.authorName ? [blog.authorName] : undefined,
+        images: blog.featuredUrl ? [{ url: absoluteUrl(blog.featuredUrl) }] : undefined,
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: blog.title,
+        description,
         images: blog.featuredUrl ? [absoluteUrl(blog.featuredUrl)] : undefined,
       },
     }
@@ -37,26 +65,43 @@ export async function generateMetadata({ params }) {
 export default async function ArabicBlogDetailPage({ params }) {
   const { slug } = await params
   const site = await loadPublicSiteData('ar')
-  let blog = null
+  let article = null
   try {
-    blog = serializePublicBlog(await getPublishedBlogBySlug(getPrisma(), slug), 'ar')
+    article = await loadArticle(slug, 'ar')
   } catch {
-    blog = null
+    article = null
   }
-  if (!blog) notFound()
+  if (!article) notFound()
+
+  const { blog, related } = article
+  const description = blog.excerpt || `${blog.title} — ${blog.authorName}`
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: blog.title,
+    description,
+    datePublished: blog.publishedOn,
+    author: {
+      '@type': 'Person',
+      name: blog.authorName,
+    },
+    image: blog.featuredUrl ? absoluteUrl(blog.featuredUrl) : undefined,
+    mainEntityOfPage: absoluteUrl(`/ar/blogs/${blog.slug}`),
+    inLanguage: 'ar',
+    articleSection: blog.categoryName || undefined,
+  }
 
   return (
-    <PublicPage locale={site.locale} messages={site.messages} contact={site.contact} services={site.services} narrow>
-      <Link href={withLocale('/blogs', 'ar')} className="font-jakarta text-sm font-semibold text-teal">
-        ← {site.messages.blogs.back}
-      </Link>
-      <p className="mt-6 font-jakarta text-xs tracking-wide text-teal uppercase">{blog.categoryName}</p>
-      <h1 className="mt-2 font-abu text-4xl tracking-[-0.03em] text-ink">{blog.title}</h1>
-      <p className="mt-3 font-jakarta text-sm text-body">
-        {site.messages.blogs.by} {blog.authorName} · {blog.publishedOn}
-      </p>
-      {blog.featuredUrl ? <img src={blog.featuredUrl} alt="" className="mt-8 w-full rounded-2xl object-cover" /> : null}
-      <RichTextContent document={blog.document} dir="rtl" className="mt-8" />
-    </PublicPage>
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <BlogArticleView
+        locale={site.locale}
+        messages={site.messages}
+        contact={site.contact}
+        services={site.services}
+        blog={blog}
+        related={related}
+      />
+    </>
   )
 }

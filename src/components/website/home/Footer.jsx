@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useActionState, useEffect, useState } from 'react'
 import Link from 'next/link'
 import logo from '@/assets/images/logo-footer-white.png'
 import phoneIcon from '@/assets/icons/icon-phone.svg'
@@ -8,8 +8,7 @@ import emailIcon from '@/assets/icons/icon-email.svg'
 import location from '@/assets/icons/icon-location.svg'
 import { assetSrc } from '@/lib/utils/assetSrc'
 import { withLocale } from '@/lib/i18n/paths'
-
-const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+import { subscribeBriefsAction } from '@/app/(website)/newsletter/actions'
 
 const companyItem =
   'mt-2.5 block w-full border-b border-white/5 pb-2 font-abu text-[17px] leading-7 font-normal text-muted'
@@ -20,11 +19,19 @@ const fallbackContact = {
 }
 
 function Footer({ locale = 'en', messages, contact = null }) {
+  const copy = messages?.home?.footer || {}
+  const nav = messages?.nav || {}
+  const [state, formAction, pending] = useActionState(subscribeBriefsAction, { ok: false, message: '' })
   const [address, setAddress] = useState('')
   const [message, setMessage] = useState('')
   const [invalid, setInvalid] = useState(false)
-  const nav = messages?.nav || {}
-  const copy = messages?.home?.footer || {}
+
+  useEffect(() => {
+    if (!state?.message) return
+    setMessage(state.message)
+    setInvalid(!state.ok)
+    if (state.ok) setAddress('')
+  }, [state])
 
   const email = contact?.contactEmail || fallbackContact.contactEmail
   const phones =
@@ -42,21 +49,6 @@ function Footer({ locale = 'en', messages, contact = null }) {
         }))
       : [{ text: copy.address || 'Al Muroor Road, Abu Dhabi, United Arab Emirates' }]
 
-  function handleSubmit(event) {
-    event.preventDefault()
-    const nextAddress = String(new FormData(event.currentTarget).get('email') ?? '').trim()
-
-    if (!emailPattern.test(nextAddress)) {
-      setInvalid(true)
-      setMessage(copy.invalidEmail || 'Enter a valid email address.')
-      return
-    }
-
-    setInvalid(false)
-    setAddress('')
-    setMessage(copy.subscribeOffline || 'This form is not connected to a mailing service. No subscription was created.')
-  }
-
   return (
     <footer className="w-full bg-navy px-[75px] pt-16 pb-8 text-muted max-[1439px]:px-10 max-[1023px]:px-8 max-[1023px]:pt-12 max-[1023px]:pb-7 max-[767px]:px-5 max-[767px]:pt-10 max-[767px]:pb-6">
       <div className="grid w-full grid-cols-[minmax(240px,395px)_minmax(140px,1fr)_minmax(180px,1fr)_minmax(220px,284px)] gap-x-12 gap-y-10 max-[1023px]:grid-cols-2 max-[767px]:grid-cols-1">
@@ -72,11 +64,11 @@ function Footer({ locale = 'en', messages, contact = null }) {
             {copy.blurb ||
               'Senior Legal Counsel & Strategic Advisory. IP protection, corporate advisory, and cross-border dispute resolution for ambitious businesses.'}
           </p>
-          <div className="mt-[18px] flex flex-wrap gap-2">
-            <span className="rounded-[2px] border border-[rgba(187,169,122,0.3)] bg-field px-2 py-1.5 font-abu text-[11px] leading-4 font-bold text-gold">
+          <div className="mt-[18px] flex flex-wrap gap-2.5">
+            <span className="rounded-[3px] border border-[rgba(187,169,122,0.45)] bg-field px-3.5 py-2.5 font-abu text-[13px] leading-5 font-bold tracking-[0.02em] text-gold">
               {copy.trademarkAgent || 'Certified Trademark Agent'}
             </span>
-            <span className="rounded-[2px] border border-[rgba(187,169,122,0.3)] bg-field px-2 py-1.5 font-abu text-[11px] leading-4 font-bold text-gold">
+            <span className="rounded-[3px] border border-[rgba(187,169,122,0.45)] bg-field px-3.5 py-2.5 font-abu text-[13px] leading-5 font-bold tracking-[0.02em] text-gold">
               {copy.arbitrator || 'Licensed Arbitrator'}
             </span>
           </div>
@@ -95,7 +87,7 @@ function Footer({ locale = 'en', messages, contact = null }) {
           <Link href={withLocale('/contact', locale)} className={companyItem}>
             {nav.contact || 'Contact Us'}
           </Link>
-          <Link href={withLocale('/privacy-policy', locale)} className={companyItem}>
+          <Link href={withLocale('/privacy', locale)} className={companyItem}>
             {nav.privacy || 'Privacy Policy'}
           </Link>
           <Link href={withLocale('/blogs', locale)} className={companyItem}>
@@ -139,7 +131,8 @@ function Footer({ locale = 'en', messages, contact = null }) {
           <p className="mt-4 font-jakarta text-[15px] leading-[24.38px]">
             {copy.briefsBody || 'Receive quarterly regulatory alerts and high-level strategic legal updates.'}
           </p>
-          <form className="mt-4 grid gap-2.5" onSubmit={handleSubmit} noValidate>
+          <form className="mt-4 grid gap-2.5" action={formAction} noValidate>
+            <input type="hidden" name="locale" value={locale} />
             <label className="sr-only" htmlFor="brief-email">
               {copy.emailLabel || 'Email address'}
             </label>
@@ -153,14 +146,20 @@ function Footer({ locale = 'en', messages, contact = null }) {
               aria-describedby="brief-status"
               className="min-h-11 w-full rounded border border-white/10 bg-field px-3 py-2.5 font-jakarta text-[13px] text-offwhite placeholder:text-muted"
               onChange={(event) => setAddress(event.target.value)}
+              required
             />
             <button
               type="submit"
-              className="min-h-11 w-full rounded bg-gold text-center font-jakarta text-sm leading-5 font-semibold text-offwhite hover:bg-[#a89564]"
+              disabled={pending}
+              className="min-h-11 w-full rounded bg-gold text-center font-jakarta text-sm leading-5 font-semibold text-offwhite hover:bg-[#a89564] disabled:opacity-70"
             >
-              {copy.subscribe || 'Subscribe to Briefs'}
+              {pending ? copy.subscribing || 'Subscribing…' : copy.subscribe || 'Subscribe to Briefs'}
             </button>
-            <p id="brief-status" role="status" className="min-h-[1.2em] font-jakarta text-[13px] leading-snug">
+            <p
+              id="brief-status"
+              role="status"
+              className={`min-h-[1.2em] font-jakarta text-[13px] leading-snug ${invalid ? 'text-[#f0b4b4]' : 'text-[#9fceb8]'}`}
+            >
               {message}
             </p>
           </form>

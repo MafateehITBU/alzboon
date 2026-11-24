@@ -54,7 +54,7 @@ Working behavior:
 - The language control changes emphasis only. Page copy stays English.
 - WhatsApp uses `https://wa.me/971562511154`.
 - Phone and email in the footer use website settings when a settings row exists; otherwise they keep `tel:+971562511154` and `mailto:info@alzboon.com`.
-- The newsletter validates an email address and states that no subscription was created.
+- Footer Judicial Briefs subscribe saves emails to `newsletter_subscribers`. Newly published public blogs notify active subscribers by SMTP with the English title and an absolute `APP_URL` link to `/blogs/[slug]`.
 - `/admin/login` signs in an active admin. `/admin` shows permission-filtered database counts and logout. `/admin/account` lets any active admin update their own profile and password; role and permissions stay read-only. `/admin/profile` redirects to `/admin/account`. `/admin/admins` manages accounts when `MANAGE_ADMINS` is granted. `/admin/website` and `/admin/partners` require `MANAGE_WEBSITE_SETTINGS`. `/admin/blog-categories` and `/admin/blogs` require `MANAGE_BLOGS`. `/admin/services` requires `MANAGE_SERVICES`. `/admin/contact-enquiries` requires `MANAGE_CONTACT_ENQUIRIES`.
 - Admin Services, Partners, Blog Categories, and Blogs lists support CSV export/import (upsert by id/slug/EN name; media restored by media id, storage key, or embedded base64; missing media does not block import—placeholder or keep existing, upload manually later).
 - Admin list pages share one live-search toolbar (no Filter button) and search across the list’s text columns.
@@ -66,7 +66,13 @@ Visible items without destinations:
 
 Public About Us is implemented at `/about` and `/ar/about` from the approved Figma About Us frame (`2120:5882`): cinematic hero background (`about-hero-presence.jpg`), overlapping white statistics card, two-column founder profile with quote and 2×2 accreditations, and homepage-style cream consultation card. Shared header/footer are reused. The founder portrait is `src/assets/images/about-founder.png` (Figma-exported studio portrait).
 
-Public Contact Us is implemented at `/contact` and `/ar/contact`: same About hero image/overlay with breadcrumb and heading, then a cream two-column enquiries section (CMS contact details + WhatsApp; inquiry form). Copy avoids the word “Chambers”.
+Public Contact Us is implemented at `/contact` and `/ar/contact`: same About hero image/overlay with breadcrumb and heading, then a cream two-column enquiries section (CMS contact details + WhatsApp; inquiry form). Copy avoids the word “Chambers”. Successful public submissions notify active Super Admins and Admins with `MANAGE_CONTACT_ENQUIRIES` via SMTP (`src/lib/mail/smtp.js`, `src/lib/mail/enquiry-notification.js`) when `SMTP_HOST` / `SMTP_PORT` / `SMTP_FROM` (and optional auth) are set.
+
+Public Privacy Policy is implemented at `/privacy` and `/ar/privacy` from Figma frame `2191:2362`: dark statutory hero with ledger card, sticky Codex TOC + non-waivable shield + protected intake CTA, and eight editorial legal sections (privilege callout, dossier cards, grounds grid, security panel, disclosures table, transfers, retention, rights). Copy lives in `src/lib/privacy/content.js`. Legacy `/privacy-policy` redirects here.
+
+Public Blogs listing is implemented at `/blogs` and `/ar/blogs` from Figma frame `2191:1818`: About-style cinematic hero, Recent Legal Briefs grid driven by `listPublishedBlogs` / `serializePublicBlogListItem`, category filter chips, and pagination (6 per page). Card excerpts prefer `BlogTranslation.description` (fallback: TipTap plain-text excerpt). Listing components live in `src/components/website/blogs`.
+
+Public blog article pages (`/blogs/[slug]`, `/ar/blogs/[slug]`) use shared `BlogArticleView` under `src/components/website/blog`: editorial hero, TipTap article rendering with heading TOC anchors, sticky sidebar, related published blogs (`listRelatedPublishedBlogs`), and a consultation CTA. SEO includes Open Graph, Twitter, hreflang, and BlogPosting JSON-LD. Private PDF attachments stay admin-only.
 
 The hero video is a still image and the exported control bar. It does not play.
 

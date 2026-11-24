@@ -167,6 +167,8 @@ test('published blogs exclude hidden and future dates and omit attachments', asy
     const published = await createBlog(prisma, actor.id, {
       titleEn: 'Phase11 Published',
       titleAr: 'منشور',
+      descriptionEn: 'Card description EN',
+      descriptionAr: 'وصف البطاقة',
       authorName: 'Editor',
       publishedOn: '2020-01-01',
       published: true,
@@ -179,6 +181,8 @@ test('published blogs exclude hidden and future dates and omit attachments', asy
     await createBlog(prisma, actor.id, {
       titleEn: 'Phase11 Future',
       titleAr: 'مستقبلي',
+      descriptionEn: 'Card description EN',
+      descriptionAr: 'وصف البطاقة',
       authorName: 'Editor',
       publishedOn: '2099-01-01',
       published: true,

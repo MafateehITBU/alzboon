@@ -1,5 +1,38 @@
 # Changelog
 
+## 2026-11-24 — Judicial Briefs newsletter + larger footer badges
+
+- Additive migration `20261124130000_newsletter_subscribers` creates `newsletter_subscribers` only (no drops).
+- Footer Subscribe to Briefs saves emails to the database; newly published public blogs email active subscribers with title + `APP_URL` absolute link.
+- Footer credential badges enlarged slightly.
+
+## 2026-11-24 — Contact enquiry SMTP notifications
+
+- Public contact form submissions email active Super Admins and Admins with `MANAGE_CONTACT_ENQUIRIES` when `SMTP_*` env vars are configured.
+- Branded HTML email uses site teal/gold/navy styling and embeds `logo-header.png`. Mail failures are logged and do not fail enquiry creation.
+
+## 2026-11-24 — Public blog article detail redesign
+
+- Redesigned `/blogs/[slug]` and `/ar/blogs/[slug]` as a shared editorial article experience (`BlogArticleView`): hero with breadcrumb/meta/featured image, TipTap article prose with heading anchors, sticky sidebar (TOC + meta + consult CTA), related published blogs, and consultation band.
+- Related posts prefer the same category via `listRelatedPublishedBlogs`. Private attachments remain admin-only. No schema or CMS data changes.
+
+## 2026-11-24 — Blog translation description for public cards
+
+- Additive migration `20261124120000_blog_translation_description` adds `description` to `blog_translations` with default `''` (no data wipe).
+- Admin create/edit, list table, CSV import/export, and public blog cards use the bilingual description.
+
+## 2026-11-24 — Public Blogs listing redesign
+
+- Redesigned `/blogs` and `/ar/blogs` from Figma node `2191:1818`: dark navy hero with static Active Repository card (`148+`), Recent Legal Briefs grid, category filters, and pagination.
+- Cards use published CMS blogs only (featured image, category translations, TipTap-derived excerpt and reading time, detail links by slug).
+- Shared Header/Footer/SiteShell unchanged. No schema, migration, seed, or Admin Blog changes.
+
+## 2026-11-24 — Privacy Policy & Statutory Legal Privilege page
+
+- Implemented `/privacy` and `/ar/privacy` from Figma node `2191:2362` (hero ledger, sticky Codex TOC, eight sectional layouts).
+- Legacy `/privacy-policy` and `/ar/privacy-policy` redirect to the new routes; footer and sitemap updated.
+- Content sourced from the approved Figma frame. Shared Header/Footer/SiteShell unchanged. No database or schema changes.
+
 ## 2026-11-24 — Contact enquiries without company/country + form toast
 
 - Dropped `company` and `country` from `contact_enquiries` (schema + admin table/detail + public submit).
