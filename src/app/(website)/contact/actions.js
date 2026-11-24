@@ -8,9 +8,28 @@ import { resolveClientIp } from '@/lib/http/client-ip'
 import { getPrisma } from '@/lib/prisma/client'
 import { revalidatePath } from 'next/cache'
 
+const emptyValues = {
+  name: '',
+  email: '',
+  phone: '',
+  serviceId: '',
+  message: '',
+}
+
+function readValues(formData) {
+  return {
+    name: String(formData.get('name') || ''),
+    email: String(formData.get('email') || ''),
+    phone: String(formData.get('phone') || ''),
+    serviceId: String(formData.get('serviceId') || ''),
+    message: String(formData.get('message') || ''),
+  }
+}
+
 export async function submitContactAction(_prev, formData) {
   const locale = normalizeLocale(formData.get('locale'))
   const copy = getMessages(locale).contact
+  const values = readValues(formData)
 
   try {
     const headerStore = await headers()
@@ -20,13 +39,11 @@ export async function submitContactAction(_prev, formData) {
       getPrisma(),
       {
         website: formData.get('website'),
-        name: formData.get('name'),
-        email: formData.get('email'),
-        phone: formData.get('phone'),
-        company: formData.get('company'),
-        country: formData.get('country'),
-        serviceId: formData.get('serviceId'),
-        message: formData.get('message'),
+        name: values.name,
+        email: values.email,
+        phone: values.phone,
+        serviceId: values.serviceId,
+        message: values.message,
       },
       { ip },
     )
@@ -37,15 +54,17 @@ export async function submitContactAction(_prev, formData) {
           ? copy.rateLimited
           : result.code === 'INVALID_SERVICE'
             ? copy.invalidService
-            : copy.invalid
-      return { ok: false, code: result.code, message }
+            : result.code === 'INVALID_PHONE'
+              ? copy.invalidPhone
+              : copy.invalid
+      return { ok: false, code: result.code, message, values }
     }
 
     revalidatePath('/admin/contact-enquiries')
     revalidatePath('/admin')
-    return { ok: true, code: 'OK', message: copy.success }
+    return { ok: true, code: 'OK', message: copy.success, values: emptyValues }
   } catch (error) {
     console.error(error)
-    return { ok: false, code: 'ERROR', message: copy.error }
+    return { ok: false, code: 'ERROR', message: copy.error, values }
   }
 }

@@ -12,7 +12,7 @@ import { withLocale } from '@/lib/i18n/paths'
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 const companyItem =
-  'mt-2.5 block w-full border-b border-white/5 pb-2 font-abu text-[15px] leading-6 font-normal text-muted'
+  'mt-2.5 block w-full border-b border-white/5 pb-2 font-abu text-[17px] leading-7 font-normal text-muted'
 
 const fallbackContact = {
   contactEmail: 'info@alzboon.com',

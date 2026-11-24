@@ -1,3 +1,4 @@
+import './use-test-database.js'
 import assert from 'node:assert/strict'
 import { randomUUID } from 'node:crypto'
 import { after, before, test } from 'node:test'
@@ -26,9 +27,8 @@ function email() {
   return `phase3-test-${randomUUID()}@example.com`
 }
 
-async function removeFixtures(emails) {
-  await prisma.loginAttempt.deleteMany({ where: { identifier: { in: emails } } })
-  await prisma.adminUser.deleteMany({ where: { email: { in: emails } } })
+async function removeFixtures(_emails) {
+  // Intentionally empty: never delete DB rows from tests.
 }
 
 /** Temporarily deactivate other active Super Admins so last-SA rules can be asserted. */
@@ -79,13 +79,9 @@ before(async () => {
     throw new Error('DATABASE_URL is not set. Auth tests need the local PostgreSQL database.')
   }
   passwordHash = await hashPassword(password)
-  await prisma.adminUser.deleteMany({ where: { email: { startsWith: 'phase3-test-' } } })
-  await prisma.loginAttempt.deleteMany({ where: { identifier: { startsWith: 'phase3-test-' } } })
 })
 
 after(async () => {
-  await prisma.adminUser.deleteMany({ where: { email: { startsWith: 'phase3-test-' } } })
-  await prisma.loginAttempt.deleteMany({ where: { identifier: { startsWith: 'phase3-test-' } } })
   await prisma.$disconnect()
 })
 

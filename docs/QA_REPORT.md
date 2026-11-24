@@ -43,7 +43,7 @@ Production server smoke on `http://127.0.0.1:3460` (build served with `next star
 | Route | HTTP |
 | --- | --- |
 | `/`, `/ar` | 200 |
-| `/about`, `/services`, `/blogs`, `/contact`, `/privacy-policy` | 200 |
+| `/about`, `/blogs`, `/contact`, `/privacy-policy` | 200 |
 | `/ar/contact` | 200 |
 | `/sitemap.xml`, `/robots.txt` | 200 |
 | `/admin/login` | 200 |

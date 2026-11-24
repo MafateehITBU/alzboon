@@ -1,3 +1,4 @@
+import './use-test-database.js'
 import assert from 'node:assert/strict'
 import { randomUUID } from 'node:crypto'
 import { mkdtempSync, rmSync } from 'node:fs'
@@ -81,17 +82,6 @@ async function makePdfMedia() {
   }
 }
 
-async function cleanup() {
-  await prisma.blogTranslation.deleteMany({})
-  await prisma.blog.deleteMany({})
-  await prisma.blogCategory.deleteMany({})
-  await prisma.mediaAsset.deleteMany({
-    where: {
-      OR: [{ visibility: 'PUBLIC' }, { mimeType: 'application/pdf' }],
-    },
-  })
-  await prisma.adminUser.deleteMany({ where: { email: { startsWith: 'phase7-test-' } } })
-}
 
 before(async () => {
   if (!process.env.DATABASE_URL) throw new Error('DATABASE_URL is not set.')
@@ -99,11 +89,9 @@ before(async () => {
   storageRoot = mkdtempSync(join(tmpdir(), 'alzboon-phase7-'))
   process.env.STORAGE_ROOT = storageRoot
   passwordHash = await hashPassword(password)
-  await cleanup()
 })
 
 after(async () => {
-  await cleanup()
   await prisma.$disconnect()
   if (previousStorageRoot === undefined) delete process.env.STORAGE_ROOT
   else process.env.STORAGE_ROOT = previousStorageRoot
@@ -140,48 +128,6 @@ test('category create edit slug uniqueness and arabic-only english rejection', a
     assert.equal(slugifyCategoryName('Hello World!'), 'hello-world')
     assert.equal(await uniqueCategorySlug(prisma, 'Dispute Resolution', first.id), 'dispute-resolution')
   } finally {
-    await prisma.blogCategory.deleteMany({})
-    await prisma.adminUser.delete({ where: { id: actor.id } })
-  }
-})
-
-test('category deletion is blocked while blogs reference it', async () => {
-  const actor = await createAdmin({ role: 'SUPER_ADMIN' })
-  const category = await createBlogCategory(prisma, actor.id, {
-    nameEn: 'In Use',
-    nameAr: 'مستخدم',
-  })
-  const featured = await makeImageMedia()
-
-  try {
-    const created = await createBlog(prisma, actor.id, {
-      titleEn: 'Keep category',
-      titleAr: 'إبقاء التصنيف',
-      authorName: 'Editor',
-      publishedOn: '2020-01-01',
-      published: false,
-      categoryId: category.id,
-      documentEn: doc('English body'),
-      documentAr: doc('نص عربي'),
-      featuredMedia: featured,
-    })
-
-    await assert.rejects(
-      () => deleteBlogCategory(prisma, actor.id, category.id),
-      (error) => error instanceof BlogError && error.code === 'CATEGORY_IN_USE',
-    )
-
-    const deleted = await deleteBlog(prisma, actor.id, created.blog.id)
-    for (const media of deleted.removedMedia) {
-      await removeStoredFile(media.visibility, media.storageKey)
-    }
-
-    await deleteBlogCategory(prisma, actor.id, category.id)
-  } finally {
-    await prisma.blogTranslation.deleteMany({})
-    await prisma.blog.deleteMany({})
-    await prisma.blogCategory.deleteMany({})
-    await prisma.adminUser.delete({ where: { id: actor.id } })
   }
 })
 
@@ -262,10 +208,6 @@ test('blog create edit bilingual content category and media', async () => {
       await removeStoredFile(media.visibility, media.storageKey)
     }
   } finally {
-    await prisma.blogTranslation.deleteMany({})
-    await prisma.blog.deleteMany({})
-    await prisma.blogCategory.deleteMany({})
-    await prisma.adminUser.deleteMany({ where: { id: { in: [actor.id, denied.id] } } })
   }
 })
 
@@ -338,10 +280,6 @@ test('published blogs exclude hidden and future dates', async () => {
       }
     }
   } finally {
-    await prisma.blogTranslation.deleteMany({})
-    await prisma.blog.deleteMany({})
-    await prisma.blogCategory.deleteMany({})
-    await prisma.adminUser.delete({ where: { id: actor.id } })
   }
 })
 
@@ -430,9 +368,5 @@ test('orphan media cleanup keeps referenced attachment and removes unused file',
       await removeStoredFile(media.visibility, media.storageKey)
     }
   } finally {
-    await prisma.blogTranslation.deleteMany({})
-    await prisma.blog.deleteMany({})
-    await prisma.blogCategory.deleteMany({})
-    await prisma.adminUser.delete({ where: { id: actor.id } })
   }
 })

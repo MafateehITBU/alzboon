@@ -19,7 +19,7 @@ function AboutFounder({ copy }) {
     <section className="bg-white" aria-labelledby="about-founder-title">
       <div className="mx-auto max-w-[1440px] px-[80px] pt-16 pb-20 max-[1439px]:px-10 max-[1023px]:px-8 max-[1023px]:pt-12 max-[1023px]:pb-14 max-[767px]:px-5 max-[767px]:pt-10 max-[767px]:pb-12">
         <div className="grid grid-cols-[minmax(280px,0.92fr)_minmax(0,1.08fr)] items-start gap-14 max-[1023px]:grid-cols-1 max-[1023px]:gap-10">
-          <div className="relative max-w-[480px] max-[1023px]:mx-auto max-[1023px]:w-full max-[1023px]:max-w-[420px]">
+          <div className="relative max-w-[480px] self-start pb-6 sticky top-24 max-[1023px]:static max-[1023px]:mx-auto max-[1023px]:w-full max-[1023px]:max-w-[420px] max-[1023px]:pb-0">
             <div className="relative overflow-hidden rounded-[22px] bg-ink shadow-[0_18px_40px_rgba(1,19,32,0.12)]">
               <img
                 src={assetSrc(portrait)}

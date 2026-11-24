@@ -4,11 +4,13 @@ import { useActionState, useEffect, useId, useRef, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Pencil, Plus, Trash2 } from 'lucide-react'
-import { adminTealButton } from '@/components/admin/adminStyles'
-import { deleteBlogAction } from '@/app/admin/(workspace)/blogs/actions'
+import AdminListToolbar from '@/components/admin/AdminListToolbar'
+import CsvImportExport from '@/components/admin/CsvImportExport'
+import useLiveSearch from '@/components/admin/useLiveSearch'
+import { adminFieldClass, adminTealButton } from '@/components/admin/adminStyles'
+import { deleteBlogAction, importBlogsCsvAction } from '@/app/admin/(workspace)/blogs/actions'
 
-const inputClass =
-  'min-h-11 rounded-xl border border-line/90 bg-white px-3.5 font-jakarta text-sm text-ink shadow-[inset_0_1px_2px_rgba(1,19,32,0.03)] transition-[border-color,box-shadow] duration-200 hover:border-teal/25 focus:border-teal/50 focus:shadow-[0_0_0_4px_rgba(63,131,119,0.12)] focus-visible:outline-none'
+const inputClass = `${adminFieldClass} sm:w-auto`
 
 const initialState = { ok: false, message: '' }
 
@@ -16,12 +18,39 @@ export default function BlogsPanel({ query, listing, categories, loadError }) {
   const router = useRouter()
   const [toast, setToast] = useState(null)
   const [deleting, setDeleting] = useState(null)
+  const [categoryId, setCategoryId] = useState(query.categoryId || '')
+  const [status, setStatus] = useState(query.status || '')
+
+  useEffect(() => {
+    setCategoryId(query.categoryId || '')
+    setStatus(query.status || '')
+  }, [query.categoryId, query.status])
 
   useEffect(() => {
     if (!toast) return undefined
     const timer = setTimeout(() => setToast(null), 4000)
     return () => clearTimeout(timer)
   }, [toast])
+
+  const [search, onSearchChange] = useLiveSearch(query.search || '', (value) => {
+    const params = new URLSearchParams()
+    const trimmed = String(value || '').trim()
+    if (trimmed) params.set('q', trimmed)
+    if (categoryId) params.set('category', categoryId)
+    if (status) params.set('status', status)
+    const next = params.toString()
+    router.push(next ? `/admin/blogs?${next}` : '/admin/blogs')
+  })
+
+  function pushFilters({ q = search, category = categoryId, nextStatus = status } = {}) {
+    const params = new URLSearchParams()
+    const trimmed = String(q || '').trim()
+    if (trimmed) params.set('q', trimmed)
+    if (category) params.set('category', category)
+    if (nextStatus) params.set('status', nextStatus)
+    const next = params.toString()
+    router.push(next ? `/admin/blogs?${next}` : '/admin/blogs')
+  }
 
   function onSaved(result) {
     if (!result?.message) return
@@ -40,49 +69,61 @@ export default function BlogsPanel({ query, listing, categories, loadError }) {
         </p>
       ) : null}
 
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <form
-          className="flex min-w-0 flex-1 flex-wrap gap-3"
-          onSubmit={(event) => {
-            event.preventDefault()
-            const data = new FormData(event.currentTarget)
-            const params = new URLSearchParams()
-            const q = String(data.get('q') || '').trim()
-            const category = String(data.get('category') || '')
-            const status = String(data.get('status') || '')
-            if (q) params.set('q', q)
-            if (category) params.set('category', category)
-            if (status) params.set('status', status)
-            const next = params.toString()
-            router.push(next ? `/admin/blogs?${next}` : '/admin/blogs')
-          }}
-        >
-          <label className="sr-only" htmlFor="blog-search">
-            Search blogs
-          </label>
-          <input id="blog-search" name="q" defaultValue={query.search} placeholder="Search titles" className={`${inputClass} min-w-[12rem] flex-1`} />
-          <select name="category" defaultValue={query.categoryId} className={inputClass} aria-label="Category">
-            <option value="">All categories</option>
-            {categories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.nameEn}
-              </option>
-            ))}
-          </select>
-          <select name="status" defaultValue={query.status} className={inputClass} aria-label="Status">
-            <option value="">All statuses</option>
-            <option value="published">Published</option>
-            <option value="hidden">Hidden</option>
-          </select>
-          <button type="submit" className={adminTealButton}>
-            Filter
-          </button>
-        </form>
-        <Link href="/admin/blogs/new" className={adminTealButton}>
-          <Plus aria-hidden="true" size={16} />
-          New blog
-        </Link>
-      </div>
+      <AdminListToolbar
+        searchId="blog-search"
+        searchLabel="Search blogs"
+        searchPlaceholder="Search title, author, category, slug"
+        searchValue={search}
+        onSearchChange={onSearchChange}
+        filters={
+          <>
+            <select
+              value={categoryId}
+              onChange={(event) => {
+                const next = event.target.value
+                setCategoryId(next)
+                pushFilters({ q: search, category: next })
+              }}
+              className={inputClass}
+              aria-label="Category"
+            >
+              <option value="">All categories</option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.nameEn}
+                </option>
+              ))}
+            </select>
+            <select
+              value={status}
+              onChange={(event) => {
+                const next = event.target.value
+                setStatus(next)
+                pushFilters({ q: search, nextStatus: next })
+              }}
+              className={inputClass}
+              aria-label="Status"
+            >
+              <option value="">All statuses</option>
+              <option value="published">Published</option>
+              <option value="hidden">Hidden</option>
+            </select>
+          </>
+        }
+        actions={
+          <>
+            <CsvImportExport
+              exportHref="/admin/blogs/export"
+              importAction={importBlogsCsvAction}
+              entityLabel="blogs"
+            />
+            <Link href="/admin/blogs/new" className={adminTealButton}>
+              <Plus aria-hidden="true" size={16} />
+              New blog
+            </Link>
+          </>
+        }
+      />
 
       {loadError ? <p className="rounded-lg border border-danger/30 bg-white p-5 font-jakarta text-sm text-danger">{loadError}</p> : null}
       {!loadError && listing?.blogs.length === 0 ? (

@@ -126,7 +126,7 @@ Phase 10 did not add public website content pages or a media library.
 ## Completed in Phase 11
 
 - Connected homepage header/practice areas/consultation/footer to available services and website settings with Figma fallbacks.
-- Added bilingual public routes for About, Services, service detail, Blogs, blog detail, Contact, and Privacy (`/` English, `/ar` Arabic).
+- Added bilingual public routes for About, service detail, Blogs, blog detail, Contact, and Privacy (`/` English, `/ar` Arabic). No general services listing page.
 - Public services and blogs use unique slugs; every saved service and published non-future blogs are exposed.
 - Contact form writes `ContactEnquiry` rows as `NEW` with honeypot and rate limiting. Email notifications were not added.
 - Added sitemap, robots, canonical/Open Graph metadata, public revalidation after CMS mutations, and TipTap-safe public rendering.

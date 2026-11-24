@@ -1,3 +1,4 @@
+import './use-test-database.js'
 import assert from 'node:assert/strict'
 import { randomUUID } from 'node:crypto'
 import { mkdtempSync, rmSync } from 'node:fs'
@@ -52,21 +53,6 @@ async function createAdmin() {
   })
 }
 
-async function cleanup() {
-  await prisma.contactEnquiry.deleteMany({ where: { email: { startsWith: 'phase11-' } } })
-  await prisma.loginAttempt.deleteMany({ where: { identifier: { startsWith: 'enquiry' } } })
-  await prisma.benefitTranslation.deleteMany({})
-  await prisma.benefit.deleteMany({})
-  await prisma.practiceAreaTranslation.deleteMany({})
-  await prisma.practiceArea.deleteMany({})
-  await prisma.serviceTranslation.deleteMany({})
-  await prisma.service.deleteMany({})
-  await prisma.blogTranslation.deleteMany({})
-  await prisma.blog.deleteMany({})
-  await prisma.blogCategory.deleteMany({ where: { slug: { startsWith: 'phase11-' } } })
-  await prisma.mediaAsset.deleteMany({ where: { visibility: 'PUBLIC' } })
-  await prisma.adminUser.deleteMany({ where: { email: { startsWith: 'phase11-' } } })
-}
 
 before(async () => {
   if (!process.env.DATABASE_URL) throw new Error('DATABASE_URL is not set.')
@@ -74,11 +60,9 @@ before(async () => {
   storageRoot = mkdtempSync(join(tmpdir(), 'alzboon-phase11-'))
   process.env.STORAGE_ROOT = storageRoot
   passwordHash = await hashPassword(password)
-  await cleanup()
 })
 
 after(async () => {
-  await cleanup()
   await prisma.$disconnect()
   if (previousStorageRoot === undefined) delete process.env.STORAGE_ROOT
   else process.env.STORAGE_ROOT = previousStorageRoot
@@ -166,8 +150,6 @@ test('every saved service appears in public listing', async () => {
     const ar = serializePublicService(bySlug, 'ar')
     assert.equal(ar.name, 'خدمة ظاهرة')
   } finally {
-    await cleanup()
-    await prisma.adminUser.delete({ where: { id: actor.id } }).catch(() => {})
   }
 })
 
@@ -217,8 +199,6 @@ test('published blogs exclude hidden and future dates and omit attachments', asy
 
     assert.deepEqual(publishedBlogWhere(new Date('2020-01-02')).published, true)
   } finally {
-    await cleanup()
-    await prisma.adminUser.delete({ where: { id: actor.id } }).catch(() => {})
   }
 })
 
@@ -261,8 +241,6 @@ test('contact form validates creates NEW enquiries and rate limits', async () =>
         name: 'Client',
         email: address,
         phone: '+971500000000',
-        company: 'Acme',
-        country: 'UAE',
         serviceId: service.service.id,
         message: 'Please help',
         website: '',
@@ -275,25 +253,24 @@ test('contact form validates creates NEW enquiries and rate limits', async () =>
     assert.equal(row.status, 'NEW')
     assert.equal(row.serviceId, service.service.id)
 
-    const invalid = await submitPublicEnquiry(prisma, { name: '', email: 'bad', phone: '', company: '', country: '', message: '' }, { ip: '203.0.113.11' })
+    const invalid = await submitPublicEnquiry(prisma, { name: '', email: 'bad', phone: '', message: '' }, { ip: '203.0.113.11' })
     assert.equal(invalid.ok, false)
     assert.equal(invalid.code, 'INVALID')
 
+    const botEmail = `phase11-bot-${randomUUID()}@example.com`
     const honeypot = await submitPublicEnquiry(
       prisma,
       {
         name: 'Bot',
-        email: `phase11-bot-${randomUUID()}@example.com`,
+        email: botEmail,
         phone: '+971500000001',
-        company: 'Spam',
-        country: 'UAE',
         message: 'Spam',
         website: 'http://spam.test',
       },
       { ip: '203.0.113.12' },
     )
     assert.equal(honeypot.ok, true)
-    assert.equal(await prisma.contactEnquiry.count({ where: { company: 'Spam' } }), 0)
+    assert.equal(await prisma.contactEnquiry.count({ where: { email: botEmail } }), 0)
 
     for (let index = 0; index < 3; index += 1) {
       await submitPublicEnquiry(
@@ -302,8 +279,6 @@ test('contact form validates creates NEW enquiries and rate limits', async () =>
           name: 'Client',
           email: address,
           phone: '+971500000000',
-          company: 'Acme',
-          country: 'UAE',
           message: `Follow up ${index}`,
         },
         { ip: `203.0.113.${20 + index}` },
@@ -315,8 +290,6 @@ test('contact form validates creates NEW enquiries and rate limits', async () =>
         name: 'Client',
         email: address,
         phone: '+971500000000',
-        company: 'Acme',
-        country: 'UAE',
         message: 'Too many',
       },
       { ip: '203.0.113.99' },
@@ -324,7 +297,5 @@ test('contact form validates creates NEW enquiries and rate limits', async () =>
     assert.equal(limited.ok, false)
     assert.equal(limited.code, 'RATE_LIMITED')
   } finally {
-    await cleanup()
-    await prisma.adminUser.delete({ where: { id: actor.id } }).catch(() => {})
   }
 })

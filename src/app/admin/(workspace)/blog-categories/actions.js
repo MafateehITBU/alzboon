@@ -6,6 +6,8 @@ import { requirePermission } from '@/lib/auth/current-admin'
 import { createBlogCategory, deleteBlogCategory, updateBlogCategory } from '@/lib/blog/categories'
 import { blogActionMessage, BlogError } from '@/lib/blog/errors'
 import { getPrisma } from '@/lib/prisma/client'
+import { importBlogCategoriesCsv } from '@/lib/csv/categories-csv'
+import { formatImportResult } from '@/lib/csv/import-result'
 
 export async function createCategoryAction(_previous, formData) {
   const current = await requirePermission('MANAGE_BLOGS')
@@ -48,6 +50,28 @@ export async function deleteCategoryAction(_previous, formData) {
     return { ok: true, message: 'The category was deleted.' }
   } catch (error) {
     return failure(error)
+  }
+}
+
+export async function importBlogCategoriesCsvAction(formData) {
+  const current = await requirePermission('MANAGE_BLOGS')
+  try {
+    const file = formData.get('file')
+    if (!(file instanceof File) || file.size < 1) {
+      return { ok: false, message: 'Choose a CSV file to import.' }
+    }
+    const text = await file.text()
+    const result = await importBlogCategoriesCsv(getPrisma(), current.admin.id, text)
+    revalidatePath('/admin/blog-categories')
+    revalidatePath('/admin')
+    return {
+      ok: result.errors.length === 0 || result.created + result.updated > 0,
+      message: formatImportResult('categories', result),
+      result,
+    }
+  } catch (error) {
+    console.error(error)
+    return { ok: false, message: 'Categories CSV import failed.' }
   }
 }
 

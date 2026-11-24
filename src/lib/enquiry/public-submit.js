@@ -1,4 +1,5 @@
 import { availableServiceWhere } from '../service/public.js'
+import { isValidInternationalPhone, toE164Phone } from './phone.js'
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const ENQUIRY_EMAIL_WINDOW_MS = 60 * 60 * 1000
@@ -12,6 +13,8 @@ function clean(value, max) {
   return text.slice(0, max)
 }
 
+export { isValidInternationalPhone as isInternationalPhone } from './phone.js'
+
 export async function submitPublicEnquiry(db, input, { ip = 'unknown' } = {}) {
   const honeypot = String(input?.website ?? '').trim()
   if (honeypot) {
@@ -20,15 +23,18 @@ export async function submitPublicEnquiry(db, input, { ip = 'unknown' } = {}) {
 
   const name = clean(input?.name, 120)
   const email = clean(input?.email, 200).toLowerCase()
-  const phone = clean(input?.phone, 60)
-  const company = clean(input?.company, 160)
-  const country = clean(input?.country, 120)
+  const phoneRaw = clean(input?.phone, 60)
   const message = clean(input?.message, 5000)
   const serviceIdRaw = clean(input?.serviceId, 80)
 
-  if (!name || !email || !EMAIL_RE.test(email) || !phone || !company || !country || !message) {
+  if (!name || !email || !EMAIL_RE.test(email) || !message) {
     return { ok: false, code: 'INVALID' }
   }
+
+  if (phoneRaw && !isValidInternationalPhone(phoneRaw)) {
+    return { ok: false, code: 'INVALID_PHONE' }
+  }
+  const phone = phoneRaw ? toE164Phone(phoneRaw) : ''
 
   if (await isEmailRateLimited(db, email)) {
     return { ok: false, code: 'RATE_LIMITED' }
@@ -52,8 +58,6 @@ export async function submitPublicEnquiry(db, input, { ip = 'unknown' } = {}) {
       name,
       email,
       phone,
-      company,
-      country,
       serviceId,
       message,
       status: 'NEW',

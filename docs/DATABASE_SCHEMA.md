@@ -217,15 +217,13 @@ A service must retain at least one benefit.
 - name
 - email
 - phone
-- company
-- country
 - optional service id (`onDelete: SetNull` keeps the enquiry when a service is deleted)
 - message
 - `status`: `NEW`, `READ`, or `ARCHIVED`
 - timestamps
 - indexes on status and creation time
 
-Admin inbox search covers name, email, phone, and company. Dashboard new counts use `status = NEW`. The homepage newsletter does not write this table. There is no public enquiry submission route yet.
+Admin inbox search covers name, email, phone, message, status, and related service name. Dashboard new counts use `status = NEW`. Public `/contact` submissions write this table (company and country were removed).
 
 ## Media
 

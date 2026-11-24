@@ -1,5 +1,51 @@
 # Changelog
 
+## 2026-11-24 — Contact enquiries without company/country + form toast
+
+- Dropped `company` and `country` from `contact_enquiries` (schema + admin table/detail + public submit).
+- Contact form shows a success/failure toaster with the result message after submit.
+
+## 2026-11-24 — Admin list search + soft CSV media import
+
+- Shared AdminListToolbar on Services, Partners, Categories, Blogs, Enquiries, and Admins: live search, no Filter button.
+- List search matches the visible/related text columns (names, titles, slugs, authors, practice areas, enquiry fields, etc.).
+- CSV import no longer fails when images are missing: text rows are created/updated; missing images use a placeholder (or keep existing on update) so admins can upload files manually. Warnings are reported in the import message.
+
+## 2026-11-24 — Admin CSV export/import restore + list toolbar
+
+- CSV export embeds image bytes (base64) so import can recreate media after records and files were deleted.
+- Import upserts by id, slug, or English name/title (no duplicate rows on re-import).
+- Admin list toolbars: removed Filter buttons; search filters as you type; Export/Import sit in a segmented control beside New/Add.
+
+## 2026-11-24 — Admin CSV export/import
+
+- Added Export CSV / Import CSV on admin Services, Partners, Blog Categories, and Blogs list pages.
+- Import upserts by id/slug and restores linked media via media id, on-disk storage key, or embedded base64.
+- Nested service practice areas/benefits and blog TipTap documents are carried in JSON CSV cells.
+
+## 2026-11-23 — Remove all test database cleanup wipes
+
+- Removed every test `cleanup()` / blank `deleteMany({})` that could wipe services, blogs, media, partners, or website settings.
+- Fixture helpers that deleted rows are now no-ops. Auth and admin account suites also redirect to `*_test` via `use-test-database.js`.
+- Never run test files directly against the app database. Use `npm test` only.
+
+## 2026-11-23 — Contact Us page redesign
+
+- Rebuilt `/contact` and `/ar/contact` with the About hero image/overlay, breadcrumb, and heading.
+- Added a two-column enquiries section: left contact details (phones, email, locations, consultation hours from website settings + WhatsApp); right inquiry form matching the approved layout.
+- Public contact payload now includes bilingual business hours. Form fields: name, email, phone, service, message.
+
+## 2026-11-23 — Remove general services listing
+
+- Removed `/services` and `/ar/services` listing pages. Individual services stay at `/services/[slug]` and `/ar/services/[slug]`, reached from the header mega menu.
+- Service breadcrumbs are Home / current service only. Sitemap no longer lists the general services index.
+
+## 2026-11-23 — Public service detail pages
+
+- Rebuilt `/services/[slug]` and `/ar/services/[slug]` with one shared template matching the approved service Figma exports.
+- CMS-driven hero and practice-area accordion; presentation-only capability headings keyed by slug; shared methodology and lead-precedent sections in messages.
+- No schema changes; existing service IDs, slugs, translations, and media left intact.
+
 ## 2026-11-23 — Admin sidebar organization
 
 - Reorganized admin navigation to match the sectioned sidebar pattern: Dashboard, then Management / Content / Enquiries / Account.
@@ -21,7 +67,7 @@ Stabilization phase: security hardening, QA, and deployment documentation. No VP
 Connected the CMS to the public website without redesigning the Figma homepage.
 
 - Homepage header, practice cards, consultation WhatsApp, and footer read available services and website settings with design fallbacks.
-- Added bilingual public routes for About, Services, service detail, Blogs, blog detail, Contact, and Privacy. English stays unprefixed; Arabic uses `/ar`.
+- Added bilingual public routes for About, service detail, Blogs, blog detail, Contact, and Privacy. English stays unprefixed; Arabic uses `/ar`.
 - Services and blogs gained unique public slugs. Every saved service and published non-future blogs appear publicly. Private attachments stay admin-only.
 - Service admin no longer has an availability checkbox; all saved services show in the public header and service pages.
 - Implemented the bilingual About Us page (`/about`, `/ar/about`) with hero, institutional stats, founder profile (using `expertise-portrait.jpg`), credentials, and consultation CTA in the homepage design system. Documented Abu Dhabi Pro (EN) and GE Dinar Two (AR) as the approved global typography policy.

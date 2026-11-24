@@ -1,6 +1,7 @@
 /**
  * Force DB integration tests onto a dedicated `*_test` database.
- * Never run destructive cleanup against the development/production DB.
+ * Never touch the development/production database from tests.
+ * Tests must not wipe tables; there is no shared cleanup helper anymore.
  */
 const url = process.env.DATABASE_URL
 if (!url) {

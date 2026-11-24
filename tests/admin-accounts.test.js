@@ -1,3 +1,4 @@
+import './use-test-database.js'
 import assert from 'node:assert/strict'
 import { randomUUID } from 'node:crypto'
 import { mkdtempSync, rmSync } from 'node:fs'
@@ -27,21 +28,8 @@ function email() {
   return `phase5-test-${randomUUID()}@example.com`
 }
 
-async function removeFixtures(emails) {
-  const users = await prisma.adminUser.findMany({
-    where: { email: { in: emails } },
-    select: { id: true, profileMediaId: true },
-  })
-  const mediaIds = users.map((user) => user.profileMediaId).filter(Boolean)
-  await prisma.loginAttempt.deleteMany({ where: { identifier: { in: emails } } })
-  await prisma.adminUser.deleteMany({ where: { email: { in: emails } } })
-  if (mediaIds.length) {
-    const media = await prisma.mediaAsset.findMany({ where: { id: { in: mediaIds } }, select: { storageKey: true } })
-    await prisma.mediaAsset.deleteMany({ where: { id: { in: mediaIds } } })
-    for (const row of media) {
-      await removeStoredFile('PRIVATE', row.storageKey)
-    }
-  }
+async function removeFixtures(_emails) {
+  // Intentionally empty: never delete DB rows from tests.
 }
 
 /** Temporarily deactivate other active Super Admins so last-SA rules can be asserted. */
@@ -95,13 +83,9 @@ before(async () => {
   storageRoot = mkdtempSync(join(tmpdir(), 'alzboon-phase5-'))
   process.env.STORAGE_ROOT = storageRoot
   passwordHash = await hashPassword(password)
-  await prisma.adminUser.deleteMany({ where: { email: { startsWith: 'phase5-test-' } } })
-  await prisma.loginAttempt.deleteMany({ where: { identifier: { startsWith: 'phase5-test-' } } })
 })
 
 after(async () => {
-  await prisma.adminUser.deleteMany({ where: { email: { startsWith: 'phase5-test-' } } })
-  await prisma.loginAttempt.deleteMany({ where: { identifier: { startsWith: 'phase5-test-' } } })
   await prisma.$disconnect()
   if (previousStorageRoot === undefined) delete process.env.STORAGE_ROOT
   else process.env.STORAGE_ROOT = previousStorageRoot

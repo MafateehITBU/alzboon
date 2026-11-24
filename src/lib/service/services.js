@@ -33,11 +33,47 @@ export async function listServices(db, actorId, query) {
 
   const where = {}
   if (query.search) {
-    where.translations = {
-      some: {
-        name: { contains: query.search, mode: 'insensitive' },
+    const q = query.search
+    where.OR = [
+      { slug: { contains: q, mode: 'insensitive' } },
+      {
+        translations: {
+          some: {
+            OR: [
+              { name: { contains: q, mode: 'insensitive' } },
+              { heroTitle: { contains: q, mode: 'insensitive' } },
+              { heroDescription: { contains: q, mode: 'insensitive' } },
+              { overviewTitle: { contains: q, mode: 'insensitive' } },
+              { overviewDescription: { contains: q, mode: 'insensitive' } },
+            ],
+          },
+        },
       },
-    }
+      {
+        practiceAreas: {
+          some: {
+            translations: {
+              some: {
+                OR: [
+                  { title: { contains: q, mode: 'insensitive' } },
+                  { subtitle: { contains: q, mode: 'insensitive' } },
+                  { description: { contains: q, mode: 'insensitive' } },
+                ],
+              },
+            },
+          },
+        },
+      },
+      {
+        benefits: {
+          some: {
+            translations: {
+              some: { text: { contains: q, mode: 'insensitive' } },
+            },
+          },
+        },
+      },
+    ]
   }
 
   const page = query.page || 1

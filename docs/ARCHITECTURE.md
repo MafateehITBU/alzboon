@@ -13,7 +13,6 @@ src/
       page.js
       not-found.js
       about/
-      services/
       services/[slug]/
       blogs/
       blogs/[slug]/
@@ -67,7 +66,7 @@ Public routes other than the homepage and not-found page are created only when t
 
 ## Component organization
 
-Homepage sections live in `src/components/website/home`. Header and Footer are client components because they hold menu, language, and form state. The remaining homepage sections are server components.
+Homepage sections live in `src/components/website/home`. Header and Footer are client components because they hold menu, language, and form state. The remaining homepage sections are server components. Public service detail sections live in `src/components/website/services` and assemble through `ServicePageView.jsx`. Hero capability headings are presentation-only (`src/lib/services/service-presentation.js`); practice points and images come from Prisma. Public contact sections live in `src/components/website/contact` and assemble through `ContactPageView.jsx`; phones, email, addresses, and business hours come from website settings via `getPublicWebsiteContact`.
 
 The admin shell is `src/components/admin/AdminShell.jsx`. Page headings use `src/components/admin/PageHeader.jsx`. Shared admin button and field classes live in `src/components/admin/adminStyles.js`. Image and attachment uploads use `ImageUploadField` and `FileUploadField`. Navigation visibility is decided in `src/lib/admin/navigation.js` and dashboard counts are read in `src/lib/admin/dashboard.js`. Admin account management lives in `src/app/admin/(workspace)/admins`. Website settings live in `src/app/admin/(workspace)/website` with `src/lib/website/settings.js`. Partners live in `src/app/admin/(workspace)/partners` with `src/lib/website/partners.js`. Blog categories and blogs live in `src/app/admin/(workspace)/blog-categories` and `src/app/admin/(workspace)/blogs`, with domain logic in `src/lib/blog/`. TipTap editing uses `src/components/admin/blog/RichTextEditor.jsx`. Services live in `src/app/admin/(workspace)/services` with domain logic in `src/lib/service/`. Practice areas and benefits keep order through `sortOrder`. Contact enquiries live in `src/app/admin/(workspace)/contact-enquiries` with domain logic in `src/lib/enquiry/`. Self-service account editing lives in `src/app/admin/(workspace)/account` with domain logic in `src/lib/auth/self-account.js`. The shell does not open Prisma. Login stays in `src/app/admin/login`. The workspace route group does not change the public URLs.
 

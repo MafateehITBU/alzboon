@@ -34,11 +34,21 @@ export async function listBlogs(db, actorId, query) {
   if (query.status === 'published') where.published = true
   if (query.status === 'hidden') where.published = false
   if (query.search) {
-    where.translations = {
-      some: {
-        title: { contains: query.search, mode: 'insensitive' },
+    const q = query.search
+    where.OR = [
+      { slug: { contains: q, mode: 'insensitive' } },
+      { authorName: { contains: q, mode: 'insensitive' } },
+      { translations: { some: { title: { contains: q, mode: 'insensitive' } } } },
+      {
+        category: {
+          OR: [
+            { nameEn: { contains: q, mode: 'insensitive' } },
+            { nameAr: { contains: q, mode: 'insensitive' } },
+            { slug: { contains: q, mode: 'insensitive' } },
+          ],
+        },
       },
-    }
+    ]
   }
 
   const page = query.page || 1

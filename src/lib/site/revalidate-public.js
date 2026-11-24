@@ -6,8 +6,6 @@ export function revalidatePublicContent({ home = false, services = false, blogs 
     revalidatePath('/ar')
   }
   if (services) {
-    revalidatePath('/services')
-    revalidatePath('/ar/services')
     revalidatePath('/services', 'layout')
     revalidatePath('/ar/services', 'layout')
   }

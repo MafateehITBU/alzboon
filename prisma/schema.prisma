@@ -330,8 +330,6 @@ model ContactEnquiry {
   name      String
   email     String
   phone     String
-  company   String
-  country   String
   serviceId String?       @map("service_id") @db.Uuid
   message   String
   status    EnquiryStatus @default(NEW)

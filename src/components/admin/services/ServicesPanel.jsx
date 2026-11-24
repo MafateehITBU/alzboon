@@ -4,12 +4,12 @@ import { useActionState, useEffect, useId, useRef, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Pencil, Plus, Trash2 } from 'lucide-react'
+import AdminListToolbar from '@/components/admin/AdminListToolbar'
 import AdminToast from '@/components/admin/AdminToast'
+import CsvImportExport from '@/components/admin/CsvImportExport'
+import useLiveSearch from '@/components/admin/useLiveSearch'
 import { adminTealButton } from '@/components/admin/adminStyles'
-import { deleteServiceAction } from '@/app/admin/(workspace)/services/actions'
-
-const inputClass =
-  'min-h-11 rounded-xl border border-line/90 bg-white px-3.5 font-jakarta text-sm text-ink shadow-[inset_0_1px_2px_rgba(1,19,32,0.03)] transition-[border-color,box-shadow] duration-200 hover:border-teal/25 focus:border-teal/50 focus:shadow-[0_0_0_4px_rgba(63,131,119,0.12)] focus-visible:outline-none'
+import { deleteServiceAction, importServicesCsvAction } from '@/app/admin/(workspace)/services/actions'
 
 const initialState = { ok: false, message: '' }
 
@@ -22,6 +22,13 @@ export default function ServicesPanel({ query, listing, loadError, notice = '' }
   const router = useRouter()
   const [toast, setToast] = useState(null)
   const [deleting, setDeleting] = useState(null)
+  const [search, onSearchChange] = useLiveSearch(query.search || '', (value) => {
+    const params = new URLSearchParams()
+    const q = value.trim()
+    if (q) params.set('q', q)
+    const next = params.toString()
+    router.push(next ? `/admin/services?${next}` : '/admin/services')
+  })
 
   useEffect(() => {
     if (!notice || !NOTICE_MESSAGES[notice]) return
@@ -46,36 +53,32 @@ export default function ServicesPanel({ query, listing, loadError, notice = '' }
     <div className="grid gap-4">
       <AdminToast toast={toast} onClose={() => setToast(null)} />
 
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <form
-          className="flex min-w-0 flex-1 flex-wrap gap-3"
-          onSubmit={(event) => {
-            event.preventDefault()
-            const data = new FormData(event.currentTarget)
-            const params = new URLSearchParams()
-            const q = String(data.get('q') || '').trim()
-            if (q) params.set('q', q)
-            const next = params.toString()
-            router.push(next ? `/admin/services?${next}` : '/admin/services')
-          }}
-        >
-          <label className="sr-only" htmlFor="service-search">
-            Search services
-          </label>
-          <input id="service-search" name="q" defaultValue={query.search} placeholder="Search names" className={`${inputClass} min-w-[12rem] flex-1`} />
-          <button type="submit" className={adminTealButton}>
-            Filter
-          </button>
-        </form>
-        <Link href="/admin/services/new" className={adminTealButton}>
-          <Plus aria-hidden="true" size={16} />
-          New service
-        </Link>
-      </div>
+      <AdminListToolbar
+        searchId="service-search"
+        searchLabel="Search services"
+        searchPlaceholder="Search all service fields"
+        searchValue={search}
+        onSearchChange={onSearchChange}
+        actions={
+          <>
+            <CsvImportExport
+              exportHref="/admin/services/export"
+              importAction={importServicesCsvAction}
+              entityLabel="services"
+            />
+            <Link href="/admin/services/new" className={adminTealButton}>
+              <Plus aria-hidden="true" size={16} />
+              New service
+            </Link>
+          </>
+        }
+      />
 
       {loadError ? <p className="rounded-lg border border-danger/30 bg-white p-5 font-jakarta text-sm text-danger">{loadError}</p> : null}
       {!loadError && listing?.services.length === 0 ? (
-        <p className="rounded-2xl border border-white/70 bg-white/90 p-5 font-jakarta text-sm text-body shadow-[0_18px_40px_-28px_rgba(1,19,32,0.28)] backdrop-blur-sm">No services match these filters.</p>
+        <p className="rounded-2xl border border-white/70 bg-white/90 p-5 font-jakarta text-sm text-body shadow-[0_18px_40px_-28px_rgba(1,19,32,0.28)] backdrop-blur-sm">
+          {search.trim() ? 'No services match this search.' : 'No services yet.'}
+        </p>
       ) : null}
 
       {!loadError && listing?.services.length > 0 ? (
@@ -118,11 +121,18 @@ export default function ServicesPanel({ query, listing, loadError, notice = '' }
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex gap-2">
-                        <Link href={`/admin/services/${service.id}/edit`} className="inline-flex size-10 items-center justify-center rounded border border-line">
+                        <Link
+                          href={`/admin/services/${service.id}/edit`}
+                          className="inline-flex size-10 items-center justify-center rounded border border-line"
+                        >
                           <Pencil aria-hidden="true" size={16} />
                           <span className="sr-only">Edit {service.nameEn}</span>
                         </Link>
-                        <button type="button" onClick={() => setDeleting(service)} className="inline-flex size-10 items-center justify-center rounded border border-line text-danger">
+                        <button
+                          type="button"
+                          onClick={() => setDeleting(service)}
+                          className="inline-flex size-10 items-center justify-center rounded border border-line text-danger"
+                        >
                           <Trash2 aria-hidden="true" size={16} />
                           <span className="sr-only">Delete {service.nameEn}</span>
                         </button>
@@ -139,10 +149,20 @@ export default function ServicesPanel({ query, listing, loadError, notice = '' }
                 Page {listing.page} of {listing.pageCount}
               </p>
               <div className="flex gap-2">
-                <button type="button" disabled={listing.page <= 1} onClick={() => goPage(router, query, listing.page - 1)} className="min-h-11 rounded border border-line px-4 disabled:opacity-40">
+                <button
+                  type="button"
+                  disabled={listing.page <= 1}
+                  onClick={() => goPage(router, query, listing.page - 1)}
+                  className="min-h-11 rounded border border-line px-4 disabled:opacity-40"
+                >
                   Previous
                 </button>
-                <button type="button" disabled={listing.page >= listing.pageCount} onClick={() => goPage(router, query, listing.page + 1)} className="min-h-11 rounded border border-line px-4 disabled:opacity-40">
+                <button
+                  type="button"
+                  disabled={listing.page >= listing.pageCount}
+                  onClick={() => goPage(router, query, listing.page + 1)}
+                  className="min-h-11 rounded border border-line px-4 disabled:opacity-40"
+                >
                   Next
                 </button>
               </div>
@@ -170,7 +190,12 @@ function DeleteDialog({ service, onClose, onSaved }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/45 px-4">
       <button type="button" className="absolute inset-0" aria-label="Close dialog" onClick={onClose} />
-      <div role="dialog" aria-modal="true" aria-labelledby={titleId} className="relative z-10 w-full max-w-md rounded-2xl border border-white/80 bg-white/95 p-5 shadow-[0_30px_80px_-36px_rgba(1,19,32,0.5)] backdrop-blur-xl">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        className="relative z-10 w-full max-w-md rounded-2xl border border-white/80 bg-white/95 p-5 shadow-[0_30px_80px_-36px_rgba(1,19,32,0.5)] backdrop-blur-xl"
+      >
         <h2 id={titleId} className="font-abu text-2xl text-ink">
           Delete service
         </h2>
@@ -183,7 +208,11 @@ function DeleteDialog({ service, onClose, onSaved }) {
           <button type="button" onClick={onClose} className="min-h-11 rounded border border-line px-4 font-jakarta text-sm">
             Cancel
           </button>
-          <button type="submit" disabled={pending} className="min-h-11 rounded bg-danger px-4 font-jakarta text-sm font-semibold text-white disabled:opacity-60">
+          <button
+            type="submit"
+            disabled={pending}
+            className="min-h-11 rounded bg-danger px-4 font-jakarta text-sm font-semibold text-white disabled:opacity-60"
+          >
             {pending ? 'Deleting…' : 'Delete'}
           </button>
         </form>

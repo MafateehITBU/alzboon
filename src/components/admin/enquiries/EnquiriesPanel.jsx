@@ -3,14 +3,15 @@
 import { useActionState, useEffect, useId, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Eye, Trash2 } from 'lucide-react'
-import { adminTealButton } from '@/components/admin/adminStyles'
+import AdminListToolbar from '@/components/admin/AdminListToolbar'
+import useLiveSearch from '@/components/admin/useLiveSearch'
+import { adminFieldClass, adminTealButton } from '@/components/admin/adminStyles'
 import {
   deleteEnquiryAction,
   updateEnquiryStatusAction,
 } from '@/app/admin/(workspace)/contact-enquiries/actions'
 
-const inputClass =
-  'min-h-11 rounded-xl border border-line/90 bg-white px-3.5 font-jakarta text-sm text-ink shadow-[inset_0_1px_2px_rgba(1,19,32,0.03)] transition-[border-color,box-shadow] duration-200 hover:border-teal/25 focus:border-teal/50 focus:shadow-[0_0_0_4px_rgba(63,131,119,0.12)] focus-visible:outline-none'
+const inputClass = `${adminFieldClass} sm:w-auto`
 
 const initialState = { ok: false, message: '' }
 
@@ -25,12 +26,39 @@ export default function EnquiriesPanel({ query, listing, services, loadError }) 
   const [toast, setToast] = useState(null)
   const [viewing, setViewing] = useState(null)
   const [deleting, setDeleting] = useState(null)
+  const [status, setStatus] = useState(query.status || '')
+  const [serviceId, setServiceId] = useState(query.serviceId || '')
+
+  useEffect(() => {
+    setStatus(query.status || '')
+    setServiceId(query.serviceId || '')
+  }, [query.status, query.serviceId])
 
   useEffect(() => {
     if (!toast) return undefined
     const timer = setTimeout(() => setToast(null), 4000)
     return () => clearTimeout(timer)
   }, [toast])
+
+  const [search, onSearchChange] = useLiveSearch(query.search || '', (value) => {
+    const params = new URLSearchParams()
+    const trimmed = String(value || '').trim()
+    if (trimmed) params.set('q', trimmed)
+    if (status) params.set('status', status)
+    if (serviceId) params.set('service', serviceId)
+    const next = params.toString()
+    router.push(next ? `/admin/contact-enquiries?${next}` : '/admin/contact-enquiries')
+  })
+
+  function pushFilters({ q = search, nextStatus = status, service = serviceId } = {}) {
+    const params = new URLSearchParams()
+    const trimmed = String(q || '').trim()
+    if (trimmed) params.set('q', trimmed)
+    if (nextStatus) params.set('status', nextStatus)
+    if (service) params.set('service', service)
+    const next = params.toString()
+    router.push(next ? `/admin/contact-enquiries?${next}` : '/admin/contact-enquiries')
+  }
 
   function onSaved(result) {
     if (!result?.message) return
@@ -60,51 +88,50 @@ export default function EnquiriesPanel({ query, listing, services, loadError }) 
         </p>
       ) : null}
 
-      <form
-        className="flex flex-wrap gap-3"
-        onSubmit={(event) => {
-          event.preventDefault()
-          const data = new FormData(event.currentTarget)
-          const params = new URLSearchParams()
-          const q = String(data.get('q') || '').trim()
-          const status = String(data.get('status') || '')
-          const service = String(data.get('service') || '')
-          if (q) params.set('q', q)
-          if (status) params.set('status', status)
-          if (service) params.set('service', service)
-          const next = params.toString()
-          router.push(next ? `/admin/contact-enquiries?${next}` : '/admin/contact-enquiries')
-        }}
-      >
-        <label className="sr-only" htmlFor="enquiry-search">
-          Search enquiries
-        </label>
-        <input
-          id="enquiry-search"
-          name="q"
-          defaultValue={query.search}
-          placeholder="Search name, email, phone, company"
-          className={`${inputClass} min-w-[14rem] flex-1`}
-        />
-        <select name="status" defaultValue={query.status} className={inputClass} aria-label="Status">
-          <option value="">All statuses</option>
-          <option value="NEW">New</option>
-          <option value="READ">Read</option>
-          <option value="ARCHIVED">Archived</option>
-        </select>
-        <select name="service" defaultValue={query.serviceId} className={inputClass} aria-label="Service">
-          <option value="">All services</option>
-          <option value="none">No service selected</option>
-          {services.map((service) => (
-            <option key={service.id} value={service.id}>
-              {service.name}
-            </option>
-          ))}
-        </select>
-        <button type="submit" className={adminTealButton}>
-          Filter
-        </button>
-      </form>
+      <AdminListToolbar
+        searchId="enquiry-search"
+        searchLabel="Search enquiries"
+        searchPlaceholder="Search contact, service, message, status"
+        searchValue={search}
+        onSearchChange={onSearchChange}
+        filters={
+          <>
+            <select
+              value={status}
+              onChange={(event) => {
+                const next = event.target.value
+                setStatus(next)
+                pushFilters({ q: search, nextStatus: next })
+              }}
+              className={inputClass}
+              aria-label="Status"
+            >
+              <option value="">All statuses</option>
+              <option value="NEW">New</option>
+              <option value="READ">Read</option>
+              <option value="ARCHIVED">Archived</option>
+            </select>
+            <select
+              value={serviceId}
+              onChange={(event) => {
+                const next = event.target.value
+                setServiceId(next)
+                pushFilters({ q: search, service: next })
+              }}
+              className={inputClass}
+              aria-label="Service"
+            >
+              <option value="">All services</option>
+              <option value="none">No service selected</option>
+              {services.map((service) => (
+                <option key={service.id} value={service.id}>
+                  {service.name}
+                </option>
+              ))}
+            </select>
+          </>
+        }
+      />
 
       {loadError ? <p className="rounded-lg border border-danger/30 bg-white p-5 font-jakarta text-sm text-danger">{loadError}</p> : null}
       {!loadError && listing?.enquiries.length === 0 ? (
@@ -118,8 +145,6 @@ export default function EnquiriesPanel({ query, listing, services, loadError }) 
               <thead className="border-b border-line/70 bg-[#f7f5ef]/70">
                 <tr className="font-jakarta text-xs tracking-wide text-muted uppercase">
                   <th className="px-4 py-3 font-semibold">Contact</th>
-                  <th className="px-4 py-3 font-semibold">Company</th>
-                  <th className="px-4 py-3 font-semibold">Country</th>
                   <th className="px-4 py-3 font-semibold">Service</th>
                   <th className="px-4 py-3 font-semibold">Submitted</th>
                   <th className="px-4 py-3 font-semibold">Status</th>
@@ -134,8 +159,6 @@ export default function EnquiriesPanel({ query, listing, services, loadError }) 
                       <p className="mt-1 font-jakarta text-xs text-body">{enquiry.email}</p>
                       <p className="mt-1 font-jakarta text-xs text-body">{enquiry.phone}</p>
                     </td>
-                    <td className="px-4 py-3 font-jakarta text-sm text-body">{enquiry.company}</td>
-                    <td className="px-4 py-3 font-jakarta text-sm text-body">{enquiry.country}</td>
                     <td className="px-4 py-3 font-jakarta text-sm text-body">{enquiry.serviceName}</td>
                     <td className="px-4 py-3 font-jakarta text-sm whitespace-nowrap text-body">{formatDate(enquiry.createdAt)}</td>
                     <td className="px-4 py-3">
@@ -211,8 +234,6 @@ function DetailDialog({ enquiry, onClose, onSaved, onDelete }) {
         <dl className="mt-5 grid gap-3 min-[720px]:grid-cols-2">
           <DetailItem label="Email" value={enquiry.email} />
           <DetailItem label="Phone" value={enquiry.phone} />
-          <DetailItem label="Company" value={enquiry.company} />
-          <DetailItem label="Country" value={enquiry.country} />
           <DetailItem label="Service" value={enquiry.serviceName} />
           <DetailItem label="Status" value={statusLabel(enquiry.status)} />
         </dl>

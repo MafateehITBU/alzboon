@@ -9,8 +9,6 @@ export default async function sitemap() {
     '/ar',
     '/about',
     '/ar/about',
-    '/services',
-    '/ar/services',
     '/blogs',
     '/ar/blogs',
     '/contact',

@@ -3,8 +3,10 @@
 import { useActionState, useEffect, useId, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Pencil, Plus, Trash2 } from 'lucide-react'
+import AdminListToolbar from '@/components/admin/AdminListToolbar'
 import ImageUploadField from '@/components/admin/ImageUploadField'
-import { adminDangerButton, adminOutlineButton, adminTealButton } from '@/components/admin/adminStyles'
+import useLiveSearch from '@/components/admin/useLiveSearch'
+import { adminDangerButton, adminFieldClass, adminOutlineButton, adminTealButton } from '@/components/admin/adminStyles'
 import { accountInitials, permissionLabel, roleLabel } from '@/lib/admin/navigation'
 import { createAdminAction, deleteAdminAction, updateAdminAction } from '@/app/admin/(workspace)/admins/actions'
 
@@ -23,6 +25,13 @@ export default function AdminAccountsPanel({ actor, query, listing, loadError })
   const [toast, setToast] = useState(null)
   const [editor, setEditor] = useState(null)
   const [deleting, setDeleting] = useState(null)
+  const [role, setRole] = useState(query.role || '')
+  const [status, setStatus] = useState(query.status || '')
+
+  useEffect(() => {
+    setRole(query.role || '')
+    setStatus(query.status || '')
+  }, [query.role, query.status])
 
   useEffect(() => {
     if (!toast) return undefined
@@ -30,14 +39,22 @@ export default function AdminAccountsPanel({ actor, query, listing, loadError })
     return () => clearTimeout(timer)
   }, [toast])
 
-  function applyFilters(formData) {
+  const [search, onSearchChange] = useLiveSearch(query.search || '', (value) => {
     const params = new URLSearchParams()
-    const q = String(formData.get('q') || '').trim()
-    const role = String(formData.get('role') || '')
-    const status = String(formData.get('status') || '')
+    const q = String(value || '').trim()
     if (q) params.set('q', q)
     if (role) params.set('role', role)
     if (status) params.set('status', status)
+    const next = params.toString()
+    router.push(next ? `/admin/admins?${next}` : '/admin/admins')
+  })
+
+  function pushFilters({ q = search, nextRole = role, nextStatus = status } = {}) {
+    const params = new URLSearchParams()
+    const trimmed = String(q || '').trim()
+    if (trimmed) params.set('q', trimmed)
+    if (nextRole) params.set('role', nextRole)
+    if (nextStatus) params.set('status', nextStatus)
     const next = params.toString()
     router.push(next ? `/admin/admins?${next}` : '/admin/admins')
   }
@@ -73,59 +90,53 @@ export default function AdminAccountsPanel({ actor, query, listing, loadError })
         </p>
       ) : null}
 
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <form
-          className="flex min-w-0 flex-1 flex-wrap gap-3"
-          onSubmit={(event) => {
-            event.preventDefault()
-            applyFilters(new FormData(event.currentTarget))
-          }}
-        >
-          <label className="sr-only" htmlFor="admin-search">
-            Search admins
-          </label>
-          <input
-            id="admin-search"
-            name="q"
-            defaultValue={query.search}
-            placeholder="Search name or email"
-            className="min-h-11 min-w-[12rem] flex-1 rounded border border-line bg-white px-3 font-jakarta text-sm text-ink focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
-          />
-          <label className="sr-only" htmlFor="admin-role">
-            Role
-          </label>
-          <select
-            id="admin-role"
-            name="role"
-            defaultValue={query.role}
-            className="min-h-11 rounded-xl border border-line/90 bg-white px-3.5 font-jakarta text-sm text-ink shadow-[inset_0_1px_2px_rgba(1,19,32,0.03)] transition-[border-color,box-shadow] duration-200 hover:border-teal/25 focus:border-teal/50 focus:shadow-[0_0_0_4px_rgba(63,131,119,0.12)] focus-visible:outline-none"
-          >
-            <option value="">All roles</option>
-            <option value="SUPER_ADMIN">Super Admin</option>
-            <option value="ADMIN">Admin</option>
-          </select>
-          <label className="sr-only" htmlFor="admin-status">
-            Status
-          </label>
-          <select
-            id="admin-status"
-            name="status"
-            defaultValue={query.status}
-            className="min-h-11 rounded-xl border border-line/90 bg-white px-3.5 font-jakarta text-sm text-ink shadow-[inset_0_1px_2px_rgba(1,19,32,0.03)] transition-[border-color,box-shadow] duration-200 hover:border-teal/25 focus:border-teal/50 focus:shadow-[0_0_0_4px_rgba(63,131,119,0.12)] focus-visible:outline-none"
-          >
-            <option value="">All statuses</option>
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
-          </select>
-          <button type="submit" className={adminTealButton}>
-            Filter
+      <AdminListToolbar
+        searchId="admin-search"
+        searchLabel="Search admins"
+        searchPlaceholder="Search name, email, role, or status"
+        searchValue={search}
+        onSearchChange={onSearchChange}
+        filters={
+          <>
+            <select
+              id="admin-role"
+              value={role}
+              onChange={(event) => {
+                const next = event.target.value
+                setRole(next)
+                pushFilters({ nextRole: next })
+              }}
+              className={`${adminFieldClass} sm:w-auto`}
+              aria-label="Role"
+            >
+              <option value="">All roles</option>
+              <option value="SUPER_ADMIN">Super Admin</option>
+              <option value="ADMIN">Admin</option>
+            </select>
+            <select
+              id="admin-status"
+              value={status}
+              onChange={(event) => {
+                const next = event.target.value
+                setStatus(next)
+                pushFilters({ nextStatus: next })
+              }}
+              className={`${adminFieldClass} sm:w-auto`}
+              aria-label="Status"
+            >
+              <option value="">All statuses</option>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </>
+        }
+        actions={
+          <button type="button" onClick={() => setEditor({ mode: 'create' })} className={adminTealButton}>
+            <Plus aria-hidden="true" size={16} />
+            Add Admin
           </button>
-        </form>
-        <button type="button" onClick={() => setEditor({ mode: 'create' })} className={adminTealButton}>
-          <Plus aria-hidden="true" size={16} />
-          Add Admin
-        </button>
-      </div>
+        }
+      />
 
       {loadError ? (
         <p className="rounded-lg border border-danger/30 bg-white p-5 font-jakarta text-sm text-danger">{loadError}</p>

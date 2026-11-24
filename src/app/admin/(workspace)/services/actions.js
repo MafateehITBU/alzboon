@@ -10,6 +10,8 @@ import { removeStoredFile } from '@/lib/storage/objects'
 import { getPrisma } from '@/lib/prisma/client'
 import { createService, deleteService, updateService } from '@/lib/service/services'
 import { serviceActionMessage, ServiceError } from '@/lib/service/errors'
+import { importServicesCsv } from '@/lib/csv/services-csv'
+import { formatImportResult } from '@/lib/csv/import-result'
 
 export async function createServiceAction(_previous, formData) {
   const current = await requirePermission('MANAGE_SERVICES')
@@ -115,6 +117,29 @@ function parseJson(value) {
     return Array.isArray(parsed) ? parsed : []
   } catch {
     return []
+  }
+}
+
+export async function importServicesCsvAction(formData) {
+  const current = await requirePermission('MANAGE_SERVICES')
+  try {
+    const file = formData.get('file')
+    if (!(file instanceof File) || file.size < 1) {
+      return { ok: false, message: 'Choose a CSV file to import.' }
+    }
+    const text = await file.text()
+    const result = await importServicesCsv(getPrisma(), current.admin.id, text)
+    revalidatePath('/admin/services')
+    revalidatePath('/admin')
+    revalidatePublicContent({ home: true, services: true })
+    return {
+      ok: result.errors.length === 0 || result.created + result.updated > 0,
+      message: formatImportResult('services', result),
+      result,
+    }
+  } catch (error) {
+    console.error(error)
+    return { ok: false, message: 'Services CSV import failed.' }
   }
 }
 

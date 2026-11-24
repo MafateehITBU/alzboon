@@ -11,6 +11,8 @@ import { discardAttachment, saveAttachment } from '@/lib/media/save-attachment'
 import { discardPublicImage, savePublicImage } from '@/lib/media/save-public-image'
 import { removeStoredFile } from '@/lib/storage/objects'
 import { getPrisma } from '@/lib/prisma/client'
+import { importBlogsCsv } from '@/lib/csv/blogs-csv'
+import { formatImportResult } from '@/lib/csv/import-result'
 
 export async function createBlogAction(_previous, formData) {
   const current = await requirePermission('MANAGE_BLOGS')
@@ -108,6 +110,29 @@ export async function deleteBlogAction(_previous, formData) {
     return { ok: true, message: 'The blog was deleted.' }
   } catch (error) {
     return failure(error)
+  }
+}
+
+export async function importBlogsCsvAction(formData) {
+  const current = await requirePermission('MANAGE_BLOGS')
+  try {
+    const file = formData.get('file')
+    if (!(file instanceof File) || file.size < 1) {
+      return { ok: false, message: 'Choose a CSV file to import.' }
+    }
+    const text = await file.text()
+    const result = await importBlogsCsv(getPrisma(), current.admin.id, text)
+    revalidatePath('/admin/blogs')
+    revalidatePath('/admin')
+    revalidatePublicContent({ blogs: true })
+    return {
+      ok: result.errors.length === 0 || result.created + result.updated > 0,
+      message: formatImportResult('blogs', result),
+      result,
+    }
+  } catch (error) {
+    console.error(error)
+    return { ok: false, message: 'Blogs CSV import failed.' }
   }
 }
 

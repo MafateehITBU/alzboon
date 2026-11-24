@@ -10,17 +10,22 @@ export async function loadPublicSiteData(localeInput = 'en') {
   let contact = null
   let services = []
 
+  if (!process.env.DATABASE_URL) {
+    return { locale, messages, contact, services }
+  }
+
+  const db = getPrisma()
+
   try {
-    if (process.env.DATABASE_URL) {
-      const db = getPrisma()
-      ;[contact, services] = await Promise.all([
-        getPublicWebsiteContact(db),
-        listAvailableServices(db, { take: 24 }),
-      ])
-      services = services.map((service) => serializePublicServiceCard(service, locale)).filter(Boolean)
-    }
+    contact = await getPublicWebsiteContact(db)
   } catch {
     contact = null
+  }
+
+  try {
+    const rows = await listAvailableServices(db, { take: 50 })
+    services = rows.map((service) => serializePublicServiceCard(service, locale)).filter(Boolean)
+  } catch {
     services = []
   }
 

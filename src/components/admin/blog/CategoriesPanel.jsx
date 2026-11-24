@@ -3,15 +3,18 @@
 import { useActionState, useEffect, useId, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Pencil, Plus, Trash2 } from 'lucide-react'
-import { adminOutlineButton, adminTealButton } from '@/components/admin/adminStyles'
+import AdminListToolbar from '@/components/admin/AdminListToolbar'
+import CsvImportExport from '@/components/admin/CsvImportExport'
+import useLiveSearch from '@/components/admin/useLiveSearch'
+import { adminFieldClass, adminOutlineButton, adminTealButton } from '@/components/admin/adminStyles'
 import {
   createCategoryAction,
   deleteCategoryAction,
+  importBlogCategoriesCsvAction,
   updateCategoryAction,
 } from '@/app/admin/(workspace)/blog-categories/actions'
 
-const inputClass =
-  'min-h-11 w-full rounded-xl border border-line/90 bg-white px-3.5 font-jakarta text-sm text-ink shadow-[inset_0_1px_2px_rgba(1,19,32,0.03)] transition-[border-color,box-shadow] duration-200 hover:border-teal/25 focus:border-teal/50 focus:shadow-[0_0_0_4px_rgba(63,131,119,0.12)] focus-visible:outline-none'
+const inputClass = adminFieldClass
 
 const initialState = { ok: false, message: '' }
 
@@ -20,6 +23,10 @@ export default function CategoriesPanel({ query, listing, loadError }) {
   const [toast, setToast] = useState(null)
   const [editor, setEditor] = useState(null)
   const [deleting, setDeleting] = useState(null)
+  const [search, onSearchChange] = useLiveSearch(query.search || '', (value) => {
+    const q = value.trim()
+    router.push(q ? `/admin/blog-categories?q=${encodeURIComponent(q)}` : '/admin/blog-categories')
+  })
 
   useEffect(() => {
     if (!toast) return undefined
@@ -45,28 +52,26 @@ export default function CategoriesPanel({ query, listing, loadError }) {
         </p>
       ) : null}
 
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <form
-          className="flex min-w-0 flex-1 flex-wrap gap-3"
-          onSubmit={(event) => {
-            event.preventDefault()
-            const q = String(new FormData(event.currentTarget).get('q') || '').trim()
-            router.push(q ? `/admin/blog-categories?q=${encodeURIComponent(q)}` : '/admin/blog-categories')
-          }}
-        >
-          <label className="sr-only" htmlFor="category-search">
-            Search categories
-          </label>
-          <input id="category-search" name="q" defaultValue={query.search} placeholder="Search name or slug" className={`${inputClass} min-w-[12rem] flex-1`} />
-          <button type="submit" className={adminTealButton}>
-            Filter
-          </button>
-        </form>
-        <button type="button" onClick={() => setEditor({ mode: 'create' })} className={adminTealButton}>
-          <Plus aria-hidden="true" size={16} />
-          Add category
-        </button>
-      </div>
+      <AdminListToolbar
+        searchId="category-search"
+        searchLabel="Search categories"
+        searchPlaceholder="Search English, Arabic, or slug"
+        searchValue={search}
+        onSearchChange={onSearchChange}
+        actions={
+          <>
+            <CsvImportExport
+              exportHref="/admin/blog-categories/export"
+              importAction={importBlogCategoriesCsvAction}
+              entityLabel="categories"
+            />
+            <button type="button" onClick={() => setEditor({ mode: 'create' })} className={adminTealButton}>
+              <Plus aria-hidden="true" size={16} />
+              Add category
+            </button>
+          </>
+        }
+      />
 
       {loadError ? <p className="rounded-lg border border-danger/30 bg-white p-5 font-jakarta text-sm text-danger">{loadError}</p> : null}
       {!loadError && listing?.categories.length === 0 ? (

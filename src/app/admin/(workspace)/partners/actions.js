@@ -8,6 +8,8 @@ import { removeStoredFile } from '@/lib/storage/objects'
 import { getPrisma } from '@/lib/prisma/client'
 import { websiteActionMessage, WebsiteError } from '@/lib/website/errors'
 import { createPartner, deletePartner, updatePartner } from '@/lib/website/partners'
+import { importPartnersCsv } from '@/lib/csv/partners-csv'
+import { formatImportResult } from '@/lib/csv/import-result'
 
 export async function createPartnerAction(_previous, formData) {
   const current = await requirePermission('MANAGE_WEBSITE_SETTINGS')
@@ -69,6 +71,27 @@ export async function deletePartnerAction(_previous, formData) {
     return { ok: true, message: 'The partner was deleted.' }
   } catch (error) {
     return failure(error)
+  }
+}
+
+export async function importPartnersCsvAction(formData) {
+  const current = await requirePermission('MANAGE_WEBSITE_SETTINGS')
+  try {
+    const file = formData.get('file')
+    if (!(file instanceof File) || file.size < 1) {
+      return { ok: false, message: 'Choose a CSV file to import.' }
+    }
+    const text = await file.text()
+    const result = await importPartnersCsv(getPrisma(), current.admin.id, text)
+    revalidatePath('/admin/partners')
+    return {
+      ok: result.errors.length === 0 || result.created + result.updated > 0,
+      message: formatImportResult('partners', result),
+      result,
+    }
+  } catch (error) {
+    console.error(error)
+    return { ok: false, message: 'Partners CSV import failed.' }
   }
 }
 

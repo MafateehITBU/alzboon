@@ -7,6 +7,19 @@ import { GlobeIcon, ScalesIcon } from '@/components/website/about/aboutIcons'
 const accentGradient =
   'inline bg-[linear-gradient(90deg,#FFFFFF_15%,#E2BC56_50%,#FDF8E6_85%)] bg-clip-text text-transparent'
 
+function HomeIcon({ className = 'h-3.5 w-3.5' }) {
+  return (
+    <svg className={className} viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path
+        d="M2.5 6.2 8 1.75l5.5 4.45V13.5A.75.75 0 0 1 12.75 14.25H9.25V10H6.75v4.25H3.25A.75.75 0 0 1 2.5 13.5V6.2Z"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
 function renderTitleParts(parts) {
   const nodes = []
   for (let index = 0; index < parts.length; index += 1) {
@@ -71,7 +84,11 @@ function AboutHero({ locale = 'en', copy }) {
           className="flex items-center gap-1.5 font-jakarta text-[10px] font-medium tracking-[0.14em] uppercase text-white/50"
           aria-label="Breadcrumb"
         >
-          <Link href={withLocale('/', locale)} className="transition-colors hover:text-white">
+          <Link
+            href={withLocale('/', locale)}
+            className="inline-flex items-center gap-1.5 transition-colors hover:text-white"
+          >
+            <HomeIcon className="h-3.5 w-3.5" />
             {copy?.breadcrumbHome || 'HOME'}
           </Link>
           <span aria-hidden="true">/</span>

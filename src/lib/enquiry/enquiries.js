@@ -110,12 +110,24 @@ function buildWhere(query) {
   else if (query.serviceId) where.serviceId = query.serviceId
 
   if (query.search) {
+    const q = query.search
+    const statusKey = q.trim().toUpperCase()
     where.OR = [
-      { name: { contains: query.search, mode: 'insensitive' } },
-      { email: { contains: query.search, mode: 'insensitive' } },
-      { phone: { contains: query.search, mode: 'insensitive' } },
-      { company: { contains: query.search, mode: 'insensitive' } },
+      { name: { contains: q, mode: 'insensitive' } },
+      { email: { contains: q, mode: 'insensitive' } },
+      { phone: { contains: q, mode: 'insensitive' } },
+      { message: { contains: q, mode: 'insensitive' } },
+      {
+        service: {
+          translations: {
+            some: { name: { contains: q, mode: 'insensitive' } },
+          },
+        },
+      },
     ]
+    if (['NEW', 'READ', 'ARCHIVED'].includes(statusKey)) {
+      where.OR.push({ status: statusKey })
+    }
   }
 
   return where
@@ -131,8 +143,6 @@ function serializeEnquiry(enquiry) {
     name: enquiry.name,
     email: enquiry.email,
     phone: enquiry.phone,
-    company: enquiry.company,
-    country: enquiry.country,
     serviceId: enquiry.serviceId,
     serviceName,
     message: enquiry.message,

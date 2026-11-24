@@ -50,11 +50,14 @@ Working behavior:
 - Home links to `/`.
 - Header, hero, and footer Contact Us scroll to `#consultation`.
 - Services opens a full-width mega menu under the header listing available CMS services in three columns with icons.
+- Public service detail pages (`/services/[slug]`, `/ar/services/[slug]`) use one shared template: hero (CMS image/title/body + presentation capability panels), practice-area accordion (CMS points + image), shared methodology, and shared lead-precedent/judicial-trust sections. There is no general `/services` listing page; visitors open individual services from the header mega menu.
 - The language control changes emphasis only. Page copy stays English.
 - WhatsApp uses `https://wa.me/971562511154`.
 - Phone and email in the footer use website settings when a settings row exists; otherwise they keep `tel:+971562511154` and `mailto:info@alzboon.com`.
 - The newsletter validates an email address and states that no subscription was created.
 - `/admin/login` signs in an active admin. `/admin` shows permission-filtered database counts and logout. `/admin/account` lets any active admin update their own profile and password; role and permissions stay read-only. `/admin/profile` redirects to `/admin/account`. `/admin/admins` manages accounts when `MANAGE_ADMINS` is granted. `/admin/website` and `/admin/partners` require `MANAGE_WEBSITE_SETTINGS`. `/admin/blog-categories` and `/admin/blogs` require `MANAGE_BLOGS`. `/admin/services` requires `MANAGE_SERVICES`. `/admin/contact-enquiries` requires `MANAGE_CONTACT_ENQUIRIES`.
+- Admin Services, Partners, Blog Categories, and Blogs lists support CSV export/import (upsert by id/slug/EN name; media restored by media id, storage key, or embedded base64; missing media does not block import—placeholder or keep existing, upload manually later).
+- Admin list pages share one live-search toolbar (no Filter button) and search across the list’s text columns.
 
 Visible items without destinations:
 
@@ -62,6 +65,8 @@ Visible items without destinations:
 - Practice-area detail pages.
 
 Public About Us is implemented at `/about` and `/ar/about` from the approved Figma About Us frame (`2120:5882`): cinematic hero background (`about-hero-presence.jpg`), overlapping white statistics card, two-column founder profile with quote and 2×2 accreditations, and homepage-style cream consultation card. Shared header/footer are reused. The founder portrait is `src/assets/images/about-founder.png` (Figma-exported studio portrait).
+
+Public Contact Us is implemented at `/contact` and `/ar/contact`: same About hero image/overlay with breadcrumb and heading, then a cream two-column enquiries section (CMS contact details + WhatsApp; inquiry form). Copy avoids the word “Chambers”.
 
 The hero video is a still image and the exported control bar. It does not play.
 

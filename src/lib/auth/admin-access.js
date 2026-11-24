@@ -37,10 +37,18 @@ export async function listAdminAccounts(db, actorId, query) {
   if (query.status === 'active') where.active = true
   if (query.status === 'inactive') where.active = false
   if (query.search) {
+    const q = query.search
+    const roleKey = q.trim().toUpperCase().replace(/\s+/g, '_')
     where.OR = [
-      { name: { contains: query.search, mode: 'insensitive' } },
-      { email: { contains: query.search, mode: 'insensitive' } },
+      { name: { contains: q, mode: 'insensitive' } },
+      { email: { contains: q, mode: 'insensitive' } },
     ]
+    if (roleKey === 'SUPER_ADMIN' || roleKey === 'ADMIN') {
+      where.OR.push({ role: roleKey })
+    }
+    if (['active', 'inactive'].includes(q.trim().toLowerCase())) {
+      where.OR.push({ active: q.trim().toLowerCase() === 'active' })
+    }
   }
 
   const page = query.page || 1

@@ -49,6 +49,8 @@ export async function getPublicWebsiteContact(db) {
 
   return {
     contactEmail: settings.contactEmail,
+    businessHoursEn: settings.businessHoursEn,
+    businessHoursAr: settings.businessHoursAr,
     phones: settings.phoneNumbers.map((phone) => ({
       id: phone.id,
       number: phone.number,

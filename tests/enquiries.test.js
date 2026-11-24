@@ -1,3 +1,4 @@
+import './use-test-database.js'
 import assert from 'node:assert/strict'
 import { randomUUID } from 'node:crypto'
 import test, { after, before } from 'node:test'
@@ -40,8 +41,6 @@ async function createEnquiry(data = {}) {
       name: data.name || 'Ada Contact',
       email: data.email || `ada-${randomUUID()}@example.com`,
       phone: data.phone || '+971500000000',
-      company: data.company || 'Ada Co',
-      country: data.country || 'UAE',
       serviceId: data.serviceId ?? null,
       message: data.message || 'Please call me about advisory work.',
       status: data.status || 'NEW',
@@ -101,32 +100,13 @@ async function createServiceFixture() {
   return { service, mediaIds: [hero.id, practice.id] }
 }
 
-async function cleanup() {
-  await prisma.contactEnquiry.deleteMany({
-    where: {
-      OR: [{ email: { startsWith: 'ada-' } }, { email: { startsWith: 'phase9-' } }, { name: { startsWith: 'Phase9' } }],
-    },
-  })
-  const services = await prisma.service.findMany({
-    where: { slug: { startsWith: 'phase9-service-' } },
-    select: { id: true, heroMediaId: true, practiceAreaMediaId: true },
-  })
-  for (const service of services) {
-    await prisma.serviceTranslation.deleteMany({ where: { serviceId: service.id } })
-    await prisma.service.delete({ where: { id: service.id } })
-    await prisma.mediaAsset.deleteMany({ where: { id: { in: [service.heroMediaId, service.practiceAreaMediaId] } } })
-  }
-  await prisma.adminUser.deleteMany({ where: { email: { startsWith: 'phase9-test-' } } })
-}
 
 before(async () => {
   if (!process.env.DATABASE_URL) throw new Error('DATABASE_URL is not set.')
   passwordHash = await hashPassword(password)
-  await cleanup()
 })
 
 after(async () => {
-  await cleanup()
   await prisma.$disconnect()
 })
 
@@ -139,7 +119,6 @@ test('enquiry listing requires MANAGE_CONTACT_ENQUIRIES', async () => {
     const listing = await listEnquiries(prisma, allowed.id, { page: 1 })
     assert.ok(listing.total >= 0)
   } finally {
-    await prisma.adminUser.deleteMany({ where: { id: { in: [allowed.id, denied.id] } } })
   }
 })
 
@@ -151,14 +130,12 @@ test('search status and service filters work with details access', async () => {
     name: 'Phase9 Searchable',
     email: `phase9-search-${randomUUID()}@example.com`,
     phone: '+971511111111',
-    company: 'Phase9 Corp',
     status: 'NEW',
     serviceId: service.id,
   })
   await createEnquiry({
     name: 'Phase9 Other',
     email: `phase9-other-${randomUUID()}@example.com`,
-    company: 'Phase9 Other Co',
     status: 'READ',
   })
 
@@ -176,9 +153,8 @@ test('search status and service filters work with details access', async () => {
 
     const detail = await getEnquiryForAdmin(prisma, actor.id, match.id)
     assert.equal(detail.message, 'Please call me about advisory work.')
-    assert.equal(detail.company, 'Phase9 Corp')
+    assert.equal(detail.email, match.email)
   } finally {
-    await cleanup()
   }
 })
 
@@ -188,7 +164,6 @@ test('status changes dashboard count deletion and invalid status', async () => {
   const enquiry = await createEnquiry({
     name: 'Phase9 Status',
     email: `phase9-status-${randomUUID()}@example.com`,
-    company: 'Phase9 Status Co',
     status: 'NEW',
   })
 
@@ -229,6 +204,5 @@ test('status changes dashboard count deletion and invalid status', async () => {
     assert.equal(deleted.id, enquiry.id)
     await assert.rejects(() => getEnquiryForAdmin(prisma, actor.id, enquiry.id), (error) => error.code === 'NOT_FOUND')
   } finally {
-    await cleanup()
   }
 })

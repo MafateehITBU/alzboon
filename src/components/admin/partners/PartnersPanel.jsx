@@ -3,16 +3,19 @@
 import { useActionState, useEffect, useId, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Pencil, Plus, Trash2 } from 'lucide-react'
+import AdminListToolbar from '@/components/admin/AdminListToolbar'
+import CsvImportExport from '@/components/admin/CsvImportExport'
 import ImageUploadField from '@/components/admin/ImageUploadField'
-import { adminOutlineButton, adminTealButton } from '@/components/admin/adminStyles'
+import useLiveSearch from '@/components/admin/useLiveSearch'
+import { adminFieldClass, adminOutlineButton, adminTealButton } from '@/components/admin/adminStyles'
 import {
   createPartnerAction,
   deletePartnerAction,
+  importPartnersCsvAction,
   updatePartnerAction,
 } from '@/app/admin/(workspace)/partners/actions'
 
-const inputClass =
-  'min-h-11 w-full rounded-xl border border-line/90 bg-white px-3.5 font-jakarta text-sm text-ink shadow-[inset_0_1px_2px_rgba(1,19,32,0.03)] transition-[border-color,box-shadow] duration-200 hover:border-teal/25 focus:border-teal/50 focus:shadow-[0_0_0_4px_rgba(63,131,119,0.12)] focus-visible:outline-none'
+const inputClass = adminFieldClass
 
 const initialState = { ok: false, message: '' }
 
@@ -21,6 +24,13 @@ export default function PartnersPanel({ query, listing, loadError }) {
   const [toast, setToast] = useState(null)
   const [editor, setEditor] = useState(null)
   const [deleting, setDeleting] = useState(null)
+  const [search, onSearchChange] = useLiveSearch(query.search || '', (value) => {
+    const params = new URLSearchParams()
+    const q = value.trim()
+    if (q) params.set('q', q)
+    const next = params.toString()
+    router.push(next ? `/admin/partners?${next}` : '/admin/partners')
+  })
 
   useEffect(() => {
     if (!toast) return undefined
@@ -36,14 +46,6 @@ export default function PartnersPanel({ query, listing, loadError }) {
       setDeleting(null)
       router.refresh()
     }
-  }
-
-  function applyFilters(formData) {
-    const params = new URLSearchParams()
-    const q = String(formData.get('q') || '').trim()
-    if (q) params.set('q', q)
-    const next = params.toString()
-    router.push(next ? `/admin/partners?${next}` : '/admin/partners')
   }
 
   function goToPage(page) {
@@ -65,33 +67,26 @@ export default function PartnersPanel({ query, listing, loadError }) {
         </p>
       ) : null}
 
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <form
-          className="flex min-w-0 flex-1 flex-wrap gap-3"
-          onSubmit={(event) => {
-            event.preventDefault()
-            applyFilters(new FormData(event.currentTarget))
-          }}
-        >
-          <label className="sr-only" htmlFor="partner-search">
-            Search partners
-          </label>
-          <input
-            id="partner-search"
-            name="q"
-            defaultValue={query.search}
-            placeholder="Search partner name"
-            className={`${inputClass} min-w-[12rem] flex-1`}
-          />
-          <button type="submit" className={adminTealButton}>
-            Filter
-          </button>
-        </form>
-        <button type="button" onClick={() => setEditor({ mode: 'create' })} className={adminTealButton}>
-          <Plus aria-hidden="true" size={16} />
-          Add partner
-        </button>
-      </div>
+      <AdminListToolbar
+        searchId="partner-search"
+        searchLabel="Search partners"
+        searchPlaceholder="Search partners"
+        searchValue={search}
+        onSearchChange={onSearchChange}
+        actions={
+          <>
+            <CsvImportExport
+              exportHref="/admin/partners/export"
+              importAction={importPartnersCsvAction}
+              entityLabel="partners"
+            />
+            <button type="button" onClick={() => setEditor({ mode: 'create' })} className={adminTealButton}>
+              <Plus aria-hidden="true" size={16} />
+              Add partner
+            </button>
+          </>
+        }
+      />
 
       {loadError ? <p className="rounded-lg border border-danger/30 bg-white p-5 font-jakarta text-sm text-danger">{loadError}</p> : null}
       {!loadError && listing?.partners.length === 0 ? (
