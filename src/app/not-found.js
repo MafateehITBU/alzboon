@@ -1,15 +1,36 @@
-import { FileQuestion } from 'lucide-react'
-import Link from 'next/link'
+import { headers } from 'next/headers'
+import NotFoundView from '@/components/website/NotFoundView'
+import { loadPublicSiteData } from '@/lib/site/load-public'
 
-export default function NotFound() {
-  return (
-    <section className="grid min-h-svh content-start justify-items-start gap-3 px-6 py-8">
-      <FileQuestion size={32} aria-hidden="true" />
-      <h1 className="font-abu text-[32px] leading-tight text-ink">Page not found</h1>
-      <p className="text-body">The page you requested does not exist.</p>
-      <Link href="/" className="font-abu text-teal-deep">
-        Back to home
-      </Link>
-    </section>
-  )
+async function localeFromRequest() {
+  try {
+    const headerStore = await headers()
+    const candidates = [
+      headerStore.get('x-invoke-path'),
+      headerStore.get('x-matched-path'),
+      headerStore.get('x-pathname'),
+      headerStore.get('next-url'),
+      headerStore.get('referer'),
+    ].filter(Boolean)
+
+    for (const value of candidates) {
+      try {
+        const path = value.startsWith('http') ? new URL(value).pathname : value
+        if (path === '/ar' || path.startsWith('/ar/')) return 'ar'
+      } catch {
+        // Ignore malformed header values.
+      }
+    }
+  } catch {
+    // Fall through to English.
+  }
+
+  return 'en'
+}
+
+export default async function NotFound() {
+  const locale = await localeFromRequest()
+  const { messages, contact, services } = await loadPublicSiteData(locale)
+
+  return <NotFoundView locale={locale} messages={messages} contact={contact} services={services} />
 }

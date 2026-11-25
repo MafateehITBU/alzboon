@@ -376,9 +376,10 @@ const messages = {
       body: 'Uncompromising fiduciary duty, absolute attorney-client confidentiality, and institutional data stewardship under Jordanian Jurisprudence and global cross-border frameworks.',
     },
     notFound: {
+      eyebrow: '404',
       title: 'Page not found',
-      body: 'The page you requested is not available.',
-      home: 'Back to home',
+      body: 'The page you requested is not available. It may have been moved, or the link may be incorrect.',
+      home: 'Return home',
     },
   },
   ar: {
@@ -756,8 +757,9 @@ const messages = {
       body: 'واجب ائتماني غير قابل للمساومة، وسرية مطلقة بين المحامي وموكله، وإدارة مؤسسية للبيانات وفق الفقه القضائي الأردني وأطر العبور عبر الحدود.',
     },
     notFound: {
+      eyebrow: '404',
       title: 'الصفحة غير موجودة',
-      body: 'الصفحة التي طلبتموها غير متاحة.',
+      body: 'الصفحة التي طلبتموها غير متاحة. قد تكون نُقلت أو أن الرابط غير صحيح.',
       home: 'العودة إلى الرئيسية',
     },
   },

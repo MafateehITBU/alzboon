@@ -18,7 +18,8 @@ Authentication, the admin workspace, and public website integration are implemen
 | `/media/[mediaId]` | Public media | Serves `PUBLIC` media assets only. Private media returns 404. |
 | `/sitemap.xml` | Sitemap | Public routes plus available services and published blogs. Excludes `/admin`. |
 | `/robots.txt` | Robots | Allows `/`, disallows `/admin`. |
-| Any other path | Not found | The not-found page links back to `/`. |
+| Any other public path | Not found | Themed public 404 with Return home (`/`). |
+| Any unmatched `/admin/*` path | Not found | Workspace 404 with Back to dashboard (`/admin`). Requires a session via the admin proxy/layout. |
 
 Header Services opens a full-width mega menu under the header with available CMS services in a three-column grid and practice-area icons. Contact Us opens `/contact` (or `/ar/contact`). WhatsApp uses the first website-settings phone when present.
 

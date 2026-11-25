@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-11-25 — Themed 404 pages
+
+- Public `not-found` uses SiteShell and the navy/gold website theme with a Return home button.
+- Admin unmatched `/admin/*` routes use the workspace not-found panel with a Back to dashboard button.
+
 ## 2026-11-25 — Playfair Display replaces Abu Dhabi Pro
 
 - English display face is Playfair Display (400/700) via `next/font/google`, self-hosted at build; `font-abu` token kept for existing utilities.

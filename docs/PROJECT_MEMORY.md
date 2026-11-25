@@ -30,7 +30,7 @@ The running application is a Next.js App Router site.
 
 - `src/app/layout.js` registers the local fonts and global stylesheet.
 - `src/app/(website)/page.js` assembles the homepage.
-- `src/app/not-found.js` renders the not-found page.
+- `src/app/not-found.js` renders the themed public 404 (SiteShell + Return home). Unmatched `/admin/*` paths use `admin/(workspace)/not-found.js` (Back to dashboard).
 - Homepage sections live in `src/components/website/home`.
 - Header and Footer are client components. The other homepage sections are server components.
 - Styling is Tailwind CSS 4, with tokens in `src/styles/globals.css`.
