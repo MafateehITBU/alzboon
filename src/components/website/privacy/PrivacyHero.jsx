@@ -55,12 +55,12 @@ export default function PrivacyHero({ locale = 'en', copy }) {
             </p>
             <h1
               id="privacy-hero-title"
-              className="mt-6 font-abu text-[56px] leading-[1.08] font-normal tracking-[-1.2px] text-white max-[1439px]:text-[44px] max-[1023px]:text-[38px] max-[767px]:text-[32px] max-[767px]:tracking-normal"
+              className="mt-6 font-abu text-[44px] leading-[1.12] font-normal tracking-[-0.8px] text-white max-[1439px]:text-[38px] max-[1023px]:text-[32px] max-[767px]:text-[28px] max-[767px]:tracking-normal"
             >
               <span className="block">{copy.heroTitleLine1}</span>
               <span className="block">{copy.heroTitleLine2}</span>
             </h1>
-            <p className="mt-5 max-w-[560px] font-abu text-[18px] leading-7 font-normal text-white/70 max-[767px]:mt-4 max-[767px]:text-base max-[767px]:leading-6">
+            <p className="mt-5 max-w-[560px] font-abu text-[16px] leading-6 font-normal text-white/70 max-[767px]:mt-4 max-[767px]:text-sm max-[767px]:leading-6">
               {copy.heroBody}
             </p>
           </div>

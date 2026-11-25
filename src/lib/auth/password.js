@@ -9,7 +9,7 @@ const options = {
 
 export function isStrongPassword(password) {
   if (typeof password !== 'string') return false
-  if (password.length < 12 || password.length > 200) return false
+  if (password.length < 8 || password.length > 200) return false
   if (!/[a-z]/.test(password) || !/[A-Z]/.test(password) || !/[0-9]/.test(password)) return false
   return true
 }

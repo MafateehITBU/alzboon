@@ -94,7 +94,7 @@ export default function AccountSelfServiceForm({ account }) {
           <Field label="Confirm new password" htmlFor="confirmPassword">
             <input id="confirmPassword" name="confirmPassword" type="password" required autoComplete="new-password" className={inputClass} />
           </Field>
-          <p className="font-jakarta text-xs text-body">Use at least 12 characters with uppercase, lowercase, and a number.</p>
+          <p className="font-jakarta text-xs text-body">Use at least 8 characters with uppercase, lowercase, and a number.</p>
 
           <div className="flex flex-wrap justify-end gap-3">
             <button type="submit" disabled={passwordPending} className={adminTealButton}>

@@ -11,7 +11,7 @@ import { switchLocalePath, withLocale } from '@/lib/i18n/paths'
 import { getServiceNavIcon } from '@/components/website/serviceNavIcons'
 
 const desktopLinkClass =
-  'relative inline-flex min-h-8 items-center gap-1.5 border-0 bg-transparent px-0 py-1 font-jakarta text-[15px] leading-6 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-teal'
+  'relative inline-flex min-h-8 items-center gap-1.5 border-0 bg-transparent px-0 py-1 font-jakarta text-[14px] leading-6 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-teal'
 
 function desktopNavClass(active) {
   return active
@@ -140,7 +140,7 @@ function Header({ locale = 'en', messages, services = [] }) {
   return (
     <header
       ref={headerRef}
-      className="sticky top-0 z-40 w-full border-b border-line/60 bg-white shadow-[0_4px_16px_rgba(15,28,38,0.04)]"
+      className="sticky top-0 z-40 w-full border-b border-line bg-white shadow-[0_4px_6px_-1px_rgb(0_0_0_/_0.1),0_2px_4px_-2px_rgb(0_0_0_/_0.1)]"
       onMouseLeave={() => {
         if (!menuOpen) scheduleCloseServicesMenu()
       }}
@@ -242,8 +242,8 @@ function Header({ locale = 'en', messages, services = [] }) {
         }`}
         onMouseEnter={openServicesMenu}
       >
-        <div className="min-h-0 overflow-hidden pb-4">
-          <div className="rounded-b-2xl border-t border-line bg-white shadow-[0_16px_36px_rgba(15,28,38,0.14)]">
+        <div className="min-h-0 overflow-hidden pb-3">
+          <div className="w-full rounded-none rounded-b-xl border border-t border-line bg-white shadow-[0_4px_6px_-1px_rgb(0_0_0_/_0.1),0_2px_4px_-2px_rgb(0_0_0_/_0.1)]">
             <div className="mx-auto max-w-[1440px] px-[114px] py-5 max-[1439px]:px-8 max-[1200px]:px-6">
               {serviceItems.length > 0 ? (
                 <ul className="grid list-none grid-cols-3 p-0">

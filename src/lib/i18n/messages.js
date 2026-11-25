@@ -16,7 +16,7 @@ const messages = {
       bookConsultation: 'Book A Consultation',
       instantWhatsapp: 'Instant WhatsApp',
       hero: {
-        eyebrow: 'OVER 25 YEARS OF LEGAL EXPERIENCE',
+        eyebrow: 'OVER 30 YEARS OF LEGAL EXPERIENCE',
         titleLine1: 'Legal Expertise.',
         titleLine2: 'Strategic Vision.',
         body: 'We provide innovative consultancy and effective legal solutions, empowering our clients to achieve sustainable success and protect their intellectual and organizational rights.',
@@ -75,7 +75,7 @@ const messages = {
         eyebrow: 'Authority & Foresight',
         title: 'Deep Expertise and a Vision for the Future',
         body1:
-          'With over 25 years of experience in providing successful and diverse consultancy services, we take pride in our ability to offer our clients deep strategic insights that help them make informed decisions to enhance their future growth.',
+          'With over 30 years of experience in providing successful and diverse consultancy services, we take pride in our ability to offer our clients deep strategic insights that help them make informed decisions to enhance their future growth.',
         body2:
           'We work closely with each client to understand their unique challenges and needs, enabling us to develop innovative and tailored solutions that align with their goals. From safeguarding nascent industrial inventions to stewarding intricate international trademarks and resolving complex institutional restructuring, our advisory framework is built on uncompromising diligence.',
         governanceTitle: 'Institutional Governance',
@@ -334,7 +334,7 @@ const messages = {
       founderCredentials: 'Licensed Arbitrator • Certified Patent & Trademark Agent',
       founderPortraitAlt: 'Counselor Awaad Alzboon, Senior Counsel and Founder',
       founderBio1:
-        'For over 25 years, Counselor Awaad Alzboon has served as confidential legal strategist and senior advocate to high-growth enterprises, multinational conglomerates, governmental authorities, and pioneer tech ventures. His practice bridges continental civil legal codifications with complex Anglo-American cross-border transactions.',
+        'For over 30 years, Counselor Awaad Alzboon has served as confidential legal strategist and senior advocate to high-growth enterprises, multinational conglomerates, governmental authorities, and pioneer tech ventures. His practice bridges continental civil legal codifications with complex Anglo-American cross-border transactions.',
       founderBio2:
         'Renowned for his strategic agility in high-stakes intellectual property dispute resolution and multi-million-dollar contractual architectures, Counselor Alzboon has represented clients before high appellate courts, ministerial chambers, and private arbitral tribunals across Jordan and the broader GCC economic sphere.',
       founderQuote:
@@ -396,7 +396,7 @@ const messages = {
       bookConsultation: 'احجز استشارة',
       instantWhatsapp: 'واتساب فوري',
       hero: {
-        eyebrow: 'أكثر من 25 عاماً من الخبرة القانونية',
+        eyebrow: 'أكثر من 30 عاماً من الخبرة القانونية',
         titleLine1: 'خبرة قانونية.',
         titleLine2: 'ورؤية استراتيجية.',
         body: 'نقدّم استشارات مبتكرة وحلولاً قانونية فعّالة، نمكّن عملاءنا من تحقيق نجاح مستدام وحماية حقوقهم الفكرية والمؤسسية.',
@@ -455,7 +455,7 @@ const messages = {
         eyebrow: 'سلطة واستشراف',
         title: 'خبرة عميقة ورؤية للمستقبل',
         body1:
-          'بخبرة تمتد لأكثر من خمسة وعشرين عاماً في تقديم استشارات ناجحة ومتنوعة، نفخر بقدرتنا على تزويد عملائنا برؤى استراتيجية عميقة تساعدهم على اتخاذ قرارات واعية تعزّز نموهم المستقبلي.',
+          'بخبرة تمتد لأكثر من ثلاثين عاماً في تقديم استشارات ناجحة ومتنوعة، نفخر بقدرتنا على تزويد عملائنا برؤى استراتيجية عميقة تساعدهم على اتخاذ قرارات واعية تعزّز نموهم المستقبلي.',
         body2:
           'نعمل عن قرب مع كل عميل لفهم تحدياته واحتياجاته الخاصة، بما يمكّننا من تطوير حلول مبتكرة ومصمَّمة وفق أهدافه. من حماية الاختراعات الصناعية الناشئة إلى إدارة العلامات التجارية الدولية المعقّدة ومعالجة إعادة الهيكلة المؤسسية المعقّدة، يرتكز إطارنا الاستشاري على عناية لا تقبل المساومة.',
         governanceTitle: 'الحوكمة المؤسسية',
@@ -713,7 +713,7 @@ const messages = {
       founderCredentials: 'محكّم مرخّص • وكيل معتمد لبراءات الاختراع والعلامات التجارية',
       founderPortraitAlt: 'المستشار عواد الزبون، المستشار القانوني الأول والمؤسس',
       founderBio1:
-        'على مدى أكثر من 25 عاماً، عمل المستشار عواد الزبون مستشاراً قانونياً استراتيجياً ومحامياً رئيسياً موثوقاً لدى الشركات ذات النمو المتسارع، والتكتلات متعددة الجنسيات، والجهات الحكومية، والمشاريع التقنية الرائدة. وتمتد ممارسته القانونية لتجمع بين الأنظمة والتشريعات المدنية ذات الجذور الأوروبية والمعاملات الدولية المعقدة العابرة للحدود، وفق الأطر القانونية الأنجلوسكسونية.',
+        'على مدى أكثر من 30 عاماً، عمل المستشار عواد الزبون مستشاراً قانونياً استراتيجياً ومحامياً رئيسياً موثوقاً لدى الشركات ذات النمو المتسارع، والتكتلات متعددة الجنسيات، والجهات الحكومية، والمشاريع التقنية الرائدة. وتمتد ممارسته القانونية لتجمع بين الأنظمة والتشريعات المدنية ذات الجذور الأوروبية والمعاملات الدولية المعقدة العابرة للحدود، وفق الأطر القانونية الأنجلوسكسونية.',
       founderBio2:
         'ويُعرف المستشار الزبون بقدرته الاستراتيجية على التعامل مع المنازعات المعقدة عالية الأهمية في مجال الملكية الفكرية، وصياغة وإدارة الهياكل التعاقدية التي تبلغ قيمتها ملايين الدولارات. كما تولّى تمثيل عملائه أمام محاكم الاستئناف العليا، والجهات والدوائر الوزارية، وهيئات التحكيم الخاصة في الأردن وعلى امتداد النطاق الاقتصادي لدول مجلس التعاون الخليجي.',
       founderQuote:

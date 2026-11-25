@@ -35,13 +35,11 @@
 
 ## Fonts
 
-- Keep both Abu Dhabi Pro files.
-- Register Regular as weight 400 and Bold as weight 700, with `font-display: swap`.
+- English display type is Playfair Display (400/700) via `next/font` (`font-abu` token), self-hosted at build with `font-display: swap`.
 - Self-host Plus Jakarta Sans, Roboto, DM Sans, and GE Dinar Two Medium from licensed font files.
 - Arabic public UI uses GE Dinar Two (`--font-dinar`) whenever `lang="ar"`.
 - Do not add a runtime request to Google Fonts.
 - Preserve Georgia and FreeSerif as the system stacks already used by the homepage.
-- Abu Dhabi Pro Regular and Bold are development copies only. Their embedded Tanween notice requires a purchased webfont license before production. Do not describe them as production-cleared, and do not replace the files without approval.
 - The homepage hero keeps LTR layout so the copy column stays on the photo side in Arabic; only the hero text block uses `dir="rtl"`.
 
 ## Server and client rules

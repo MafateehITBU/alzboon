@@ -27,14 +27,14 @@
   --color-info: #2563eb;
   --color-success: #15803d;
   --color-danger: #dc2626;
-  --font-abu: var(--font-abu-family), sans-serif;
+  --font-abu: var(--font-abu-family), Georgia, 'Times New Roman', serif;
   --font-jakarta: var(--font-jakarta-family), sans-serif;
   --font-roboto: var(--font-roboto-family), sans-serif;
   --font-dm: var(--font-dm-family), sans-serif;
   --font-dinar: var(--font-dinar-family), 'Segoe UI', Tahoma, sans-serif;
   --font-georgia: Georgia, 'Times New Roman', serif;
   --font-freeserif: FreeSerif, 'Times New Roman', serif;
-  --shadow-header: 0 4px 24px -4px rgba(15, 28, 38, 0.08);
+  --shadow-header: 0 1px 0 rgba(15, 28, 38, 0.05), 0 8px 24px -10px rgba(15, 28, 38, 0.08);
   --shadow-card: 0 1px 1px rgba(0, 0, 0, 0.05);
   --shadow-soft: 0 4px 4px rgba(0, 0, 0, 0.1);
   --shadow-portrait: 4px 4px 4px rgba(0, 0, 0, 0.2);
@@ -69,7 +69,7 @@
   body {
     min-height: 100svh;
     color: var(--color-ink-soft);
-    font-family: var(--font-abu), sans-serif;
+    font-family: var(--font-abu), Georgia, 'Times New Roman', serif;
     font-weight: 400;
     line-height: 1.5;
     color-scheme: light;

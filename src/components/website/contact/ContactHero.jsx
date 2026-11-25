@@ -50,11 +50,11 @@ function ContactHero({ locale = 'en', copy }) {
 
         <h1
           id="contact-hero-title"
-          className="mt-10 max-w-[720px] font-abu text-[56px] leading-[1.08] font-normal tracking-[-1.2px] text-white max-[1439px]:text-[44px] max-[1023px]:mt-8 max-[1023px]:text-[38px] max-[767px]:text-[32px] max-[767px]:tracking-normal"
+          className="mt-10 max-w-[720px] font-abu text-[44px] leading-[1.12] font-normal tracking-[-0.8px] text-white max-[1439px]:text-[38px] max-[1023px]:mt-8 max-[1023px]:text-[32px] max-[767px]:text-[28px] max-[767px]:tracking-normal"
         >
           {copy?.heroTitle || copy?.title || 'Contact Us'}
         </h1>
-        <p className="mt-5 max-w-[560px] font-abu text-[18px] leading-7 font-normal text-white/70 max-[767px]:mt-4 max-[767px]:text-base max-[767px]:leading-6">
+        <p className="mt-5 max-w-[560px] font-abu text-[16px] leading-6 font-normal text-white/70 max-[767px]:mt-4 max-[767px]:text-sm max-[767px]:leading-6">
           {copy?.heroBody || copy?.description}
         </p>
       </div>

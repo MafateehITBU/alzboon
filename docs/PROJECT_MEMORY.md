@@ -87,8 +87,8 @@ Phase 12 is implemented. Phase 11 public CMS integration remains in place. Phase
 - Uploads live in `/var/www/alzboon/shared/uploads/`, split into `public/` and `private/`. Releases must not delete that directory.
 - Public media covers approved website images, logos, partner logos, blog featured images, and service hero/practice-area images. Private media covers protected blog attachments and admin profile photos and is served only after a server-side session and permission check.
 - File metadata is stored in PostgreSQL. File bytes are stored by one storage service.
-- Abu Dhabi Pro Regular stays registered at CSS weight 400, despite OS/2 weight class 500. Bold stays at 700.
-- Plus Jakarta Sans, Roboto, and DM Sans are self-hosted from licensed files. The homepage does not request Google Fonts.
+- English display type is Playfair Display (400/700) via `next/font`; the Tailwind token remains `font-abu`.
+- Plus Jakarta Sans, Roboto, and DM Sans are self-hosted from licensed files. Fonts are not requested from Google at runtime.
 - The homepage remains the Figma layout. Footer contact email, phones, and addresses come from website settings when saved. The homepage has no social icon row or partners strip yet, so those records are stored for later public pages.
 - The homepage newsletter is not a contact enquiry.
 - Public pages that do not exist today remain not-found until their own phase builds them.
@@ -97,7 +97,6 @@ Phase 12 is implemented. Phase 11 public CMS integration remains in place. Phase
 
 ## Known issues
 
-- Abu Dhabi Pro Regular and Bold both embed a Tanween notice that website use needs a separate webfont license. No license file is in the repository. Neither weight is production-cleared. The Bold filename is a FontsFree redistribution name. **Production blocker** until a commercial webfont license is obtained or a licensed alternative is approved.
 - Local `DATABASE_URL` and `STORAGE_ROOT` are configured. Their values are not recorded here.
 - Admin profile photos, public logos, blog featured images, and service hero/practice-area images accept JPEG, PNG, and WebP up to 2 MB. SVG is rejected. Blog attachments accept PDF up to 10 MB.
 - No map provider is configured. Manual latitude and longitude editing is available. Search and draggable markers wait for provider approval.

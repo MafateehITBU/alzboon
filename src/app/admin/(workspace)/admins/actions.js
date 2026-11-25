@@ -13,25 +13,39 @@ import { PERMISSIONS } from '@/lib/auth/constants'
 import { discardStoredPhoto, saveProfilePhoto } from '@/lib/media/save-profile-photo'
 import { getPrisma } from '@/lib/prisma/client'
 
+function readAdminFormValues(formData) {
+  return {
+    name: String(formData.get('name') || ''),
+    email: String(formData.get('email') || ''),
+    phone: String(formData.get('phone') || ''),
+    role: String(formData.get('role') || 'ADMIN'),
+    permissions: selectedPermissions(formData),
+    active: formData.get('active') === '1',
+    password: String(formData.get('password') || ''),
+    confirmPassword: String(formData.get('confirmPassword') || ''),
+  }
+}
+
 export async function createAdminAction(_previous, formData) {
   const current = await requirePermission('MANAGE_ADMINS')
   let stagedKey = null
+  const values = readAdminFormValues(formData)
 
   try {
-    const password = String(formData.get('password') || '')
-    const confirmPassword = String(formData.get('confirmPassword') || '')
+    const password = values.password
+    const confirmPassword = values.confirmPassword
     if (password !== confirmPassword) throw new AuthError('PASSWORD_MISMATCH')
 
     const profileMedia = await saveProfilePhoto(formData.get('photo'))
     stagedKey = profileMedia?.storageKey ?? null
 
     const created = await createAdminAccount(getPrisma(), current.admin.id, {
-      name: formData.get('name'),
-      email: formData.get('email'),
-      phone: formData.get('phone'),
+      name: values.name,
+      email: values.email,
+      phone: values.phone,
       password,
-      role: formData.get('role'),
-      permissions: selectedPermissions(formData),
+      role: values.role,
+      permissions: values.permissions,
       profileMedia,
     })
 
@@ -40,19 +54,20 @@ export async function createAdminAction(_previous, formData) {
     return { ok: true, message: `${created.name} was created.`, adminId: created.id }
   } catch (error) {
     if (stagedKey) await discardStoredPhoto(stagedKey)
-    return failure(error)
+    return failure(error, values)
   }
 }
 
 export async function updateAdminAction(_previous, formData) {
   const current = await requirePermission('MANAGE_ADMINS')
   let stagedKey = null
+  const values = readAdminFormValues(formData)
 
   try {
     const targetId = String(formData.get('adminId') || '')
     const isSelf = targetId === current.admin.id
-    const password = String(formData.get('password') || '')
-    const confirmPassword = String(formData.get('confirmPassword') || '')
+    const password = values.password
+    const confirmPassword = values.confirmPassword
     if (password && password !== confirmPassword) throw new AuthError('PASSWORD_MISMATCH')
 
     const removeProfile = formData.get('removePhoto') === '1'
@@ -60,18 +75,18 @@ export async function updateAdminAction(_previous, formData) {
     stagedKey = profileMedia?.storageKey ?? null
 
     const updated = await updateAdminAccess(getPrisma(), current.admin.id, targetId, {
-      name: formData.get('name'),
-      email: formData.get('email'),
-      phone: formData.get('phone'),
-      active: formData.get('active') === '1',
+      name: values.name,
+      email: values.email,
+      phone: values.phone,
+      active: values.active,
       password: password || undefined,
       profileMedia,
       removeProfile,
       ...(isSelf
         ? {}
         : {
-            role: formData.get('role') || undefined,
-            permissions: selectedPermissions(formData),
+            role: values.role || undefined,
+            permissions: values.permissions,
           }),
     })
 
@@ -84,7 +99,7 @@ export async function updateAdminAction(_previous, formData) {
     return { ok: true, message: `${updated.name} was updated.`, adminId: updated.id }
   } catch (error) {
     if (stagedKey) await discardStoredPhoto(stagedKey)
-    return failure(error)
+    return failure(error, values)
   }
 }
 
@@ -108,10 +123,10 @@ function selectedPermissions(formData) {
   return PERMISSIONS.filter((permission) => formData.get(`permission_${permission}`) === '1')
 }
 
-function failure(error) {
+function failure(error, values = null) {
   if (error instanceof AuthError) {
-    return { ok: false, message: adminActionMessage(error.code), code: error.code }
+    return { ok: false, message: adminActionMessage(error.code), code: error.code, values }
   }
   console.error(error)
-  return { ok: false, message: adminActionMessage('UNKNOWN') }
+  return { ok: false, message: adminActionMessage('UNKNOWN'), values }
 }

@@ -81,11 +81,11 @@ function ServiceHero({ locale = 'en', service, copy }) {
             </span>
             <h1
               id="service-hero-title"
-              className={`mt-5 font-abu text-[56px] leading-[1.08] font-normal tracking-[-1px] max-[1439px]:text-[46px] max-[1023px]:text-[40px] max-[767px]:text-[32px] max-[767px]:tracking-normal ${titleGradient}`}
+              className={`mt-5 font-abu text-[44px] leading-[1.12] font-normal tracking-[-0.8px] max-[1439px]:text-[38px] max-[1023px]:text-[32px] max-[767px]:text-[28px] max-[767px]:tracking-normal ${titleGradient}`}
             >
               {service?.heroTitle || service?.name}
             </h1>
-            <p className="mt-6 max-w-[540px] font-abu text-[18px] leading-[28px] text-white/75 max-[767px]:mt-5 max-[767px]:text-base max-[767px]:leading-6">
+            <p className="mt-5 max-w-[540px] font-abu text-[16px] leading-[26px] text-white/75 max-[767px]:mt-4 max-[767px]:text-sm max-[767px]:leading-6">
               {service?.heroDescription}
             </p>
             <Link
@@ -103,43 +103,43 @@ function ServiceHero({ locale = 'en', service, copy }) {
             </Link>
           </div>
 
-          <aside className="flex flex-col gap-3.5 pt-1 max-[1023px]:pt-0">
-            <div className="rounded-[14px] border border-white/10 bg-[rgba(1,19,32,0.55)] px-5 py-5 backdrop-blur-[2px]">
-              <div className="flex items-center gap-3.5">
-                <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-[6px] border border-gold/55 bg-transparent text-gold">
-                  <ScalesIcon className="h-5 w-5" />
+          <aside className="flex flex-col gap-3 pt-1 max-[1023px]:pt-0">
+            <div className="rounded-[12px] border border-white/10 bg-[rgba(1,19,32,0.55)] px-4 py-3.5 backdrop-blur-[2px]">
+              <div className="flex items-center gap-3">
+                <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] border border-gold/55 bg-transparent text-gold">
+                  <ScalesIcon className="h-4 w-4" />
                 </span>
-                <p className="font-abu text-[18px] leading-6 font-bold tracking-[0.04em] text-white uppercase">
+                <p className="font-abu text-[14px] leading-5 font-bold tracking-[0.04em] text-white uppercase">
                   {presentation.capabilitiesHeading}
                 </p>
               </div>
             </div>
 
             {presentation.capabilitiesTagline ? (
-              <div className="rounded-[14px] border border-white/10 bg-[rgba(1,19,32,0.45)] px-5 py-5 backdrop-blur-[2px]">
-                <div className="flex items-start gap-3.5">
-                  <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-[6px] border border-teal/55 bg-transparent text-teal">
-                    <ShieldIcon className="h-5 w-5" />
+              <div className="rounded-[12px] border border-white/10 bg-[rgba(1,19,32,0.45)] px-4 py-3.5 backdrop-blur-[2px]">
+                <div className="flex items-start gap-3">
+                  <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] border border-teal/55 bg-transparent text-teal">
+                    <ShieldIcon className="h-4 w-4" />
                   </span>
-                  <p className="pt-2 font-abu text-[18px] leading-7 text-white">{presentation.capabilitiesTagline}</p>
+                  <p className="pt-1.5 font-abu text-[14px] leading-6 text-white">{presentation.capabilitiesTagline}</p>
                 </div>
               </div>
             ) : null}
 
             {capabilities.length > 0 ? (
-              <div className="rounded-[14px] border border-white/10 bg-[rgba(1,19,32,0.55)] px-5 py-6 backdrop-blur-[2px]">
-                <ul className="grid list-none gap-5 p-0">
+              <div className="rounded-[12px] border border-white/10 bg-[rgba(1,19,32,0.55)] px-4 py-4 backdrop-blur-[2px]">
+                <ul className="grid list-none gap-3.5 p-0">
                   {capabilities.map((item, index) => {
                     const Icon = CAPABILITY_ICONS[index % CAPABILITY_ICONS.length]
                     return (
-                      <li key={item.id || item.title} className="flex items-start gap-3.5">
-                        <span className="mt-0.5 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[6px] border border-gold/55 bg-transparent text-gold">
-                          <Icon className="h-[18px] w-[18px]" />
+                      <li key={item.id || item.title} className="flex items-start gap-3">
+                        <span className="mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] border border-gold/55 bg-transparent text-gold">
+                          <Icon className="h-3.5 w-3.5" />
                         </span>
                         <div className="min-w-0">
-                          <p className="font-abu text-[17px] leading-6 font-bold text-white">{item.title}</p>
+                          <p className="font-abu text-[14px] leading-5 font-bold text-white">{item.title}</p>
                           {item.body ? (
-                            <p className="mt-1.5 font-abu text-[15px] leading-6 text-white line-clamp-2">{item.body}</p>
+                            <p className="mt-1 font-abu text-[13px] leading-5 text-white/85 line-clamp-2">{item.body}</p>
                           ) : null}
                         </div>
                       </li>

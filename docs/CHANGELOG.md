@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-11-25 — Playfair Display replaces Abu Dhabi Pro
+
+- English display face is Playfair Display (400/700) via `next/font/google`, self-hosted at build; `font-abu` token kept for existing utilities.
+- Removed `abu-dhabi-pro-regular.otf` and `FontsFree-Net-Abu-Dhabi-Pro-Bold.ttf`. Arabic pages still use GE Dinar Two.
+
 ## 2026-11-24 — Judicial Briefs newsletter + larger footer badges
 
 - Additive migration `20261124130000_newsletter_subscribers` creates `newsletter_subscribers` only (no drops).

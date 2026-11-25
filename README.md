@@ -41,7 +41,7 @@ Add `SUPER_ADMIN_EMAIL` and `SUPER_ADMIN_PASSWORD` to `.env`, then run:
 npm run admin:bootstrap
 ```
 
-The password must be 12 to 200 characters and include an uppercase letter, a lowercase letter, and a number. The command does nothing when either value is missing, and it refuses to create a second Super Admin. Remove both variables after it succeeds. Do not put the password in source or documentation.
+The password must be 8 to 200 characters and include an uppercase letter, a lowercase letter, and a number. The command does nothing when either value is missing, and it refuses to create a second Super Admin. Remove both variables after it succeeds. Do not put the password in source or documentation.
 
 Sign in at `/admin/login`. An active admin can open `/admin` and `/admin/account` to update their own profile and password. Accounts with `MANAGE_ADMINS` can open `/admin/admins`. Accounts with `MANAGE_WEBSITE_SETTINGS` can open `/admin/website` and `/admin/partners`. Accounts with `MANAGE_BLOGS` can open `/admin/blog-categories` and `/admin/blogs`. Accounts with `MANAGE_SERVICES` can open `/admin/services`. Accounts with `MANAGE_CONTACT_ENQUIRIES` can open `/admin/contact-enquiries`. Modules that are not built yet stay disabled in the sidebar.
 

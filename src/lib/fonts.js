@@ -1,18 +1,9 @@
+import { Playfair_Display } from 'next/font/google'
 import localFont from 'next/font/local'
 
-export const abuDhabi = localFont({
-  src: [
-    {
-      path: '../assets/fonts/abu-dhabi-pro-regular.otf',
-      weight: '400',
-      style: 'normal',
-    },
-    {
-      path: '../assets/fonts/FontsFree-Net-Abu-Dhabi-Pro-Bold.ttf',
-      weight: '700',
-      style: 'normal',
-    },
-  ],
+export const playfair = Playfair_Display({
+  subsets: ['latin'],
+  weight: ['400', '700'],
   variable: '--font-abu-family',
   display: 'swap',
 })
@@ -49,7 +40,7 @@ export const geDinar = localFont({
 })
 
 export const fontVariables = [
-  abuDhabi.variable,
+  playfair.variable,
   plusJakarta.variable,
   roboto.variable,
   dmSans.variable,

@@ -99,11 +99,11 @@ function AboutHero({ locale = 'en', copy }) {
           <div className="max-w-[720px]">
             <h1
               id="about-hero-title"
-              className="font-abu text-[64px] leading-[1.08] font-normal tracking-[-1.4px] text-white max-[1439px]:text-[48px] max-[1023px]:text-[42px] max-[767px]:text-[34px] max-[767px]:tracking-normal"
+              className="font-abu text-[48px] leading-[1.12] font-normal tracking-[-1px] text-white max-[1439px]:text-[40px] max-[1023px]:text-[34px] max-[767px]:text-[28px] max-[767px]:tracking-normal"
             >
               {renderTitleParts(parts)}
             </h1>
-            <p className="mt-9 max-w-[560px] font-abu text-[20px] leading-[26px] font-normal text-white/70 max-[1439px]:text-[18px] max-[767px]:mt-6 max-[767px]:text-base max-[767px]:leading-6">
+            <p className="mt-7 max-w-[560px] font-abu text-[16px] leading-[24px] font-normal text-white/70 max-[1439px]:text-[15px] max-[767px]:mt-5 max-[767px]:text-sm max-[767px]:leading-6">
               {copy?.heroBody}
             </p>
           </div>
@@ -126,10 +126,10 @@ function AboutHero({ locale = 'en', copy }) {
                     <Icon className="h-5 w-5" />
                   </span>
                   <div className="min-w-0">
-                    <p className="font-abu text-[20px] leading-6 font-bold text-white max-[767px]:text-[18px]">
+                    <p className="font-abu text-[17px] leading-6 font-bold text-white max-[767px]:text-[16px]">
                       {card.title}
                     </p>
-                    <p className="mt-1.5 font-abu text-[16px] leading-[22px] text-white/65 max-[767px]:text-[15px]">
+                    <p className="mt-1.5 font-abu text-[14px] leading-[22px] text-white/65 max-[767px]:text-[13px]">
                       {card.body}
                     </p>
                   </div>

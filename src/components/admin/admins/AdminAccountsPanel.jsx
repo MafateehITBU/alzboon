@@ -282,7 +282,14 @@ function AdminEditorDialog({ actor, mode, admin, onClose, onSaved }) {
   const closeRef = useRef(null)
   const action = mode === 'create' ? createAdminAction : updateAdminAction
   const [state, formAction, pending] = useActionState(action, initialState)
+  const [name, setName] = useState(admin?.name || '')
+  const [email, setEmail] = useState(admin?.email || '')
+  const [phone, setPhone] = useState(admin?.phone || '')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [role, setRole] = useState(admin?.role || 'ADMIN')
+  const [active, setActive] = useState(Boolean(admin?.active))
+  const [permissions, setPermissions] = useState(() => new Set(admin?.permissions || []))
   const [removePhoto, setRemovePhoto] = useState(false)
   const canAssignSuper = actor.role === 'SUPER_ADMIN'
   const canChangeRole = mode === 'create' ? canAssignSuper : Boolean(admin?.canChangeRole)
@@ -306,8 +313,27 @@ function AdminEditorDialog({ actor, mode, admin, onClose, onSaved }) {
   useEffect(() => {
     if (!state?.message || handledState.current === state) return
     handledState.current = state
+    if (!state.ok && state.values) {
+      setName(state.values.name || '')
+      setEmail(state.values.email || '')
+      setPhone(state.values.phone || '')
+      setRole(state.values.role || 'ADMIN')
+      setActive(Boolean(state.values.active))
+      setPermissions(new Set(state.values.permissions || []))
+      setPassword(state.values.password || '')
+      setConfirmPassword(state.values.confirmPassword || '')
+    }
     onSaved(state)
   }, [state, onSaved])
+
+  function togglePermission(permission) {
+    setPermissions((current) => {
+      const next = new Set(current)
+      if (next.has(permission)) next.delete(permission)
+      else next.add(permission)
+      return next
+    })
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-ink/45 px-4 py-8">
@@ -344,22 +370,64 @@ function AdminEditorDialog({ actor, mode, admin, onClose, onSaved }) {
           ) : null}
           {removePhoto ? <input type="hidden" name="removePhoto" value="1" /> : null}
           <Field label="Full name" htmlFor="admin-name">
-            <input id="admin-name" name="name" required defaultValue={admin?.name || ''} className={inputClass} />
+            <input
+              id="admin-name"
+              name="name"
+              required
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              className={inputClass}
+            />
           </Field>
           <Field label="Email" htmlFor="admin-email">
-            <input id="admin-email" name="email" type="email" required defaultValue={admin?.email || ''} className={inputClass} />
+            <input
+              id="admin-email"
+              name="email"
+              type="email"
+              required
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              className={inputClass}
+            />
           </Field>
           <Field label="Phone" htmlFor="admin-phone">
-            <input id="admin-phone" name="phone" defaultValue={admin?.phone || ''} className={inputClass} />
+            <input
+              id="admin-phone"
+              name="phone"
+              value={phone}
+              onChange={(event) => setPhone(event.target.value)}
+              className={inputClass}
+            />
           </Field>
           <div className="grid gap-4 min-[820px]:grid-cols-2">
             <Field label={mode === 'create' ? 'Password' : 'New password (optional)'} htmlFor="admin-password">
-              <input id="admin-password" name="password" type="password" autoComplete="new-password" required={mode === 'create'} className={inputClass} />
+              <input
+                id="admin-password"
+                name="password"
+                type="password"
+                autoComplete="new-password"
+                required={mode === 'create'}
+                minLength={8}
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                className={inputClass}
+              />
             </Field>
             <Field label="Confirm password" htmlFor="admin-confirm">
-              <input id="admin-confirm" name="confirmPassword" type="password" autoComplete="new-password" required={mode === 'create'} className={inputClass} />
+              <input
+                id="admin-confirm"
+                name="confirmPassword"
+                type="password"
+                autoComplete="new-password"
+                required={mode === 'create'}
+                minLength={8}
+                value={confirmPassword}
+                onChange={(event) => setConfirmPassword(event.target.value)}
+                className={inputClass}
+              />
             </Field>
           </div>
+          <p className="font-jakarta text-xs text-body">Use at least 8 characters with uppercase, lowercase, and a number.</p>
           <Field label="Role" htmlFor="admin-form-role">
             <select
               id="admin-form-role"
@@ -379,7 +447,13 @@ function AdminEditorDialog({ actor, mode, admin, onClose, onSaved }) {
               <legend className="font-jakarta text-sm text-body">Account status</legend>
               {canChangeActive ? (
                 <label className="mt-2 flex items-center gap-2 font-jakarta text-sm text-ink">
-                  <input type="checkbox" name="active" value="1" defaultChecked={admin.active} />
+                  <input
+                    type="checkbox"
+                    name="active"
+                    value="1"
+                    checked={active}
+                    onChange={(event) => setActive(event.target.checked)}
+                  />
                   Active
                 </label>
               ) : (
@@ -405,7 +479,8 @@ function AdminEditorDialog({ actor, mode, admin, onClose, onSaved }) {
                       type="checkbox"
                       name={`permission_${permission}`}
                       value="1"
-                      defaultChecked={admin?.permissions?.includes(permission)}
+                      checked={permissions.has(permission)}
+                      onChange={() => togglePermission(permission)}
                     />
                     {permissionLabel(permission)}
                   </label>

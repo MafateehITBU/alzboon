@@ -3,7 +3,7 @@ export function adminActionMessage(code) {
     case 'DUPLICATE_EMAIL':
       return 'Another admin already uses that email address.'
     case 'WEAK_PASSWORD':
-      return 'Use a password with at least 12 characters, including uppercase, lowercase, and a number.'
+      return 'Use a password with at least 8 characters, including uppercase, lowercase, and a number.'
     case 'INVALID_NAME':
       return 'Enter a full name.'
     case 'INVALID_EMAIL':

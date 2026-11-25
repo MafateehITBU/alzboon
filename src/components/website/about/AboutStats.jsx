@@ -78,7 +78,7 @@ function AboutStats({ copy }) {
                   {stat.label}
                 </p>
                 <p
-                  className={`mt-2 font-abu text-[40px] leading-none font-bold tracking-[-0.03em] max-[1439px]:text-[36px] max-[767px]:text-[32px] ${
+                  className={`mt-2 font-abu text-[32px] leading-none font-bold tracking-[-0.03em] max-[1439px]:text-[28px] max-[767px]:text-[26px] ${
                     index === stats.length - 1 ? 'text-[#BBA97A]' : 'text-ink'
                   }`}
                 >

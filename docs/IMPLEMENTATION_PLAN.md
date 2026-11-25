@@ -9,7 +9,7 @@ Phase 12 is complete. Do not deploy to production or begin a new development pha
 - Inspected the Vite application, homepage, assets, fonts, tokens, and behavior.
 - Confirmed PostgreSQL, Prisma, the Linux VPS, and local media storage.
 - Confirmed Next.js App Router, JavaScript, and Tailwind CSS 4.
-- Confirmed self-hosted fonts and the existing Abu Dhabi Pro weight mappings.
+- Confirmed self-hosted fonts (Playfair Display for English display; GE Dinar Two for Arabic).
 - Confirmed that the proxy is not the authorization boundary.
 - Recorded the schema, storage layout, backup method, and deployment method.
 - Wrote `AGENTS.md` and the Phase 0 documents.
@@ -23,7 +23,7 @@ None.
 - Added Next.js 16.4.6 and Tailwind CSS 4.3.5.
 - Moved the homepage and not-found page to the App Router.
 - Moved homepage components to `src/components/website/home` and converted them to Tailwind utilities.
-- Registered Abu Dhabi Pro at weights 400 and 700, and self-hosted Plus Jakarta Sans, Roboto, and DM Sans.
+- Registered English display type (later Playfair Display) at weights 400 and 700, and self-hosted Plus Jakarta Sans, Roboto, and DM Sans.
 - Removed the component stylesheets, Vite, `index.html`, `src/main.jsx`, and React Router after the rendered checks.
 - Ignored `.env`.
 - ESLint and `npm run build` passed.
@@ -143,7 +143,6 @@ Phase 10 did not add public website content pages or a media library.
 
 ## Known blockers
 
-- Abu Dhabi Pro Regular and Bold are not production-cleared (Tanween webfont license missing).
 - Production VPS deploy, HTTPS, and verified off-server backup/restore are not done.
 - Admin profile photos, public logos, blog featured images, and service hero/practice-area images are JPEG, PNG, or WebP up to 2 MB. Blog attachments are PDF up to 10 MB.
 - The local database is PostgreSQL 18.1, database `alzboon`. Production hosting remains a separate VPS setup.

@@ -36,14 +36,14 @@ Implemented in `src/styles/globals.css` with Tailwind CSS 4 `@theme`. Component 
 
 Approved website-wide typography:
 
-- English public UI uses **Abu Dhabi Pro** Regular and Bold (`font-abu`).
+- English public UI uses **Playfair Display** Regular and Bold (`font-abu` token → Playfair).
 - Arabic public UI uses **GE Dinar Two** (`--font-dinar` / remapped under `lang="ar"`).
-- Do not replace either family with IBM Plex, Tajawal, Google Fonts, or other substitutes.
-- Preserve the existing font files in `src/assets/fonts`.
+- Do not replace GE Dinar Two with IBM Plex, Tajawal, or other Arabic substitutes.
+- Preserve the self-hosted font files in `src/assets/fonts` (Jakarta, Roboto, DM Sans, GE Dinar Two).
 
 | Token | Source | Weights |
 | --- | --- | --- |
-| `font-abu` | `abu-dhabi-pro-regular.otf` and `FontsFree-Net-Abu-Dhabi-Pro-Bold.ttf` | 400 and 700 |
+| `font-abu` | Playfair Display via `next/font/google` (self-hosted at build) | 400 and 700 |
 | `font-dinar` | `GE-Dinar-Two-Medium_1E.otf` | 500 (Arabic public pages) |
 | `font-jakarta` | `plus-jakarta-sans-wght.ttf`, SIL Open Font License | 400 through 700 |
 | `font-roboto` | `roboto-400.woff2`, SIL Open Font License | 400 |
@@ -51,11 +51,7 @@ Approved website-wide typography:
 | `font-georgia` | Georgia, then Times New Roman | 400 |
 | `font-freeserif` | FreeSerif, then Times New Roman | 700 for the language-switcher label |
 
-`next/font` registers Abu Dhabi Pro and GE Dinar Two in `src/lib/fonts.js`. When `html` or a subtree has `lang="ar"`, `globals.css` assigns GE Dinar Two to the body and remaps `.font-abu`, `.font-jakarta`, `.font-roboto`, and `.font-dm` so Arabic public pages stay on Dinar without rewriting every utility class. English pages keep Abu Dhabi Pro as the display face.
-
-Regular Abu Dhabi Pro is registered at CSS weight 400. Its OS/2 weight class is 500. Bold is registered at 700. Supplied families use `font-display: swap`. The page does not request Google Fonts.
-
-Both Abu Dhabi Pro files embed the same Tanween notice: website use requires a separate webfont license, and the foundry does not supply a standard webfont license in the file. The notice points to `d.jaser@tanweentype.me` and `www.tanweentype.me`. There is no license file beside either font. The Bold filename, `FontsFree-Net-Abu-Dhabi-Pro-Bold.ttf`, is a redistribution name and is not permission to use it. Neither weight is cleared for production. Leave both files in place for development until a webfont license is purchased and the licensed files replace these copies.
+`next/font` registers Playfair Display and GE Dinar Two in `src/lib/fonts.js`. When `html` or a subtree has `lang="ar"`, `globals.css` assigns GE Dinar Two to the body and remaps `.font-abu`, `.font-jakarta`, `.font-roboto`, and `.font-dm` so Arabic public pages stay on Dinar without rewriting every utility class. English pages use Playfair Display as the display face. Supplied families use `font-display: swap`. Playfair is bundled at build time; the page does not request Google Fonts at runtime.
 
 The official Roboto and DM Sans masters contain more than one variation axis. `next/font` loads the static Latin files for the weights the homepage uses. The variable masters and license texts remain in `src/assets/fonts`.
 

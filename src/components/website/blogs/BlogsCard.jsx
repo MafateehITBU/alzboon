@@ -51,7 +51,7 @@ export default function BlogsCard({ locale = 'en', blog, copy }) {
       </Link>
 
       <div className="flex flex-1 flex-col px-5 pt-5 pb-5">
-        <h3 className="font-abu text-[22px] leading-7 tracking-[-0.02em] text-ink max-[767px]:text-[20px]">
+        <h3 className="font-abu text-[18px] leading-7 tracking-[-0.02em] text-ink max-[767px]:text-[17px]">
           <Link href={href} className="transition-colors hover:text-teal">
             {blog.title}
           </Link>

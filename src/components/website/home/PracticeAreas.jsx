@@ -24,28 +24,28 @@ function PracticeCard({ area, detailsLabel }) {
         <img src={assetSrc(area.icon)} alt="" width={area.iconWidth} height={area.iconHeight} />
       </div>
       {area.eyebrow ? (
-        <p className="mt-[18px] font-abu text-[17px] leading-4 tracking-[0.55px] text-[#3F8377] uppercase">
+        <p className="mt-[18px] font-abu text-[13px] leading-4 tracking-[0.55px] text-[#3F8377] uppercase">
           {area.eyebrow}
         </p>
       ) : null}
       <h3
-        className={`${area.eyebrow ? 'mt-2.5' : 'mt-[18px]'} font-abu text-[27px] leading-[30px] font-bold tracking-[2px] text-ink uppercase max-[767px]:text-[22px] max-[767px]:tracking-[0.5px]`}
+        className={`${area.eyebrow ? 'mt-2.5' : 'mt-[18px]'} font-abu text-[22px] leading-[28px] font-bold tracking-[1.5px] text-ink uppercase max-[767px]:text-[20px] max-[767px]:tracking-[0.5px]`}
       >
         {area.title}
       </h3>
-      <p className="mt-3 font-abu text-[20px] leading-[21.13px] text-body-strong max-[767px]:text-base max-[767px]:leading-[1.45]">
+      <p className="mt-3 font-abu text-[15px] leading-[22px] text-body-strong max-[767px]:text-sm max-[767px]:leading-[1.45]">
         {area.body}
       </p>
       {area.href ? (
         <Link
           href={area.href}
-          className="mt-auto inline-flex items-center gap-2 pt-[18px] font-abu text-base leading-6 font-bold tracking-[1px] text-gold"
+          className="mt-auto inline-flex items-center gap-2 pt-[18px] font-abu text-[14px] leading-6 font-bold tracking-[1px] text-gold"
         >
           {detailsLabel}
           <img src={assetSrc(arrow)} alt="" width="11" height="11" className="h-[11px] w-[11px]" />
         </Link>
       ) : (
-        <p className="mt-auto inline-flex items-center gap-2 pt-[18px] font-abu text-base leading-6 font-bold tracking-[1px] text-gold">
+        <p className="mt-auto inline-flex items-center gap-2 pt-[18px] font-abu text-[14px] leading-6 font-bold tracking-[1px] text-gold">
           {detailsLabel}
           <img src={assetSrc(arrow)} alt="" width="11" height="11" className="h-[11px] w-[11px]" />
         </p>
@@ -85,18 +85,18 @@ function PracticeAreas({ locale = 'en', messages, services = [] }) {
         alt=""
       />
       <div className="relative z-[1] mx-auto max-w-[1280px]">
-        <p className="flex items-center justify-center gap-4 font-abu text-[20px] leading-4 font-bold tracking-[0.55px] text-gold uppercase">
+        <p className="flex items-center justify-center gap-4 font-abu text-[14px] leading-4 font-bold tracking-[0.55px] text-gold uppercase">
           <span className="h-0.5 w-[30px] bg-gold" />
           {copy.eyebrow || 'Disciplines & Retainers'}
           <span className="h-0.5 w-[30px] bg-gold" />
         </p>
         <h2
           id="practice-title"
-          className="mx-auto mt-[18px] max-w-[640px] text-center font-abu text-[64px] leading-[50px] font-normal tracking-[-1px] text-ink max-[1439px]:text-[48px] max-[1439px]:leading-[1.05] max-[1023px]:text-[40px] max-[767px]:text-[32px] max-[767px]:tracking-normal"
+          className="mx-auto mt-[18px] max-w-[640px] text-center font-abu text-[44px] leading-[1.15] font-normal tracking-[-0.5px] text-ink max-[1439px]:text-[38px] max-[1023px]:text-[34px] max-[767px]:text-[28px] max-[767px]:tracking-normal"
         >
           {copy.title || 'Awaad Alzboon Legal Practice Areas'}
         </h2>
-        <p className="mx-auto mt-[22px] max-w-[494px] text-center font-abu text-[20px] leading-[24.38px] text-body-strong max-[767px]:text-base max-[767px]:leading-[1.45]">
+        <p className="mx-auto mt-[22px] max-w-[494px] text-center font-abu text-[16px] leading-[24px] text-body-strong max-[767px]:text-sm max-[767px]:leading-[1.45]">
           {copy.description ||
             'At Awaad Alzboon Consultancy, we offer a comprehensive range of legal and administrative services, specifically designed to meet the needs of individuals and companies across 12 core disciplines.'}
         </p>

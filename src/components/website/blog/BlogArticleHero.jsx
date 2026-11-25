@@ -61,12 +61,12 @@ export default function BlogArticleHero({ locale = 'en', copy, blog }) {
           </p>
         ) : null}
 
-        <h1 className="mt-4 max-w-[920px] font-abu text-[48px] leading-[1.12] font-normal tracking-[-0.03em] text-ink max-[1439px]:text-[40px] max-[1023px]:text-[34px] max-[767px]:mt-3 max-[767px]:text-[28px] max-[767px]:tracking-normal">
+        <h1 className="mt-4 max-w-[920px] font-abu text-[40px] leading-[1.15] font-normal tracking-[-0.02em] text-ink max-[1439px]:text-[34px] max-[1023px]:text-[30px] max-[767px]:mt-3 max-[767px]:text-[26px] max-[767px]:tracking-normal">
           {blog.title}
         </h1>
 
         {blog.excerpt ? (
-          <p className="mt-5 max-w-[720px] font-abu text-[18px] leading-7 text-body max-[767px]:mt-4 max-[767px]:text-[16px] max-[767px]:leading-6">
+          <p className="mt-5 max-w-[720px] font-abu text-[16px] leading-7 text-body max-[767px]:mt-4 max-[767px]:text-[15px] max-[767px]:leading-6">
             {blog.excerpt}
           </p>
         ) : null}

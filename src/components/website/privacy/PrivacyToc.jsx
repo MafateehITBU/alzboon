@@ -83,7 +83,7 @@ export default function PrivacyToc({ locale = 'en', copy }) {
         <p className="font-jakarta text-[11px] font-semibold tracking-[0.14em] text-[#BBA97A] uppercase">
           {copy.shieldEyebrow}
         </p>
-        <h2 className="mt-2 font-abu text-[22px] leading-7">{copy.shieldTitle}</h2>
+        <h2 className="mt-2 font-abu text-[18px] leading-7">{copy.shieldTitle}</h2>
         <p className="mt-3 font-jakarta text-[14px] leading-6 text-white/75">{copy.shieldBody}</p>
         <div className="mt-4 border-t border-white/10 pt-3">
           <p className="font-jakarta text-[11px] tracking-[0.12em] text-[#6c8793] uppercase">{copy.shieldMeta}</p>
