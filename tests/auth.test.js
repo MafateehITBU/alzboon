@@ -4,10 +4,10 @@ import { randomUUID } from 'node:crypto'
 import { after, before, test } from 'node:test'
 import { PrismaClient } from '@prisma/client'
 import { deleteAdminAccount, updateAdminAccess } from '../src/lib/auth/admin-access.js'
-import { bootstrapSuperAdmin } from '../src/lib/auth/bootstrap.js'
+import { bootstrapSuperAdmin, bootstrapSuperAdmins } from '../src/lib/auth/bootstrap.js'
 import { normalizeEmail } from '../src/lib/auth/email.js'
 import { AuthError } from '../src/lib/auth/errors.js'
-import { authenticate } from '../src/lib/auth/login.js'
+import { authenticate, verifyLoginOtp } from '../src/lib/auth/login.js'
 import { hashPassword, isStrongPassword, verifyPassword } from '../src/lib/auth/password.js'
 import { hasPermission } from '../src/lib/auth/permissions.js'
 import { adminProxyDecision } from '../src/lib/auth/proxy-decision.js'
@@ -111,14 +111,23 @@ test('proxy redirects only from the cookie presence', () => {
   assert.equal(adminProxyDecision({ pathname: '/admin', hasSessionCookie: true }), 'next')
 })
 
-test('valid login creates a hashed session and rejects bad or unknown credentials', async () => {
+test('valid login requires OTP then creates a hashed session and rejects bad credentials', async () => {
   const address = email()
   const user = await createAdmin({ address, role: 'ADMIN', permissions: ['MANAGE_BLOGS'] })
 
   try {
-    const success = await authenticate(prisma, { email: ` ${address.toUpperCase()} `, password })
+    const challenge = await authenticate(prisma, { email: ` ${address.toUpperCase()} `, password })
+    assert.equal(challenge.status, 'OTP_REQUIRED')
+    assert.ok(challenge.challengeToken)
+    assert.match(challenge.debugOtp, /^\d{6}$/)
+    assert.equal(Object.hasOwn(challenge, 'passwordHash'), false)
+
+    const success = await verifyLoginOtp(prisma, {
+      challengeToken: challenge.challengeToken,
+      code: challenge.debugOtp,
+    })
     assert.equal(success.status, 'OK')
-    assert.equal(Object.hasOwn(success, 'passwordHash'), false)
+
     const stored = await prisma.session.findFirst({ where: { adminUserId: user.id, revokedAt: null } })
     assert.equal(stored.tokenHash, hashSessionToken(success.token))
     assert.notEqual(stored.tokenHash, success.token)
@@ -181,23 +190,114 @@ test('inactive accounts cannot sign in or keep a session', async () => {
     const revoked = await prisma.session.findUnique({ where: { id: session.sessionId } })
     assert.ok(revoked.revokedAt)
     const result = await authenticate(prisma, { email: address, password })
-    assert.equal(result.status, 'INVALID_CREDENTIALS')
+    assert.equal(result.status, 'ACCOUNT_DEACTIVATED')
   } finally {
     await removeFixtures([address])
   }
 })
 
-test('five recent failures temporarily throttle the identifier', async () => {
+test('five wrong passwords lock the account for one hour', async () => {
   const address = email()
+  const user = await createAdmin({ address })
 
   try {
-    await prisma.loginAttempt.createMany({
-      data: Array.from({ length: 5 }, () => ({ identifier: address, successful: false })),
+    for (let index = 0; index < 4; index += 1) {
+      const result = await authenticate(prisma, { email: address, password: 'Wrong-Password-1' })
+      assert.equal(result.status, 'INVALID_CREDENTIALS')
+    }
+
+    const locked = await authenticate(prisma, { email: address, password: 'Wrong-Password-1' })
+    assert.equal(locked.status, 'ACCOUNT_LOCKED')
+    assert.ok(locked.lockedUntil instanceof Date)
+
+    const stored = await prisma.adminUser.findUnique({ where: { id: user.id } })
+    assert.equal(stored.lockoutLevel, 1)
+    assert.equal(stored.failedLoginCount, 0)
+    assert.ok(stored.lockedUntil > new Date())
+
+    const stillLocked = await authenticate(prisma, { email: address, password })
+    assert.equal(stillLocked.status, 'ACCOUNT_LOCKED')
+  } finally {
+    await removeFixtures([address])
+  }
+})
+
+test('progressive lockouts escalate then deactivate the account', async () => {
+  const address = email()
+  const user = await createAdmin({ address })
+
+  try {
+    const failFive = async () => {
+      let last = null
+      for (let index = 0; index < 5; index += 1) {
+        last = await authenticate(prisma, { email: address, password: 'Wrong-Password-1' })
+      }
+      return last
+    }
+
+    assert.equal((await failFive()).status, 'ACCOUNT_LOCKED')
+    await prisma.adminUser.update({
+      where: { id: user.id },
+      data: { lockedUntil: new Date(Date.now() - 1000) },
     })
-    const limited = await authenticate(prisma, { email: address, password: 'Wrong-Password-1' })
-    assert.equal(limited.status, 'RATE_LIMITED')
-    const attempts = await prisma.loginAttempt.count({ where: { identifier: address } })
-    assert.equal(attempts, 5)
+
+    assert.equal((await failFive()).status, 'ACCOUNT_LOCKED')
+    await prisma.adminUser.update({
+      where: { id: user.id },
+      data: { lockedUntil: new Date(Date.now() - 1000) },
+    })
+
+    assert.equal((await failFive()).status, 'ACCOUNT_LOCKED')
+    await prisma.adminUser.update({
+      where: { id: user.id },
+      data: { lockedUntil: new Date(Date.now() - 1000) },
+    })
+
+    assert.equal((await failFive()).status, 'ACCOUNT_LOCKED')
+    let stored = await prisma.adminUser.findUnique({ where: { id: user.id } })
+    assert.equal(stored.lockoutLevel, 4)
+
+    await prisma.adminUser.update({
+      where: { id: user.id },
+      data: { lockedUntil: new Date(Date.now() - 1000) },
+    })
+
+    const deactivated = await failFive()
+    assert.equal(deactivated.status, 'ACCOUNT_DEACTIVATED')
+    stored = await prisma.adminUser.findUnique({ where: { id: user.id } })
+    assert.equal(stored.active, false)
+
+    const blocked = await authenticate(prisma, { email: address, password })
+    assert.equal(blocked.status, 'ACCOUNT_DEACTIVATED')
+  } finally {
+    await removeFixtures([address])
+  }
+})
+
+test('three wrong OTP codes invalidate the challenge', async () => {
+  const address = email()
+  await createAdmin({ address })
+
+  try {
+    const challenge = await authenticate(prisma, { email: address, password })
+    assert.equal(challenge.status, 'OTP_REQUIRED')
+
+    assert.equal(
+      (await verifyLoginOtp(prisma, { challengeToken: challenge.challengeToken, code: '000000' })).status,
+      'OTP_INVALID',
+    )
+    assert.equal(
+      (await verifyLoginOtp(prisma, { challengeToken: challenge.challengeToken, code: '111111' })).status,
+      'OTP_INVALID',
+    )
+    const alerted = await verifyLoginOtp(prisma, { challengeToken: challenge.challengeToken, code: '222222' })
+    assert.equal(alerted.status, 'OTP_ALERT_SENT')
+
+    const reused = await verifyLoginOtp(prisma, {
+      challengeToken: challenge.challengeToken,
+      code: challenge.debugOtp,
+    })
+    assert.equal(reused.status, 'OTP_INVALID')
   } finally {
     await removeFixtures([address])
   }
@@ -325,42 +425,45 @@ test('a second Super Admin can demote another Super Admin', async () => {
   }
 })
 
-test('bootstrap refuses a weak password, a missing password, and a second Super Admin', async () => {
-  const address = email()
+test('bootstrap seeds configured Super Admins idempotently and rejects weak passwords', async () => {
+  const first = email()
+  const second = email()
 
   try {
     await assert.rejects(
-      () => bootstrapSuperAdmin(prisma, { SUPER_ADMIN_EMAIL: address }),
+      () => bootstrapSuperAdmin(prisma, { SUPER_ADMIN_EMAIL: first }),
       (error) => error.code === 'BOOTSTRAP_CONFIG',
     )
     await assert.rejects(
-      () => bootstrapSuperAdmin(prisma, { SUPER_ADMIN_EMAIL: address, SUPER_ADMIN_PASSWORD: 'weak' }),
+      () => bootstrapSuperAdmin(prisma, { SUPER_ADMIN_EMAIL: first, SUPER_ADMIN_PASSWORD: 'weak' }),
       (error) => error.code === 'WEAK_PASSWORD',
     )
 
-    const preexisting = await prisma.adminUser.findFirst({
-      where: { role: 'SUPER_ADMIN', NOT: { email: { startsWith: 'phase3-test-' } } },
-      select: { id: true },
+    const created = await bootstrapSuperAdmins(prisma, {
+      SUPER_ADMIN_EMAIL: first,
+      SUPER_ADMIN_PASSWORD: password,
+      SUPER_ADMIN_NAME: 'First SA',
+      SUPER_ADMIN_EMAIL_2: second,
+      SUPER_ADMIN_PASSWORD_2: password,
+      SUPER_ADMIN_NAME_2: 'Second SA',
     })
 
-    if (!preexisting) {
-      const created = await bootstrapSuperAdmin(prisma, {
-        SUPER_ADMIN_EMAIL: address,
-        SUPER_ADMIN_PASSWORD: password,
-      })
-      assert.equal(created.role, 'SUPER_ADMIN')
-      assert.equal(Object.hasOwn(created, 'passwordHash'), false)
-    }
+    assert.equal(created.length, 2)
+    assert.equal(created[0].status, 'created')
+    assert.equal(created[0].admin.email, first)
+    assert.equal(created[0].admin.role, 'SUPER_ADMIN')
+    assert.equal(created[1].status, 'created')
+    assert.equal(created[1].admin.email, second)
 
-    await assert.rejects(
-      () =>
-        bootstrapSuperAdmin(prisma, {
-          SUPER_ADMIN_EMAIL: email(),
-          SUPER_ADMIN_PASSWORD: password,
-        }),
-      (error) => error.code === 'BOOTSTRAP_EXISTS',
-    )
+    const again = await bootstrapSuperAdmins(prisma, {
+      SUPER_ADMIN_EMAIL: first,
+      SUPER_ADMIN_PASSWORD: password,
+      SUPER_ADMIN_EMAIL_2: second,
+      SUPER_ADMIN_PASSWORD_2: password,
+    })
+    assert.equal(again[0].status, 'exists')
+    assert.equal(again[1].status, 'exists')
   } finally {
-    await removeFixtures([address])
+    await removeFixtures([first, second])
   }
 })

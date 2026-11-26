@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-11-26 — Admin login OTP + progressive lockout + auto-deploy
+
+- Admin sign-in requires a 6-digit email OTP after a correct password. Three wrong OTPs invalidate the challenge and email `info@aipmcae.com`.
+- Progressive password lockout: 5 failures → 1h, then 5h, 12h, 24h; another 5 failures deactivates the account until a Super Admin reactivates it.
+- Additive migration `20261126120000_admin_login_otp_lockout`. SMTP is required for production login OTP.
+- GitHub Actions `deploy.yml` runs `scripts/deploy-release.sh` on push to `main` (SSH secrets required).
+- Deploy seeds up to two Super Admins from `SUPER_ADMIN_EMAIL` / `_2` env pairs (idempotent).
+
 ## 2026-11-25 — Themed 404 pages
 
 - Public `not-found` uses SiteShell and the navy/gold website theme with a Return home button.

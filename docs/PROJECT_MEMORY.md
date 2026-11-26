@@ -55,7 +55,7 @@ Working behavior:
 - WhatsApp uses `https://wa.me/971562511154`.
 - Phone and email in the footer use website settings when a settings row exists; otherwise they keep `tel:+971562511154` and `mailto:info@alzboon.com`.
 - Footer Judicial Briefs subscribe saves emails to `newsletter_subscribers`. Newly published public blogs notify active subscribers by SMTP with the English title and an absolute `APP_URL` link to `/blogs/[slug]`.
-- `/admin/login` signs in an active admin. `/admin` shows permission-filtered database counts and logout. `/admin/account` lets any active admin update their own profile and password; role and permissions stay read-only. `/admin/profile` redirects to `/admin/account`. `/admin/admins` manages accounts when `MANAGE_ADMINS` is granted. `/admin/website` and `/admin/partners` require `MANAGE_WEBSITE_SETTINGS`. `/admin/blog-categories` and `/admin/blogs` require `MANAGE_BLOGS`. `/admin/services` requires `MANAGE_SERVICES`. `/admin/contact-enquiries` requires `MANAGE_CONTACT_ENQUIRIES`.
+- `/admin/login` requires password then a 6-digit email OTP. Progressive password lockout: 5 failures → 1h → 5h → 12h → 24h, then auto-deactivate until a Super Admin reactivates. Three wrong OTPs email `info@aipmcae.com`. `/admin` shows permission-filtered database counts and logout. `/admin/account` lets any active admin update their own profile and password; role and permissions stay read-only. `/admin/profile` redirects to `/admin/account`. `/admin/admins` manages accounts when `MANAGE_ADMINS` is granted. `/admin/website` and `/admin/partners` require `MANAGE_WEBSITE_SETTINGS`. `/admin/blog-categories` and `/admin/blogs` require `MANAGE_BLOGS`. `/admin/services` requires `MANAGE_SERVICES`. `/admin/contact-enquiries` requires `MANAGE_CONTACT_ENQUIRIES`.
 - Admin Services, Partners, Blog Categories, and Blogs lists support CSV export/import (upsert by id/slug/EN name; media restored by media id, storage key, or embedded base64; missing media does not block import—placeholder or keep existing, upload manually later).
 - Admin list pages share one live-search toolbar (no Filter button) and search across the list’s text columns.
 
@@ -110,19 +110,16 @@ Phase 12 is implemented. Phase 11 public CMS integration remains in place. Phase
 
 ## Pending tasks
 
-Await explicit approval before VPS deployment. Email notifications, map provider, Arabic homepage copy completion, and Prisma 7 upgrade remain deferred. See `docs/IMPLEMENTATION_PLAN.md` and `docs/QA_REPORT.md`.
+Await explicit approval before VPS cutover. Auto-deploy on push to `main` is wired via `.github/workflows/deploy.yml` (requires GitHub secrets + `shared/bin/deploy-release.sh` on the VPS). SMTP is required for admin login OTP in production. Map provider, Arabic homepage copy completion, and Prisma 7 upgrade remain deferred. See `docs/IMPLEMENTATION_PLAN.md` and `docs/QA_REPORT.md`.
 
 ## First Super Admin
 
-The database may still have zero admins until an operator runs the bootstrap command:
+Deploy runs `npm run admin:bootstrap` after migrate. It creates configured Super Admins when missing (idempotent; does not reset existing passwords).
 
-```bash
-npm run admin:bootstrap
-```
+Required environment variables:
 
-Required environment variables in `.env`:
+- `SUPER_ADMIN_EMAIL` / `SUPER_ADMIN_PASSWORD` (8–200 characters, with uppercase, lowercase, and a number)
+- Optional second account: `SUPER_ADMIN_EMAIL_2` / `SUPER_ADMIN_PASSWORD_2`
+- Optional display names: `SUPER_ADMIN_NAME` / `SUPER_ADMIN_NAME_2`
 
-- `SUPER_ADMIN_EMAIL`
-- `SUPER_ADMIN_PASSWORD` (12–200 characters, with uppercase, lowercase, and a number)
-
-Remove both variables after the command succeeds. Do not commit them.
+Do not commit real passwords. Keep the pairs in `production.env` on the VPS so auto-deploy can seed missing accounts.

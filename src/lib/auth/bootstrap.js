@@ -3,46 +3,95 @@ import { normalizeEmail } from './email.js'
 import { hashPassword, isStrongPassword } from './password.js'
 import { publicAdmin } from './session.js'
 
-export async function bootstrapSuperAdmin(db, env = process.env) {
-  const email = normalizeEmail(env.SUPER_ADMIN_EMAIL ?? '')
-  const password = env.SUPER_ADMIN_PASSWORD
+/**
+ * Read initial Super Admin accounts from env.
+ * Supports SUPER_ADMIN_EMAIL / SUPER_ADMIN_PASSWORD and optional
+ * SUPER_ADMIN_EMAIL_2 / SUPER_ADMIN_PASSWORD_2 (and matching optional NAME / NAME_2).
+ */
+export function readBootstrapAccounts(env = process.env) {
+  const accounts = []
 
-  if (!email || typeof password !== 'string' || password.length === 0) {
+  const firstEmail = normalizeEmail(env.SUPER_ADMIN_EMAIL ?? '')
+  const firstPassword = env.SUPER_ADMIN_PASSWORD
+  if (firstEmail || (typeof firstPassword === 'string' && firstPassword.length > 0)) {
+    accounts.push({
+      email: firstEmail,
+      password: firstPassword,
+      name: String(env.SUPER_ADMIN_NAME || 'Super Admin').trim() || 'Super Admin',
+    })
+  }
+
+  const secondEmail = normalizeEmail(env.SUPER_ADMIN_EMAIL_2 ?? '')
+  const secondPassword = env.SUPER_ADMIN_PASSWORD_2
+  if (secondEmail || (typeof secondPassword === 'string' && secondPassword.length > 0)) {
+    accounts.push({
+      email: secondEmail,
+      password: secondPassword,
+      name: String(env.SUPER_ADMIN_NAME_2 || 'Super Admin').trim() || 'Super Admin',
+    })
+  }
+
+  return accounts
+}
+
+/**
+ * Idempotent seed: create each configured Super Admin if the email is missing.
+ * Does not reset passwords for existing accounts. Safe to run on every deploy.
+ */
+export async function bootstrapSuperAdmins(db, env = process.env) {
+  const accounts = readBootstrapAccounts(env)
+
+  if (accounts.length === 0) {
     throw new AuthError('BOOTSTRAP_CONFIG')
   }
 
-  if (!isStrongPassword(password)) throw new AuthError('WEAK_PASSWORD')
-
-  const passwordHash = await hashPassword(password)
-
-  try {
-    const created = await db.$transaction(
-      async (tx) => {
-        const existing = await tx.adminUser.findFirst({
-          where: { role: 'SUPER_ADMIN' },
-          select: { id: true },
-        })
-
-        if (existing) throw new AuthError('BOOTSTRAP_EXISTS')
-
-        return tx.adminUser.create({
-          data: {
-            name: 'Super Admin',
-            email,
-            passwordHash,
-            role: 'SUPER_ADMIN',
-            active: true,
-          },
-          include: { permissions: { select: { permission: true } } },
-        })
-      },
-      { isolationLevel: 'Serializable' },
-    )
-
-    return publicAdmin(created)
-  } catch (error) {
-    if (error instanceof AuthError) throw error
-    if (error?.code === 'P2002') throw new AuthError('BOOTSTRAP_EXISTS')
-    throw error
+  for (const account of accounts) {
+    if (!account.email || typeof account.password !== 'string' || account.password.length === 0) {
+      throw new AuthError('BOOTSTRAP_CONFIG')
+    }
+    if (!isStrongPassword(account.password)) {
+      throw new AuthError('WEAK_PASSWORD')
+    }
   }
+
+  const results = []
+
+  for (const account of accounts) {
+    const existing = await db.adminUser.findUnique({
+      where: { email: account.email },
+      include: { permissions: { select: { permission: true } } },
+    })
+
+    if (existing) {
+      results.push({ status: 'exists', admin: publicAdmin(existing) })
+      continue
+    }
+
+    const passwordHash = await hashPassword(account.password)
+    const created = await db.adminUser.create({
+      data: {
+        name: account.name.slice(0, 120),
+        email: account.email,
+        passwordHash,
+        role: 'SUPER_ADMIN',
+        active: true,
+      },
+      include: { permissions: { select: { permission: true } } },
+    })
+
+    results.push({ status: 'created', admin: publicAdmin(created) })
+  }
+
+  return results
+}
+
+/** @deprecated Prefer bootstrapSuperAdmins. Creates/ensures the first env account only. */
+export async function bootstrapSuperAdmin(db, env = process.env) {
+  const singleEnv = {
+    SUPER_ADMIN_EMAIL: env.SUPER_ADMIN_EMAIL,
+    SUPER_ADMIN_PASSWORD: env.SUPER_ADMIN_PASSWORD,
+    SUPER_ADMIN_NAME: env.SUPER_ADMIN_NAME,
+  }
+  const results = await bootstrapSuperAdmins(db, singleEnv)
+  return results[0]?.admin
 }

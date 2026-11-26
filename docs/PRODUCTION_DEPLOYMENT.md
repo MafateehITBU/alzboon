@@ -67,8 +67,8 @@ Notes:
 - Set `APP_URL` to the public HTTPS origin (used by sitemap, robots, metadata).
 - `TRUST_PROXY=true` only when Nginx strips client-supplied `X-Forwarded-For` and sets the real client IP.
 - SMTP vars are optional; when set, new public contact enquiries email active Super Admins and Admins with `MANAGE_CONTACT_ENQUIRIES`.
-- Do **not** leave `SUPER_ADMIN_EMAIL` / `SUPER_ADMIN_PASSWORD` in production env after bootstrap.
-- Never commit production secrets.
+- Keep `SUPER_ADMIN_EMAIL` / `SUPER_ADMIN_PASSWORD` and optional `_2` pairs in `production.env` so deploy can seed missing Super Admins idempotently (existing accounts are not overwritten).
+- Never commit production secrets or real passwords to Git.
 
 ## PostgreSQL
 
@@ -87,12 +87,13 @@ npx prisma migrate status
 npx prisma validate
 ```
 
-Bootstrap the first Super Admin once:
+Super Admin seed (also runs automatically in `deploy-release.sh` after migrate):
 
 ```bash
-# temporarily export SUPER_ADMIN_EMAIL and SUPER_ADMIN_PASSWORD
+# production.env must include SUPER_ADMIN_EMAIL / SUPER_ADMIN_PASSWORD
+# and optional SUPER_ADMIN_EMAIL_2 / SUPER_ADMIN_PASSWORD_2
+cd /var/www/alzboon/current
 npm run admin:bootstrap
-# unset and remove those variables immediately
 ```
 
 ## Application build
@@ -125,7 +126,7 @@ User=deploy
 Group=deploy
 WorkingDirectory=/var/www/alzboon/current
 EnvironmentFile=/var/www/alzboon/shared/env/production.env
-ExecStart=/usr/bin/npm run start -- --hostname 127.0.0.1 --port 3000
+ExecStart=/usr/bin/npm run start -- --hostname 127.0.0.1 --port 3001
 Restart=on-failure
 RestartSec=5
 TimeoutStopSec=20
@@ -149,7 +150,7 @@ Do **not** alias `/var/www/alzboon/shared/uploads`. All media goes through Next.
 limit_req_zone $binary_remote_addr zone=alzboon_login:10m rate=10r/m;
 
 upstream alzboon_app {
-  server 127.0.0.1:3000;
+  server 127.0.0.1:3001;
   keepalive 32;
 }
 
@@ -196,13 +197,38 @@ systemctl is-active alzboon
 journalctl -u alzboon -n 100 --no-pager
 ```
 
+## Auto-deploy (GitHub Actions)
+
+On each push to `main`, `.github/workflows/deploy.yml` SSHs into the VPS and runs `/var/www/alzboon/shared/bin/deploy-release.sh`.
+
+One-time VPS setup:
+
+```bash
+sudo mkdir -p /var/www/alzboon/shared/bin
+sudo cp /path/to/repo/scripts/deploy-release.sh /var/www/alzboon/shared/bin/deploy-release.sh
+sudo chmod 750 /var/www/alzboon/shared/bin/deploy-release.sh
+# Ensure the systemd unit uses port 3001 (al-nawras already uses 3000).
+```
+
+GitHub repository secrets:
+
+| Secret | Purpose |
+| --- | --- |
+| `DEPLOY_HOST` | VPS IP or hostname |
+| `DEPLOY_USER` | SSH user (e.g. `root` or `deploy`) |
+| `DEPLOY_SSH_KEY` | Private key for that user |
+| `DEPLOY_REPO_URL` | HTTPS or SSH git URL for this repo |
+| `DEPLOY_PORT` | Optional SSH port (defaults to 22 in the action when empty) |
+
+SMTP must be configured in `production.env` so admin login OTP emails can send.
+
 ## Deploy procedure
 
-1. Build a new release directory (`npm ci`, `prisma generate`, `npm run build`).
+1. Build a new release directory (`npm ci`, `prisma generate`, `npm run build`), or rely on auto-deploy.
 2. Run `prisma migrate deploy` against production (backup first — see `BACKUP_AND_RECOVERY.md`).
 3. Point `current` symlink at the new release.
 4. `sudo systemctl restart alzboon`.
-5. Hit health checks and spot-check `/`, `/ar`, `/admin/login`, one service, one blog, contact form.
+5. Hit health checks and spot-check `/`, `/ar`, `/admin/login` (password + email OTP), one service, one blog, contact form.
 
 ## Rollback
 

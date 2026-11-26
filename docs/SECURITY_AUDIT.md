@@ -27,7 +27,8 @@ Root cause of the two prior test failures: local DB already had an active non-fi
 | Session token hashing | Verified | SHA-256 stored; raw token only in cookie |
 | Cookie flags | Verified | `httpOnly`, `SameSite=lax`, `Secure` in production |
 | Session TTL / revoke | Verified | 12h; revoke on logout, deactivate, role/permission/password change |
-| Login rate limit (email) | Verified | 5 failures / 15 minutes |
+| Login progressive lockout | Verified | 5 wrong passwords → 1h → 5h → 12h → 24h; then deactivate until Super Admin |
+| Login email OTP (2FA) | Verified | 6-digit code after correct password; 3 wrong OTPs → alert `info@aipmcae.com` |
 | Login rate limit (IP) | Added | 30 failures / 15 minutes when IP is known |
 | Proxy is not authz | Verified | `src/proxy.js` cookie redirect only |
 | Bootstrap | Verified | One Super Admin; refuses second |

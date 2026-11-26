@@ -52,20 +52,24 @@ enum MediaVisibility {
 }
 
 model AdminUser {
-  id             String    @id @default(uuid()) @db.Uuid
-  name           String
-  email          String    @unique
-  phone          String?
-  passwordHash   String    @map("password_hash")
-  role           AdminRole
-  active         Boolean   @default(true)
-  profileMediaId String?   @map("profile_media_id") @db.Uuid
-  createdAt      DateTime  @default(now()) @map("created_at")
-  updatedAt      DateTime  @updatedAt @map("updated_at")
+  id               String    @id @default(uuid()) @db.Uuid
+  name             String
+  email            String    @unique
+  phone            String?
+  passwordHash     String    @map("password_hash")
+  role             AdminRole
+  active           Boolean   @default(true)
+  failedLoginCount Int       @default(0) @map("failed_login_count")
+  lockoutLevel     Int       @default(0) @map("lockout_level")
+  lockedUntil      DateTime? @map("locked_until")
+  profileMediaId   String?   @map("profile_media_id") @db.Uuid
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
 
-  profileMedia MediaAsset?       @relation("AdminProfile", fields: [profileMediaId], references: [id], onDelete: Restrict)
-  permissions  AdminPermission[]
-  sessions     Session[]
+  profileMedia   MediaAsset?         @relation("AdminProfile", fields: [profileMediaId], references: [id], onDelete: Restrict)
+  permissions    AdminPermission[]
+  sessions       Session[]
+  otpChallenges  LoginOtpChallenge[]
 
   @@index([profileMediaId])
   @@map("admin_users")
@@ -104,6 +108,23 @@ model LoginAttempt {
 
   @@index([identifier, createdAt])
   @@map("login_attempts")
+}
+
+model LoginOtpChallenge {
+  id                 String    @id @default(uuid()) @db.Uuid
+  adminUserId        String    @map("admin_user_id") @db.Uuid
+  challengeTokenHash String    @unique @map("challenge_token_hash")
+  codeHash           String    @map("code_hash")
+  attempts           Int       @default(0)
+  expiresAt          DateTime  @map("expires_at")
+  consumedAt         DateTime? @map("consumed_at")
+  createdAt          DateTime  @default(now()) @map("created_at")
+
+  adminUser AdminUser @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
+
+  @@index([adminUserId, createdAt])
+  @@index([expiresAt])
+  @@map("login_otp_challenges")
 }
 
 model WebsiteSettings {

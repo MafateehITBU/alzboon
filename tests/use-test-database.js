@@ -30,3 +30,6 @@ const finalName = new URL(process.env.DATABASE_URL).pathname.replace(/^\//, '').
 if (!finalName.endsWith('_test')) {
   throw new Error(`Refusing to run tests against non-test database "${finalName}". Use a *_test database.`)
 }
+
+// Expose OTP codes from authenticate() so auth tests can complete the 2FA step without SMTP.
+process.env.AUTH_TEST_EXPOSE_OTP = '1'
