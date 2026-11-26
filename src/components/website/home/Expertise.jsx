@@ -58,40 +58,40 @@ function Expertise({ messages }) {
         </div>
 
         <div>
-          <p className="flex items-center gap-3.5 font-abu text-[14px] leading-4 font-bold tracking-[0.55px] text-gold uppercase max-[767px]:text-[13px] max-[767px]:leading-normal">
+          <p className="flex items-center gap-3.5 font-abu text-[20px] leading-4 font-bold tracking-[0.55px] text-gold uppercase max-[767px]:text-base max-[767px]:leading-normal">
             <span className="h-[3px] w-10 bg-gold" />
             {copy.eyebrow || 'Authority & Foresight'}
           </p>
           <h2
             id="expertise-title"
-            className="mt-[18px] max-w-[560px] font-abu text-[34px] leading-[1.2] font-normal tracking-[0.5px] text-ink-soft max-[1439px]:text-[30px] max-[1439px]:leading-[1.2] max-[767px]:text-[26px] max-[767px]:tracking-normal"
+            className="mt-[18px] max-w-[560px] font-abu text-[42px] leading-[50px] font-normal tracking-[1px] text-ink-soft max-[1439px]:text-4xl max-[1439px]:leading-[1.2] max-[767px]:text-[30px] max-[767px]:tracking-normal"
           >
             {copy.title || 'Deep Expertise and a Vision for the Future'}
           </h2>
-          <p className="mt-[23px] font-abu text-[16px] leading-[26px] text-body max-[767px]:text-sm max-[767px]:leading-normal">
+          <p className="mt-[23px] font-abu text-[20px] leading-[29.25px] text-body max-[767px]:text-base max-[767px]:leading-normal">
             {copy.body1 ||
               'With over 30 years of experience in providing successful and diverse consultancy services, we take pride in our ability to offer our clients deep strategic insights that help them make informed decisions to enhance their future growth.'}
           </p>
-          <p className="mt-[23px] font-abu text-[16px] leading-[24px] text-body max-[767px]:text-sm max-[767px]:leading-normal">
+          <p className="mt-[23px] font-abu text-[20px] leading-[24.38px] text-body max-[767px]:text-base max-[767px]:leading-normal">
             {copy.body2 ||
               'We work closely with each client to understand their unique challenges and needs, enabling us to develop innovative and tailored solutions that align with their goals. From safeguarding nascent industrial inventions to stewarding intricate international trademarks and resolving complex institutional restructuring, our advisory framework is built on uncompromising diligence.'}
           </p>
           <div className="mt-7 grid grid-cols-[repeat(2,minmax(0,327px))] gap-4 max-[1023px]:grid-cols-1">
             <article className="rounded-lg bg-[rgba(248,246,241,0.5)] p-5 shadow-soft">
               <img src={assetSrc(governance)} alt="" width="36" height="36" className="h-9 w-9" />
-              <h3 className="mt-3 font-abu text-base leading-6 font-bold text-ink-soft">
+              <h3 className="mt-3 font-abu text-lg leading-7 font-bold text-ink-soft">
                 {copy.governanceTitle || 'Institutional Governance'}
               </h3>
-              <p className="mt-1.5 font-abu text-sm leading-6 text-body">
+              <p className="mt-1.5 font-abu text-lg leading-6 text-body">
                 {copy.governanceBody || 'Robust legal compliance and executive decision safeguarding.'}
               </p>
             </article>
             <article className="rounded-lg bg-paper p-5 shadow-soft">
               <img src={assetSrc(crossBorder)} alt="" width="44" height="44" className="h-11 w-11" />
-              <h3 className="mt-3 font-abu text-base leading-6 font-bold text-ink-soft">
+              <h3 className="mt-3 font-abu text-lg leading-7 font-bold text-ink-soft">
                 {copy.crossBorderTitle || 'Cross-Border Protection'}
               </h3>
-              <p className="mt-1.5 font-abu text-sm leading-6 text-body">
+              <p className="mt-1.5 font-abu text-lg leading-6 text-body">
                 {copy.crossBorderBody || 'Madrid Protocol, PCT national phase filings, and multi-region enforcement.'}
               </p>
             </article>

@@ -84,10 +84,10 @@ function renderNode(node, index, keyPrefix = 'n', options = {}) {
 
       const className = article
         ? level === 1
-          ? 'mt-12 mb-5 scroll-mt-28 border-s-[3px] border-[#BBA97A] ps-4 font-abu text-[28px] leading-[1.25] tracking-[-0.02em] text-ink max-[767px]:mt-10 max-[767px]:text-[24px]'
+          ? 'mt-12 mb-5 scroll-mt-28 border-s-[3px] border-[#BBA97A] ps-4 font-abu text-[34px] leading-[1.2] tracking-[-0.02em] text-ink max-[767px]:mt-10 max-[767px]:text-[28px]'
           : level === 2
-            ? 'mt-10 mb-4 scroll-mt-28 border-s-[3px] border-teal/50 ps-4 font-abu text-[24px] leading-[1.3] tracking-[-0.02em] text-ink max-[767px]:mt-8 max-[767px]:text-[20px]'
-            : 'mt-8 mb-3 scroll-mt-28 font-abu text-[20px] leading-snug text-ink max-[767px]:text-[18px]'
+            ? 'mt-10 mb-4 scroll-mt-28 border-s-[3px] border-teal/50 ps-4 font-abu text-[28px] leading-[1.25] tracking-[-0.02em] text-ink max-[767px]:mt-8 max-[767px]:text-[24px]'
+            : 'mt-8 mb-3 scroll-mt-28 font-abu text-[22px] leading-snug text-ink max-[767px]:text-[20px]'
         : level === 1
           ? 'mb-4 font-abu text-3xl text-ink'
           : level === 2

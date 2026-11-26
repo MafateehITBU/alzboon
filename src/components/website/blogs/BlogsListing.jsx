@@ -30,7 +30,7 @@ export default function BlogsListing({
             <span aria-hidden="true">— </span>
             {copy.sectionEyebrow}
           </p>
-          <h2 className="mt-3 font-abu text-[32px] leading-[1.15] tracking-[-0.02em] text-ink max-[1023px]:text-[28px] max-[767px]:text-[24px]">
+          <h2 className="mt-3 font-abu text-[40px] leading-[1.12] tracking-[-0.03em] text-ink max-[1023px]:text-[34px] max-[767px]:text-[28px]">
             {copy.sectionTitle}
           </h2>
         </header>

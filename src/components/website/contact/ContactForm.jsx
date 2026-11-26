@@ -85,7 +85,7 @@ export default function ContactForm({ locale, messages, services = [] }) {
         <input type="text" name="website" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
 
         <div>
-          <h2 className="font-abu text-[26px] leading-tight tracking-[-0.3px] text-ink max-[767px]:text-[22px]">
+          <h2 className="font-abu text-[32px] leading-tight tracking-[-0.4px] text-ink max-[767px]:text-[28px]">
             {copy.formTitle || 'Send an Inquiry'}
           </h2>
           <p className="mt-2 font-jakarta text-[14px] leading-6 text-body">

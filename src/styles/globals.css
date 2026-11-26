@@ -27,7 +27,7 @@
   --color-info: #2563eb;
   --color-success: #15803d;
   --color-danger: #dc2626;
-  --font-abu: var(--font-abu-family), Georgia, 'Times New Roman', serif;
+  --font-abu: var(--font-abu-family), sans-serif;
   --font-jakarta: var(--font-jakarta-family), sans-serif;
   --font-roboto: var(--font-roboto-family), sans-serif;
   --font-dm: var(--font-dm-family), sans-serif;
@@ -108,7 +108,7 @@
   body {
     min-height: 100svh;
     color: var(--color-ink-soft);
-    font-family: var(--font-abu), Georgia, 'Times New Roman', serif;
+    font-family: var(--font-abu), sans-serif;
     font-weight: 400;
     line-height: 1.5;
     color-scheme: light;

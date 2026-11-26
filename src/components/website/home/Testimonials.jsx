@@ -49,17 +49,17 @@ function Testimonials({ messages }) {
       aria-labelledby="testimonials-title"
     >
       <div className="mx-auto max-w-[672px] text-center">
-        <p className="inline-flex items-center gap-2 rounded-xl bg-[#f1f5f8] px-3 py-1 font-jakarta text-[12px] leading-4 font-bold tracking-[0.4px] text-gold uppercase">
+        <p className="inline-flex items-center gap-2 rounded-xl bg-[#f1f5f8] px-3 py-1 font-jakarta text-[15px] leading-4 font-bold tracking-[0.4px] text-gold uppercase">
           <img src={assetSrc(award)} alt="" width="13" height="13" className="h-[13px] w-[13px]" />
           {copy.eyebrow || 'Client Validation'}
         </p>
         <h2
           id="testimonials-title"
-          className="mt-[18px] font-abu text-[36px] leading-[1.2] font-normal tracking-[-0.5px] text-ink max-[1439px]:text-[32px] max-[1439px]:leading-[1.2] max-[767px]:text-[26px]"
+          className="mt-[18px] font-abu text-[45px] leading-[50px] font-normal tracking-[-1px] text-ink max-[1439px]:text-[38px] max-[1439px]:leading-[1.15] max-[767px]:text-[30px]"
         >
           {copy.title || 'Recognized by Leading Enterprises'}
         </h2>
-        <p className="mt-3 font-abu text-[16px] leading-6 text-body-strong">
+        <p className="mt-3 font-abu text-[20px] leading-6 text-body-strong">
           {copy.description || 'Over two decades of discretion, landmark resolutions, and fortified brand equity.'}
         </p>
       </div>

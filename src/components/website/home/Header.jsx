@@ -11,7 +11,7 @@ import { switchLocalePath, withLocale } from '@/lib/i18n/paths'
 import { getServiceNavIcon } from '@/components/website/serviceNavIcons'
 
 const desktopLinkClass =
-  'relative inline-flex min-h-8 items-center gap-1.5 border-0 bg-transparent px-0 py-1 font-jakarta text-[14px] leading-6 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-teal'
+  'relative inline-flex min-h-8 items-center gap-1.5 border-0 bg-transparent px-0 py-1 font-jakarta text-[15px] leading-6 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-teal'
 
 function desktopNavClass(active) {
   return active

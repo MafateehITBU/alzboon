@@ -36,24 +36,24 @@ Implemented in `src/styles/globals.css` with Tailwind CSS 4 `@theme`. Component 
 
 Approved website-wide typography:
 
-- English public UI uses **Playfair Display** Regular and Bold (`font-abu` token → Playfair).
-- Arabic public UI uses **GE Dinar Two** (`--font-dinar` / remapped under `lang="ar"`).
+- English public UI uses **Abu Dhabi Pro** Regular (`font-abu` → `AbuDhabiPro-Regular.ttf`).
+- Arabic public UI uses **GE Dinar Two** (`--font-dinar` / remapped under `lang="ar"` → `ArbFONTS-GE-Dinar-Two-Medium.otf`).
 - Do not replace GE Dinar Two with IBM Plex, Tajawal, or other Arabic substitutes.
-- Preserve the self-hosted font files in `src/assets/fonts` (Jakarta, Roboto, DM Sans, GE Dinar Two).
+- Preserve the self-hosted font files in `src/assets/fonts` (Jakarta, Roboto, DM Sans, Abu Dhabi Pro, GE Dinar Two).
 
 | Token | Source | Weights |
 | --- | --- | --- |
-| `font-abu` | Playfair Display via `next/font/google` (self-hosted at build) | 400 and 700 |
-| `font-dinar` | `GE-Dinar-Two-Medium_1E.otf` | 500 (Arabic public pages) |
+| `font-abu` | `AbuDhabiPro-Regular.ttf` | 400 |
+| `font-dinar` | `ArbFONTS-GE-Dinar-Two-Medium.otf` | 500 (Arabic public pages) |
 | `font-jakarta` | `plus-jakarta-sans-wght.ttf`, SIL Open Font License | 400 through 700 |
 | `font-roboto` | `roboto-400.woff2`, SIL Open Font License | 400 |
 | `font-dm` | `dm-sans-400.woff2`, SIL Open Font License | 400 |
 | `font-georgia` | Georgia, then Times New Roman | 400 |
 | `font-freeserif` | FreeSerif, then Times New Roman | 700 for the language-switcher label |
 
-`next/font` registers Playfair Display and GE Dinar Two in `src/lib/fonts.js`. When `html` or a subtree has `lang="ar"`, `globals.css` assigns GE Dinar Two to the body and remaps `.font-abu`, `.font-jakarta`, `.font-roboto`, and `.font-dm` so Arabic public pages stay on Dinar without rewriting every utility class. English pages use Playfair Display as the display face. Supplied families use `font-display: swap`. Playfair is bundled at build time; the page does not request Google Fonts at runtime.
+`next/font` registers Abu Dhabi Pro and GE Dinar Two in `src/lib/fonts.js`. When `html` or a subtree has `lang="ar"`, `globals.css` assigns GE Dinar Two to the body and remaps `.font-abu`, `.font-jakarta`, `.font-roboto`, and `.font-dm` so Arabic public pages stay on Dinar without rewriting every utility class. English pages use Abu Dhabi Pro as the display face. Supplied families use `font-display: swap`. The page does not request Google Fonts at runtime.
 
-The official Roboto and DM Sans masters contain more than one variation axis. `next/font` loads the static Latin files for the weights the homepage uses. The variable masters and license texts remain in `src/assets/fonts`.
+`next/font` loads only the static Latin files used on the site (`roboto-400.woff2`, `dm-sans-400.woff2`). Unused variable masters were removed. SIL license texts remain in `src/assets/fonts/licenses`.
 
 ## Typography and spacing
 

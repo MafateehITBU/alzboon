@@ -16,16 +16,16 @@ function AboutConsultation({ locale = 'en', copy, contact = null }) {
       <div className="relative mx-auto min-h-[310px] max-w-[1280px] overflow-hidden rounded-3xl bg-cream p-[57px] shadow-cta max-[1023px]:p-9 max-[767px]:rounded-2xl max-[767px]:px-5 max-[767px]:py-7">
         <span className="pointer-events-none absolute -right-10 -bottom-20 h-80 w-80 rounded-xl bg-[rgba(187,169,122,0.2)] blur-[32px]" aria-hidden="true" />
         <div className="relative z-[1]">
-          <p className="font-abu text-[14px] leading-4 font-bold tracking-[1.1px] text-gold uppercase">
+          <p className="font-abu text-[18px] leading-4 font-bold tracking-[1.1px] text-gold uppercase">
             {copy?.ctaLabel}
           </p>
           <h2
             id="about-cta-title"
-            className="mt-4 max-w-[760px] font-abu text-[36px] leading-[1.2] font-bold tracking-[0.5px] text-ink-soft max-[1439px]:text-[32px] max-[1439px]:leading-[1.2] max-[767px]:text-[26px] max-[767px]:tracking-normal"
+            className="mt-4 max-w-[760px] font-abu text-[45px] leading-[50px] font-bold tracking-[1px] text-ink-soft max-[1439px]:text-4xl max-[1439px]:leading-[1.2] max-[767px]:text-[28px] max-[767px]:tracking-normal"
           >
             {copy?.ctaTitle}
           </h2>
-          <p className="mt-3.5 max-w-[680px] font-abu text-[16px] leading-6 text-body">{copy?.ctaBody}</p>
+          <p className="mt-3.5 max-w-[680px] font-abu text-[18px] leading-6 text-body">{copy?.ctaBody}</p>
           <div className="mt-7 flex flex-wrap gap-4 max-[767px]:mt-5 max-[767px]:w-full max-[767px]:flex-col max-[767px]:gap-2.5">
             <Link
               href={withLocale('/contact', locale)}

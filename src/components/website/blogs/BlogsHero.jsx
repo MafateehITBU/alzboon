@@ -60,7 +60,7 @@ export default function BlogsHero({ locale = 'en', copy }) {
 
             <h1
               id="blogs-hero-title"
-              className="mt-5 max-w-[720px] font-abu text-[44px] leading-[1.12] font-normal tracking-[-0.8px] text-white max-[1439px]:text-[38px] max-[1023px]:text-[32px] max-[767px]:mt-4 max-[767px]:text-[28px] max-[767px]:tracking-normal"
+              className="mt-5 max-w-[720px] font-abu text-[56px] leading-[1.08] font-normal tracking-[-1.2px] text-white max-[1439px]:text-[44px] max-[1023px]:text-[38px] max-[767px]:mt-4 max-[767px]:text-[32px] max-[767px]:tracking-normal"
             >
               {copy.heroTitleBefore}
               <em className={accentGradient}>{copy.heroTitleAccent1}</em>
@@ -68,7 +68,7 @@ export default function BlogsHero({ locale = 'en', copy }) {
               <em className={accentGradient}>{copy.heroTitleAccent2}</em>
             </h1>
 
-            <p className="mt-5 max-w-[560px] font-abu text-[16px] leading-6 font-normal text-white/70 max-[767px]:mt-4 max-[767px]:text-sm max-[767px]:leading-6">
+            <p className="mt-5 max-w-[560px] font-abu text-[18px] leading-7 font-normal text-white/70 max-[767px]:mt-4 max-[767px]:text-base max-[767px]:leading-6">
               {copy.heroBody}
             </p>
           </div>
@@ -80,7 +80,7 @@ export default function BlogsHero({ locale = 'en', copy }) {
             <p className="font-jakarta text-[10px] font-semibold tracking-[0.2em] text-[#BBA97A] uppercase">
               {copy.repositoryLabel}
             </p>
-            <p className="mt-2 font-abu text-[34px] leading-none tracking-[-0.04em] text-white max-[767px]:text-[28px]">
+            <p className="mt-2 font-abu text-[42px] leading-none tracking-[-0.04em] text-white max-[767px]:text-[36px]">
               {copy.repositoryFigure}
             </p>
             <p className="mt-2 font-jakarta text-[13px] leading-5 text-white/80">{copy.repositoryDescription}</p>

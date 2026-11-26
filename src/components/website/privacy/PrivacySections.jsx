@@ -1,7 +1,7 @@
 import { FolderOpen, Lock, Scale, Shield } from 'lucide-react'
 
 const sectionHeading =
-  'font-abu text-[30px] leading-[1.2] tracking-[-0.3px] text-ink max-[1023px]:text-[26px] max-[767px]:text-[22px]'
+  'font-abu text-[36px] leading-[1.15] tracking-[-0.5px] text-ink max-[1023px]:text-[30px] max-[767px]:text-[26px]'
 
 const bodyText = 'font-jakarta text-[16px] leading-7 text-body max-[767px]:text-[15px] max-[767px]:leading-6'
 
@@ -9,7 +9,7 @@ function SectionShell({ id, number, title, children }) {
   return (
     <section id={id} className="scroll-mt-28 border-b border-line/80 pb-14 last:border-b-0 last:pb-0">
       <div className="flex items-start gap-4 max-[767px]:gap-3">
-        <span className="font-abu text-[32px] leading-none text-[#BBA97A] max-[767px]:text-[26px]">{number}.</span>
+        <span className="font-abu text-[42px] leading-none text-[#BBA97A] max-[767px]:text-[32px]">{number}.</span>
         <h2 className={sectionHeading}>{title}</h2>
       </div>
       <div className="mt-6">{children}</div>

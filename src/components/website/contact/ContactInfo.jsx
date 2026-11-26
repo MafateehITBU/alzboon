@@ -56,7 +56,7 @@ function ContactInfo({ locale = 'en', copy, contact = null }) {
 
   return (
     <div className="max-w-[440px]">
-      <h2 className="font-abu text-[32px] leading-[1.2] font-normal tracking-[-0.4px] text-ink max-[1023px]:text-[28px] max-[767px]:text-[24px]">
+      <h2 className="font-abu text-[40px] leading-[1.15] font-normal tracking-[-0.6px] text-ink max-[1023px]:text-[34px] max-[767px]:text-[30px]">
         {copy?.sectionTitle || 'Enquiries'}
       </h2>
       <p className="mt-4 font-jakarta text-[15px] leading-6 text-body">

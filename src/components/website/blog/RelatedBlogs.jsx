@@ -15,7 +15,7 @@ export default function RelatedBlogs({ locale = 'en', copy, blogs = [] }) {
         </p>
         <h2
           id="related-blogs-title"
-          className="mt-3 font-abu text-[30px] leading-[1.2] tracking-[-0.02em] text-ink max-[1023px]:text-[26px] max-[767px]:text-[22px]"
+          className="mt-3 font-abu text-[36px] leading-[1.15] tracking-[-0.03em] text-ink max-[1023px]:text-[30px] max-[767px]:text-[26px]"
         >
           {copy.relatedTitle}
         </h2>
