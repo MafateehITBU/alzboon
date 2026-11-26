@@ -9,7 +9,7 @@ Phase 12 is complete. Do not deploy to production or begin a new development pha
 - Inspected the Vite application, homepage, assets, fonts, tokens, and behavior.
 - Confirmed PostgreSQL, Prisma, the Linux VPS, and local media storage.
 - Confirmed Next.js App Router, JavaScript, and Tailwind CSS 4.
-- Confirmed self-hosted fonts (Abu Dhabi Pro for English display; GE Dinar Two for Arabic).
+- Confirmed self-hosted fonts (Playfair Display for English display; GE Dinar Two for Arabic).
 - Confirmed that the proxy is not the authorization boundary.
 - Recorded the schema, storage layout, backup method, and deployment method.
 - Wrote `AGENTS.md` and the Phase 0 documents.

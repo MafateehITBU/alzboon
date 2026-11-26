@@ -1,11 +1,5 @@
 # Changelog
 
-## 2026-11-26 — Restore Abu Dhabi Pro + update GE Dinar Two file
-
-- English `font-abu` uses local `AbuDhabiPro-Regular.ttf` again (Playfair Display removed).
-- Arabic GE Dinar Two now loads `ArbFONTS-GE-Dinar-Two-Medium.otf`; removed `GE-Dinar-Two-Medium_1E.otf`.
-- Removed unused `roboto-variable.ttf` and `dm-sans-variable.ttf`.
-
 ## 2026-11-25 — Themed 404 pages
 
 - Public `not-found` uses SiteShell and the navy/gold website theme with a Return home button.

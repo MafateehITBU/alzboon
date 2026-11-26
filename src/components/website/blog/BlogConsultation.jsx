@@ -19,16 +19,16 @@ export default function BlogConsultation({ locale = 'en', copy, contact = null }
           aria-hidden="true"
         />
         <div className="relative z-[1]">
-          <p className="font-abu text-[18px] leading-4 font-bold tracking-[1.1px] text-gold uppercase">
+          <p className="font-abu text-[14px] leading-4 font-bold tracking-[1.1px] text-gold uppercase">
             {copy.consultLabel}
           </p>
           <h2
             id="blog-consult-title"
-            className="mt-4 max-w-[760px] font-abu text-[40px] leading-[1.15] font-bold tracking-[0.5px] text-ink-soft max-[1439px]:text-4xl max-[767px]:text-[26px] max-[767px]:tracking-normal"
+            className="mt-4 max-w-[760px] font-abu text-[34px] leading-[1.2] font-bold tracking-[0.5px] text-ink-soft max-[1439px]:text-[30px] max-[767px]:text-[24px] max-[767px]:tracking-normal"
           >
             {copy.consultTitle}
           </h2>
-          <p className="mt-3.5 max-w-[680px] font-abu text-[18px] leading-6 text-body max-[767px]:text-[15px]">
+          <p className="mt-3.5 max-w-[680px] font-abu text-[16px] leading-6 text-body max-[767px]:text-sm">
             {copy.consultBody}
           </p>
           <div className="mt-7 flex flex-wrap gap-4 max-[767px]:mt-5 max-[767px]:w-full max-[767px]:flex-col max-[767px]:gap-2.5">

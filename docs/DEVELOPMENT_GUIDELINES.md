@@ -35,8 +35,8 @@
 
 ## Fonts
 
-- English display type is Abu Dhabi Pro Regular via `next/font` (`font-abu` → `AbuDhabiPro-Regular.ttf`), with `font-display: swap`.
-- Self-host Plus Jakarta Sans, Roboto, DM Sans, and GE Dinar Two Medium (`ArbFONTS-GE-Dinar-Two-Medium.otf`) from local font files.
+- English display type is Playfair Display (400/700) via `next/font` (`font-abu` token), self-hosted at build with `font-display: swap`.
+- Self-host Plus Jakarta Sans, Roboto, DM Sans, and GE Dinar Two Medium from licensed font files.
 - Arabic public UI uses GE Dinar Two (`--font-dinar`) whenever `lang="ar"`.
 - Do not add a runtime request to Google Fonts.
 - Preserve Georgia and FreeSerif as the system stacks already used by the homepage.

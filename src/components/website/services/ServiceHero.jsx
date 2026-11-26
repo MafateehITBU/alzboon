@@ -81,11 +81,11 @@ function ServiceHero({ locale = 'en', service, copy }) {
             </span>
             <h1
               id="service-hero-title"
-              className={`mt-5 font-abu text-[56px] leading-[1.08] font-normal tracking-[-1px] max-[1439px]:text-[46px] max-[1023px]:text-[40px] max-[767px]:text-[32px] max-[767px]:tracking-normal ${titleGradient}`}
+              className={`mt-5 font-abu text-[44px] leading-[1.12] font-normal tracking-[-0.8px] max-[1439px]:text-[38px] max-[1023px]:text-[32px] max-[767px]:text-[28px] max-[767px]:tracking-normal ${titleGradient}`}
             >
               {service?.heroTitle || service?.name}
             </h1>
-            <p className="mt-6 max-w-[540px] font-abu text-[18px] leading-[28px] text-white/75 max-[767px]:mt-5 max-[767px]:text-base max-[767px]:leading-6">
+            <p className="mt-5 max-w-[540px] font-abu text-[16px] leading-[26px] text-white/75 max-[767px]:mt-4 max-[767px]:text-sm max-[767px]:leading-6">
               {service?.heroDescription}
             </p>
             <Link

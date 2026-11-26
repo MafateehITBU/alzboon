@@ -33,7 +33,7 @@ function AboutFounder({ copy }) {
                   <ShieldOutlineIcon className="h-3.5 w-3.5 shrink-0 text-gold" />
                   {copy?.founderRole}
                 </p>
-                <p className="mt-2 font-abu text-[30px] leading-none font-bold text-white max-[767px]:text-[26px]">
+                <p className="mt-2 font-abu text-[24px] leading-none font-bold text-white max-[767px]:text-[22px]">
                   {copy?.founderName}
                 </p>
                 <p className="mt-2 max-w-[300px] font-jakarta text-[13px] leading-5 text-white/75">
@@ -58,20 +58,20 @@ function AboutFounder({ copy }) {
           </div>
 
           <div className="min-w-0 pt-1">
-            <p className="flex items-center gap-3 font-abu text-[15px] leading-4 font-bold tracking-[0.55px] text-teal uppercase max-[767px]:text-[13px] max-[767px]:leading-normal">
+            <p className="flex items-center gap-3 font-abu text-[13px] leading-4 font-bold tracking-[0.55px] text-teal uppercase max-[767px]:text-[12px] max-[767px]:leading-normal">
               <span className="h-px w-8 shrink-0 bg-teal" aria-hidden="true" />
               {copy?.founderEyebrow}
             </p>
             <h2
               id="about-founder-title"
-              className="mt-[18px] max-w-[560px] font-abu text-[42px] leading-[50px] font-normal tracking-[1px] text-ink-soft max-[1439px]:text-4xl max-[1439px]:leading-[1.2] max-[767px]:text-[30px] max-[767px]:tracking-normal"
+              className="mt-[18px] max-w-[560px] font-abu text-[34px] leading-[1.2] font-normal tracking-[0.5px] text-ink-soft max-[1439px]:text-[30px] max-[1439px]:leading-[1.2] max-[767px]:text-[26px] max-[767px]:tracking-normal"
             >
               {copy?.founderHeading}
             </h2>
 
             <div className="mt-[23px] max-w-[620px] space-y-[23px]">
-              <p className="font-abu text-[20px] leading-[29.25px] text-body max-[767px]:text-base max-[767px]:leading-normal">{copy?.founderBio1}</p>
-              <p className="font-abu text-[20px] leading-[24.38px] text-body max-[767px]:text-base max-[767px]:leading-normal">{copy?.founderBio2}</p>
+              <p className="font-abu text-[16px] leading-[26px] text-body max-[767px]:text-sm max-[767px]:leading-normal">{copy?.founderBio1}</p>
+              <p className="font-abu text-[16px] leading-[24px] text-body max-[767px]:text-sm max-[767px]:leading-normal">{copy?.founderBio2}</p>
             </div>
 
             <blockquote className="relative mt-8 overflow-hidden rounded-[16px] bg-[#EEF1F4] px-7 py-7 max-[767px]:px-5 max-[767px]:py-6">

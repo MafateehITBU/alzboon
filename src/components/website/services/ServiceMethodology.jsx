@@ -38,17 +38,17 @@ function ServiceMethodology({ copy }) {
   return (
     <section className="bg-cream" aria-labelledby="service-methodology-title">
       <div className="mx-auto max-w-[1440px] px-[80px] py-20 max-[1439px]:px-10 max-[1023px]:px-8 max-[1023px]:py-14 max-[767px]:px-5 max-[767px]:py-12">
-        <p className="text-center font-abu text-[18px] leading-4 font-bold tracking-[1.1px] text-gold uppercase">
+        <p className="text-center font-abu text-[14px] leading-4 font-bold tracking-[1.1px] text-gold uppercase">
           {copy?.eyebrow || 'STRATEGIC METHODOLOGY'}
         </p>
         <h2
           id="service-methodology-title"
-          className="mx-auto mt-4 max-w-[760px] text-center font-abu text-[42px] leading-[1.15] font-bold tracking-[1px] text-ink-soft max-[1439px]:text-[36px] max-[767px]:text-[28px] max-[767px]:tracking-normal"
+          className="mx-auto mt-4 max-w-[760px] text-center font-abu text-[34px] leading-[1.2] font-bold tracking-[0.5px] text-ink-soft max-[1439px]:text-[30px] max-[767px]:text-[26px] max-[767px]:tracking-normal"
         >
           {copy?.title}
         </h2>
         {copy?.body ? (
-          <p className="mx-auto mt-4 max-w-[680px] text-center font-abu text-[18px] leading-6 text-body max-[767px]:text-base max-[767px]:leading-6">
+          <p className="mx-auto mt-4 max-w-[680px] text-center font-abu text-[16px] leading-6 text-body max-[767px]:text-sm max-[767px]:leading-6">
             {copy.body}
           </p>
         ) : null}

@@ -87,7 +87,7 @@ Phase 12 is implemented. Phase 11 public CMS integration remains in place. Phase
 - Uploads live in `/var/www/alzboon/shared/uploads/`, split into `public/` and `private/`. Releases must not delete that directory.
 - Public media covers approved website images, logos, partner logos, blog featured images, and service hero/practice-area images. Private media covers protected blog attachments and admin profile photos and is served only after a server-side session and permission check.
 - File metadata is stored in PostgreSQL. File bytes are stored by one storage service.
-- English display type is Abu Dhabi Pro Regular (`AbuDhabiPro-Regular.ttf`); the Tailwind token remains `font-abu`. Arabic uses GE Dinar Two (`ArbFONTS-GE-Dinar-Two-Medium.otf`).
+- English display type is Playfair Display (400/700) via `next/font`; the Tailwind token remains `font-abu`.
 - Plus Jakarta Sans, Roboto, and DM Sans are self-hosted from licensed files. Fonts are not requested from Google at runtime.
 - The homepage remains the Figma layout. Footer contact email, phones, and addresses come from website settings when saved. The homepage has no social icon row or partners strip yet, so those records are stored for later public pages.
 - The homepage newsletter is not a contact enquiry.

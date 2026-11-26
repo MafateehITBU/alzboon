@@ -12,7 +12,7 @@ Phase 12 is implemented. The platform has completed final QA, security hardening
 - PostgreSQL and Prisma.
 - Self-managed Linux VPS.
 - Media on the VPS filesystem, outside the release directory.
-- English display type uses Abu Dhabi Pro (`AbuDhabiPro-Regular.ttf`, `font-abu` utility). Arabic public UI uses GE Dinar Two (`ArbFONTS-GE-Dinar-Two-Medium.otf`).
+- English display type uses Playfair Display via `next/font` (self-hosted at build; `font-abu` utility). Arabic public UI uses GE Dinar Two.
 - Plus Jakarta Sans, Roboto, and DM Sans are self-hosted. Do not load them from Google Fonts at runtime.
 
 ## Implementation rules

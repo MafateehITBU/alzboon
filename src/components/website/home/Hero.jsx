@@ -54,23 +54,23 @@ function Hero({ locale = 'en', messages }) {
         >
           <div className={`flex items-center gap-3.5 ${isArabic ? 'flex-row-reverse justify-end' : ''}`}>
             <span className="h-0.5 w-11 bg-gold-deep" />
-            <p className="font-abu text-base leading-6 font-normal tracking-[0.5px] text-gold-deep">
+            <p className="font-abu text-[15px] leading-6 font-normal tracking-[0.5px] text-gold-deep">
               {copy.eyebrow || 'OVER 30 YEARS OF LEGAL EXPERIENCE'}
             </p>
           </div>
-          <h1 id="hero-title" className="mt-7 grid font-abu text-[64px] leading-[1.08] font-normal max-[1439px]:text-[48px] max-[1023px]:text-[42px] max-[767px]:text-[34px]">
+          <h1 id="hero-title" className="mt-7 grid font-abu text-[52px] leading-[1.1] font-normal max-[1439px]:text-[42px] max-[1023px]:text-[36px] max-[767px]:text-[30px]">
             <span className="text-ivory">{copy.titleLine1 || 'Legal Expertise.'}</span>
             <span className="text-gold-deep">{copy.titleLine2 || 'Strategic Vision.'}</span>
           </h1>
-          <p className="mt-9 max-w-[540px] font-abu text-[20px] leading-[26px] font-normal text-ivory max-[1439px]:text-[18px] max-[767px]:text-base max-[767px]:leading-6">
+          <p className="mt-7 max-w-[540px] font-abu text-[16px] leading-[24px] font-normal text-ivory max-[1439px]:text-[15px] max-[767px]:text-sm max-[767px]:leading-6">
             {copy.body ||
               'We provide innovative consultancy and effective legal solutions, empowering our clients to achieve sustainable success and protect their intellectual and organizational rights.'}
           </p>
           <div
-            className={`mt-12 flex flex-wrap gap-[34px] max-[767px]:mt-8 max-[767px]:gap-2.5 ${isArabic ? 'flex-row-reverse justify-end' : ''}`}
+            className={`mt-10 flex flex-wrap gap-[34px] max-[767px]:mt-8 max-[767px]:gap-2.5 ${isArabic ? 'flex-row-reverse justify-end' : ''}`}
           >
             <a
-              className={`${tealButton} w-[157px] px-4 max-[767px]:h-11 max-[767px]:min-h-11 max-[767px]:flex-1 max-[767px]:px-3 max-[767px]:text-[15px] max-[767px]:tracking-normal`}
+              className={`${tealButton} w-[157px] px-4 max-[767px]:h-11 max-[767px]:min-h-11 max-[767px]:flex-1 max-[767px]:px-3 max-[767px]:text-[14px] max-[767px]:tracking-normal`}
               href="#consultation"
             >
               {copy.contact || 'Contact Us'}
@@ -84,7 +84,7 @@ function Hero({ locale = 'en', messages }) {
             </a>
             <button
               type="button"
-              className={`${outlineButton} w-[157px] px-4 max-[767px]:h-11 max-[767px]:min-h-11 max-[767px]:flex-1 max-[767px]:px-3 max-[767px]:text-[15px] max-[767px]:tracking-normal`}
+              className={`${outlineButton} w-[157px] px-4 max-[767px]:h-11 max-[767px]:min-h-11 max-[767px]:flex-1 max-[767px]:px-3 max-[767px]:text-[14px] max-[767px]:tracking-normal`}
             >
               {copy.profile || 'View Our Profile'}
             </button>
@@ -109,7 +109,7 @@ function Hero({ locale = 'en', messages }) {
             />
           </div>
           <p
-            className="mt-[18px] flex items-center justify-center gap-4 text-center font-abu text-base leading-[26px] font-bold tracking-[4px] text-teal-deep max-[1023px]:text-[13px] max-[1023px]:tracking-[2px] max-[767px]:gap-2 max-[767px]:tracking-[1px]"
+            className="mt-[18px] flex items-center justify-center gap-4 text-center font-abu text-[14px] leading-[22px] font-bold tracking-[3px] text-teal-deep max-[1023px]:text-[12px] max-[1023px]:tracking-[2px] max-[767px]:gap-2 max-[767px]:tracking-[1px]"
             lang={isArabic ? 'ar' : 'en'}
             dir={isArabic ? 'rtl' : 'ltr'}
           >

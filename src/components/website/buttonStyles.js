@@ -1,5 +1,5 @@
 const buttonChrome =
-  'inline-flex items-center justify-center gap-2 border-2 px-6 text-center font-abu text-[18px] font-bold whitespace-nowrap transition-[color,background-color,box-shadow,transform] duration-300 ease-out focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-teal'
+  'inline-flex items-center justify-center gap-2 border-2 px-6 text-center font-abu text-[15px] font-bold whitespace-nowrap transition-[color,background-color,box-shadow,transform] duration-300 ease-out focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-teal'
 
 const filledButton = `${buttonChrome} h-[48px] rounded-[4px] border-transparent py-0 leading-5 tracking-[0.35px]`
 

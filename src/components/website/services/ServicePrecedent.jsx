@@ -11,17 +11,17 @@ function ServicePrecedent({ copy }) {
               aria-hidden="true"
             />
             <div className="relative z-[1] flex h-full flex-col">
-              <p className="font-abu text-[18px] leading-4 font-bold tracking-[1.1px] text-gold uppercase">
+              <p className="font-abu text-[14px] leading-4 font-bold tracking-[1.1px] text-gold uppercase">
                 {copy?.eyebrow || 'LEAD PRECEDENT'}
               </p>
               <h2
                 id="service-precedent-title"
-                className="mt-4 max-w-[520px] font-abu text-[36px] leading-[42px] font-bold tracking-[1px] text-ink-soft max-[1439px]:text-[32px] max-[1439px]:leading-[1.2] max-[767px]:text-[26px] max-[767px]:tracking-normal"
+                className="mt-4 max-w-[520px] font-abu text-[30px] leading-[1.2] font-bold tracking-[0.5px] text-ink-soft max-[1439px]:text-[28px] max-[1439px]:leading-[1.2] max-[767px]:text-[24px] max-[767px]:tracking-normal"
               >
                 {copy?.title}
               </h2>
               {copy?.body ? (
-                <p className="mt-3.5 max-w-[480px] font-abu text-[18px] leading-6 text-body">{copy.body}</p>
+                <p className="mt-3.5 max-w-[480px] font-abu text-[16px] leading-6 text-body">{copy.body}</p>
               ) : null}
               {copy?.attribution ? (
                 <p className="mt-auto pt-8 font-abu text-[15px] font-bold text-ink-soft">{copy.attribution}</p>
@@ -35,7 +35,7 @@ function ServicePrecedent({ copy }) {
             </p>
             {copy?.quote ? (
               <blockquote className="mt-5">
-                <p className="font-abu text-[28px] leading-[1.35] font-normal text-ink max-[1439px]:text-[24px] max-[767px]:text-[20px]">
+                <p className="font-abu text-[22px] leading-[1.4] font-normal text-ink max-[1439px]:text-[20px] max-[767px]:text-[18px]">
                   “{copy.quote}”
                 </p>
                 {copy?.quoteAttribution ? (

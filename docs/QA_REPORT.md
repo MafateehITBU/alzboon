@@ -109,4 +109,4 @@ See `docs/QA_REPORT.md` section below and classification in the Phase 12 complet
 
 ## Remaining production blockers
 
-See completion report: production env/HTTPS/Nginx; map provider undecided (non-blocker if coords-only). English display type is Abu Dhabi Pro.
+See completion report: production env/HTTPS/Nginx; map provider undecided (non-blocker if coords-only). English display type is Playfair Display.
